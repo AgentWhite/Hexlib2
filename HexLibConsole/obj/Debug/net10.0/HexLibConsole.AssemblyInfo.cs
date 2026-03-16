@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HexLibConsole")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b72ce54457c56fa8478d4e925cd89b84d5374523")]
 [assembly: System.Reflection.AssemblyProductAttribute("HexLibConsole")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HexLibConsole")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

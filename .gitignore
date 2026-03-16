@@ -1,0 +1,65 @@
+# Build artifacts
+bin/
+obj/
+
+# Visual Studio temporary files, build results, and more
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.cache
+
+# Rider files
+.idea/
+*.sln.iml
+
+# NuGet
+*.nupkg
+# The packages folder can be ignored because of Package Restore
+**/[Pp]ackages/*
+# except build/, nuget.targets, and nuget.exe
+!**/[Pp]ackages/build/
+!**/[Pp]ackages/repositories.config
+!**/[Pp]ackages/*.nuspec
+
+# Visual Studio Code
+.vscode/
+
+# Local history for Visual Studio
+.vs/
+
+# Azure Pipelines
+.azure-pipelines.yml
+
+# Roslyn
+*.ide.*
+
+# JetBrains Rider
+.idea/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userprefs
+
+# Mono
+*.pidb
+
+# OS files
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Logs
+*.log
+
+# Others
+*.ncrunch*
+*.vsmdi
+*.tmp
+*.err
+*.cache
+
+# Workspace file
+*.code-workspace
