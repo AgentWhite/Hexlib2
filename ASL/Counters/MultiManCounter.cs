@@ -16,12 +16,14 @@ public abstract class MultiManCounter : BaseASLCounter
     public int SmokePlacementExponent { get; set; }
     public int BPV { get; set; }
 
-    protected MultiManCounter(string name, int firepower, int range, int morale, Nationality nationality)
+    public override string Stats => $"FP: {Firepower}, Range: {Range}, Morale: {Morale}";
+
+    protected MultiManCounter(int fp, int range, int morale, string identity, UnitClass @class, Nationality nationality) 
+        : base(identity, morale, nationality)
     {
-        Name = name;
-        Firepower = firepower;
+        Firepower = fp;
         Range = range;
-        Morale = morale;
-        Nationality = nationality;
+        Identity = identity;
+        Class = @class;
     }
 }

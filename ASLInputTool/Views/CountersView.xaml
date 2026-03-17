@@ -1,0 +1,139 @@
+<UserControl x:Class="ASLInputTool.Views.CountersView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:asl="clr-namespace:ASL;assembly=ASL"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="800">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="0,0,0,20">
+            <TextBlock Text="Counters" FontSize="24" FontWeight="Bold" VerticalAlignment="Center"/>
+            <Button Content="Add Counter" Command="{Binding AddCounterCommand}" 
+                    Visibility="{Binding IsAddingCounter, Converter={StaticResource InverseBoolToVis}}"
+                    Margin="20,0,0,0" Padding="15,5" Background="CornflowerBlue" Foreground="White" FontWeight="Bold"/>
+            <Button Content="Back to List" Command="{Binding CancelAddCommand}" 
+                    Visibility="{Binding IsAddingCounter, Converter={StaticResource BoolToVis}}"
+                    Margin="20,0,0,0" Padding="15,5"/>
+        </StackPanel>
+
+        <!-- List View -->
+        <Grid Grid.Row="1" Visibility="{Binding IsAddingCounter, Converter={StaticResource InverseBoolToVis}}">
+            <DataGrid ItemsSource="{Binding Counters}" AutoGenerateColumns="False" IsReadOnly="True" Background="White">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Nationality" Binding="{Binding Nationality}" Width="120" />
+                    <DataGridTextColumn Header="Unit class" Binding="{Binding Class}" Width="120" />
+                    <DataGridTextColumn Header="Stats" Binding="{Binding Stats}" Width="*" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+
+        <!-- Form View (The original entry form) -->
+        <TabControl Grid.Row="1" Visibility="{Binding IsAddingCounter, Converter={StaticResource BoolToVis}}">
+            <TabItem Header="Single Man (SMC)">
+                <ScrollViewer Padding="10">
+                    <StackPanel>
+                        <Label Content="Counter Name:" FontWeight="SemiBold"/>
+                        <TextBox Margin="0,0,0,10" Padding="5"/>
+
+                        <Label Content="Nationality:" FontWeight="SemiBold"/>
+                        <ComboBox Margin="0,0,0,10" Padding="5"
+                                  ItemsSource="{Binding Nationalities}"
+                                  SelectedItem="{Binding SelectedNationality}"/>
+
+                        <Label Content="Morale:" FontWeight="SemiBold"/>
+                        <TextBox Margin="0,0,0,10" Padding="5" Width="50" HorizontalAlignment="Left"/>
+
+                        <GroupBox Header="Type Specific" Margin="0,10,0,0">
+                            <StackPanel Margin="10">
+                                <RadioButton Content="Leader" IsChecked="True" Margin="0,0,0,5"/>
+                                <StackPanel Margin="20,0,0,10">
+                                    <Label Content="Leadership Modifier:"/>
+                                    <TextBox Width="50" HorizontalAlignment="Left" Padding="5"/>
+                                </StackPanel>
+
+                                <RadioButton Content="Hero" Margin="0,0,0,5"/>
+                                <StackPanel Margin="20,0,0,10">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Margin="0,0,20,0">
+                                            <Label Content="Firepower:"/>
+                                            <TextBox Width="50" HorizontalAlignment="Left" Padding="5"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1">
+                                            <Label Content="Range:"/>
+                                            <TextBox Width="50" HorizontalAlignment="Left" Padding="5"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </StackPanel>
+                            </StackPanel>
+                        </GroupBox>
+                        <Button Content="Save Counter" Margin="0,20,0,0" Padding="20,10" HorizontalAlignment="Right" Background="Green" Foreground="White" FontWeight="Bold"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+            
+            <TabItem Header="Multi Man (MMC)">
+                <ScrollViewer Padding="10">
+                    <StackPanel>
+                        <Label Content="Counter Name / Unit Identity:" FontWeight="SemiBold"/>
+                        <TextBox Margin="0,0,0,10" Padding="5"/>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                <Label Content="Nationality:" FontWeight="SemiBold"/>
+                                <ComboBox Padding="5"
+                                          ItemsSource="{Binding Nationalities}"
+                                          SelectedItem="{Binding SelectedNationality}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <Label Content="Class:" FontWeight="SemiBold"/>
+                                <ComboBox Padding="5"
+                                          ItemsSource="{Binding UnitClasses}"
+                                          SelectedItem="{Binding SelectedClass}"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Margin="0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,20,0">
+                                <Label Content="Firepower:"/>
+                                <TextBox Width="50" HorizontalAlignment="Left" Padding="5"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="0,0,20,0">
+                                <Label Content="Range:"/>
+                                <TextBox Width="50" HorizontalAlignment="Left" Padding="5"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <Label Content="Morale:"/>
+                                <TextBox Width="50" HorizontalAlignment="Left" Padding="5"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <CheckBox Content="Has Assault Fire" Margin="0,5"/>
+                        <CheckBox Content="Has Spraying Fire" Margin="0,5"/>
+                        <CheckBox Content="Can Self Rally" Margin="0,5"/>
+
+                        <Button Content="Save MMC Counter" Margin="0,20,0,0" Padding="20,10" HorizontalAlignment="Right" Background="CornflowerBlue" Foreground="White" FontWeight="Bold"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>

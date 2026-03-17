@@ -2,8 +2,8 @@ namespace ASL.Counters;
 
 public class Squad : MultiManCounter
 {
-    public Squad(string name, int firepower, int range, int morale, Nationality nationality) 
-        : base(name, firepower, range, morale, nationality)
+    public Squad(string name, int fp, int range, int morale, UnitClass unitClass, Nationality nationality) 
+        : base(fp, range, morale, name, unitClass, nationality)
     {
     }
 }

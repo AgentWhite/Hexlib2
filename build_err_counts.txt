@@ -1,0 +1,16 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  HexLib -> D:\Git\HexLib\HexLib\bin\Debug\net10.0\HexLib.dll
+D:\Git\HexLib\ASL\Counters\Leader.cs(9,87): error CS1729: 'BaseASLCounter' does not contain a constructor that takes 3 arguments [D:\Git\HexLib\ASL\ASL.csproj]
+D:\Git\HexLib\ASL\Counters\MultiManCounter.cs(22,11): error CS1729: 'BaseASLCounter' does not contain a constructor that takes 3 arguments [D:\Git\HexLib\ASL\ASL.csproj]
+D:\Git\HexLib\ASL\Counters\Hero.cs(10,88): error CS1729: 'BaseASLCounter' does not contain a constructor that takes 3 arguments [D:\Git\HexLib\ASL\ASL.csproj]
+
+Build FAILED.
+
+D:\Git\HexLib\ASL\Counters\Leader.cs(9,87): error CS1729: 'BaseASLCounter' does not contain a constructor that takes 3 arguments [D:\Git\HexLib\ASL\ASL.csproj]
+D:\Git\HexLib\ASL\Counters\MultiManCounter.cs(22,11): error CS1729: 'BaseASLCounter' does not contain a constructor that takes 3 arguments [D:\Git\HexLib\ASL\ASL.csproj]
+D:\Git\HexLib\ASL\Counters\Hero.cs(10,88): error CS1729: 'BaseASLCounter' does not contain a constructor that takes 3 arguments [D:\Git\HexLib\ASL\ASL.csproj]
+    0 Warning(s)
+    3 Error(s)
+
+Time Elapsed 00:00:00.63

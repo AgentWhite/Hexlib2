@@ -5,12 +5,11 @@ public class Hero : BaseASLCounter
     public int Firepower { get; set; }
     public int Range { get; set; }
 
-    public Hero(string name, int firepower, int range, int morale, Nationality nationality)
+    public override string Stats => $"FP: {Firepower}, Range: {Range}, Morale: {Morale}";
+
+    public Hero(string name, int fp, int range, int morale, Nationality nationality) : base(name, morale, nationality)
     {
-        Name = name;
-        Firepower = firepower;
+        Firepower = fp;
         Range = range;
-        Morale = morale;
-        Nationality = nationality;
     }
 }

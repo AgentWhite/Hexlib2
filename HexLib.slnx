@@ -4,4 +4,5 @@
   <Project Path="HexLibConsole\HexLibConsole.csproj" />
   <Project Path="ASL\ASL.csproj" />
   <Project Path="ASL.Tests\ASL.Tests.csproj" />
+  <Project Path="ASLInputTool\ASLInputTool.csproj" />
 </Solution>

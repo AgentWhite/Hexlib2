@@ -1,0 +1,13 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  HexLib -> D:\Git\HexLib\HexLib\bin\Debug\net10.0\HexLib.dll
+  ASL -> D:\Git\HexLib\ASL\bin\Debug\net10.0\ASL.dll
+D:\Git\HexLib\ASLInputTool\Views\CountersView.xaml(111,34): error MC3074: The tag 'Grid.ColumnDefinition' does not exist in XML namespace 'http://schemas.microsoft.com/winfx/2006/xaml/presentation'. Line 111 Position 34. [D:\Git\HexLib\ASLInputTool\ASLInputTool.csproj]
+
+Build FAILED.
+
+D:\Git\HexLib\ASLInputTool\Views\CountersView.xaml(111,34): error MC3074: The tag 'Grid.ColumnDefinition' does not exist in XML namespace 'http://schemas.microsoft.com/winfx/2006/xaml/presentation'. Line 111 Position 34. [D:\Git\HexLib\ASLInputTool\ASLInputTool.csproj]
+    0 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:00.65
