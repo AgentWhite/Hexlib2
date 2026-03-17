@@ -4,7 +4,9 @@ namespace HexLib;
 /// Manages a localized collection of Hexes representing a physical tile map.
 /// Connects to other Board instances to form dynamic wargame geometries.
 /// </summary>
-public class Board
+/// <typeparam name="THexMetadata">User-defined type for hex terrain or data.</typeparam>
+/// <typeparam name="TEdgeData">User-defined type for hexside data (roads, walls, etc.).</typeparam>
+public class Board<THexMetadata, TEdgeData>
 {
     /// <summary>
     /// The unique identifier or printed name of this board (e.g., "Board A").
@@ -35,7 +37,7 @@ public class Board
     /// <summary>
     /// The manager controlling the global map scope this board belongs to, if any.
     /// </summary>
-    public BoardManager? Manager { get; internal set; }
+    public BoardManager<THexMetadata, TEdgeData>? Manager { get; internal set; }
 
     /// <summary>
     /// The visual reading orientation of the board map grid.
@@ -101,18 +103,22 @@ public class Board
         return edge;
     }
 
-    private readonly Dictionary<CubeCoordinate, Hex> _hexes = new Dictionary<CubeCoordinate, Hex>();
-    private readonly Dictionary<BoardEdge, Board> _neighbors = new Dictionary<BoardEdge, Board>();
+    private readonly Dictionary<CubeCoordinate, Hex<THexMetadata>> _hexes = new Dictionary<CubeCoordinate, Hex<THexMetadata>>();
+    private readonly Dictionary<BoardEdge, Board<THexMetadata, TEdgeData>> _neighbors = new Dictionary<BoardEdge, Board<THexMetadata, TEdgeData>>();
+    
+    // Store edge data using a normalized key of (CubeCoordinate, CubeCoordinate).
+    // Using (CoordMin, CoordMax) ensures Hex A and Hex B refer to the same logical edge.
+    private readonly Dictionary<(CubeCoordinate, CubeCoordinate), TEdgeData> _edges = new Dictionary<(CubeCoordinate, CubeCoordinate), TEdgeData>();
 
     /// <summary>
     /// A read-only collection of all hexes strictly owned by this board, keyed by their logical coordinates.
     /// </summary>
-    public IReadOnlyDictionary<CubeCoordinate, Hex> Hexes => _hexes;
+    public IReadOnlyDictionary<CubeCoordinate, Hex<THexMetadata>> Hexes => _hexes;
 
     /// <summary>
     /// A read-only collection of other boards physically joined to this board, keyed by the edge they attach to.
     /// </summary>
-    public IReadOnlyDictionary<BoardEdge, Board> Neighbors => _neighbors;
+    public IReadOnlyDictionary<BoardEdge, Board<THexMetadata, TEdgeData>> Neighbors => _neighbors;
 
     /// <summary>
     /// Initializes a new, unlinked <see cref="Board"/> with the specified physical width and height in hexes and physical orientation.
@@ -152,7 +158,7 @@ public class Board
     /// <param name="other">The board attempting to connect.</param>
     /// <param name="direction">The single physical edge direction on this board to join.</param>
     /// <returns><c>true</c> if the join is valid; otherwise <c>false</c>.</returns>
-    public bool CanJoin(Board other, BoardEdge direction)
+    public bool CanJoin(Board<THexMetadata, TEdgeData> other, BoardEdge direction)
     {
         if (other == null) return false;
         
@@ -198,7 +204,7 @@ public class Board
     /// <param name="physicalCoordinate">The starting physical coordinate.</param>
     /// <param name="physicalDirection">The physical direction to travel.</param>
     /// <returns>The neighboring hex if it exists, either natively or on a joined board, or <c>null</c>.</returns>
-    public Hex? GetPhysicalNeighbor(CubeCoordinate physicalCoordinate, PhysicalDirection physicalDirection)
+    public Hex<THexMetadata>? GetPhysicalNeighbor(CubeCoordinate physicalCoordinate, PhysicalDirection physicalDirection)
     {
         // 1. Calculate the target physical coordinate assuming it's on the same infinite grid
         var offset = GetPhysicalOffset_Internal(physicalDirection);
@@ -225,7 +231,7 @@ public class Board
         return null;
     }
 
-    private Hex? GetMirrorHexOnEdge(BoardEdge incomingEdge, CubeCoordinate originalPhysicalTarget, Board requestingBoard)
+    private Hex<THexMetadata>? GetMirrorHexOnEdge(BoardEdge incomingEdge, CubeCoordinate originalPhysicalTarget, Board<THexMetadata, TEdgeData> requestingBoard)
     {
         // Convert the incoming physical target to an offset coordinate relative to the requesting board
         var offsetSource = originalPhysicalTarget.ToOffset(requestingBoard.TopOrientation);
@@ -325,7 +331,7 @@ public class Board
     /// <param name="direction">The edge on this board to connect.</param>
     /// <param name="determinePrimaryHex">An optional selector function to determine which overlapping half-hex should act as the primary, physical hex.</param>
     /// <exception cref="InvalidOperationException">Thrown if the join validation fails.</exception>
-    public void Join(Board other, BoardEdge direction, Func<Hex, Hex, Hex>? determinePrimaryHex = null)
+    public void Join(Board<THexMetadata, TEdgeData> other, BoardEdge direction, Func<Hex<THexMetadata>, Hex<THexMetadata>, Hex<THexMetadata>>? determinePrimaryHex = null)
     {
         if (!CanJoin(other, direction))
         {
@@ -339,14 +345,14 @@ public class Board
         LinkHalfHexes(other, direction, determinePrimaryHex);
     }
 
-    private void LinkHalfHexes(Board other, BoardEdge direction, Func<Hex, Hex, Hex>? determinePrimaryHex)
+    private void LinkHalfHexes(Board<THexMetadata, TEdgeData> other, BoardEdge direction, Func<Hex<THexMetadata>, Hex<THexMetadata>, Hex<THexMetadata>>? determinePrimaryHex)
     {
         // For now, as a placeholder until physical coordinate mapping is implemented, 
         // we need to find the overlapping hexes. This requires identifying the border hexes on both ends.
         // We will implement the actual overlap pairing logic along with GetPhysicalNeighbor.
         // The core requirement is identifying the alias vs primary.
         
-        Func<Hex, Hex, Hex> prioritySelector = determinePrimaryHex ?? ((h1, h2) => 
+        Func<Hex<THexMetadata>, Hex<THexMetadata>, Hex<THexMetadata>> prioritySelector = determinePrimaryHex ?? ((h1, h2) => 
         {
             var b1Name = this.Name ?? string.Empty;
             var b2Name = other.Name ?? string.Empty;
@@ -378,7 +384,7 @@ public class Board
         }
     }
 
-    private void UnlinkHalfHexes(Board other, BoardEdge direction)
+    private void UnlinkHalfHexes(Board<THexMetadata, TEdgeData> other, BoardEdge direction)
     {
         // Placeholder for breaking the alias bonds on the overlapping edge
         // foreach(var (myHex, otherHex) in GetOverlappingHexPairs(direction, other))
@@ -394,7 +400,7 @@ public class Board
     /// <param name="hex">The hex to add.</param>
     /// <exception cref="ArgumentNullException">Thrown if the hex is null.</exception>
     /// <exception cref="ArgumentException">Thrown if a hex already exists at the target logical location.</exception>
-    public void AddHex(Hex hex)
+    public void AddHex(Hex<THexMetadata> hex)
     {
         if (hex == null) throw new ArgumentNullException(nameof(hex));
         if (_hexes.ContainsKey(hex.Location))
@@ -409,7 +415,7 @@ public class Board
     /// </summary>
     /// <param name="location">The logical coordinate relative to this board's origin.</param>
     /// <returns>The hex if found; otherwise, <c>null</c>.</returns>
-    public Hex? GetHexAt(CubeCoordinate location)
+    public Hex<THexMetadata>? GetHexAt(CubeCoordinate location)
     {
         _hexes.TryGetValue(location, out var hex);
         return hex;
@@ -423,5 +429,30 @@ public class Board
     public bool RemoveHexAt(CubeCoordinate location)
     {
         return _hexes.Remove(location);
+    }
+
+    /// <summary>
+    /// Registers or updates metadata for a physical edge between two hexes.
+    /// Order of coordinates does not matter.
+    /// </summary>
+    public void SetEdgeData(CubeCoordinate a, CubeCoordinate b, TEdgeData data)
+    {
+        _edges[NormalizeEdge(a, b)] = data;
+    }
+
+    /// <summary>
+    /// Retrieves metadata for a physical edge between two hexes.
+    /// Returns default if no data is registered.
+    /// </summary>
+    public TEdgeData? GetEdgeData(CubeCoordinate a, CubeCoordinate b)
+    {
+        _edges.TryGetValue(NormalizeEdge(a, b), out var data);
+        return data;
+    }
+
+    private (CubeCoordinate, CubeCoordinate) NormalizeEdge(CubeCoordinate a, CubeCoordinate b)
+    {
+        // Consistent ordering to ensure A-B and B-A are the same key.
+        return (a.Q < b.Q || (a.Q == b.Q && a.R < b.R)) ? (a, b) : (b, a);
     }
 }

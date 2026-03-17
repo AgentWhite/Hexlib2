@@ -4,14 +4,14 @@ namespace HexLib.Tests;
 
 public class BoardManagerTests
 {
-    private Board CreateBoard(string name, int width, int height)
+    private Board<object, object> CreateBoard(string name, int width, int height)
     {
-        var board = new Board(width, height) { Name = name };
+        var board = new Board<object, object>(width, height) { Name = name };
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                var hex = new Hex(HexMath.OffsetToCube(x, y)) { Id = $"{name}_{x}_{y}" };
+                var hex = new Hex<object>(HexMath.OffsetToCube(x, y)) { Id = $"{name}_{x}_{y}" };
                 board.AddHex(hex);
             }
         }
@@ -21,7 +21,7 @@ public class BoardManagerTests
     [Fact]
     public void SetAnchorBoard_WithUnjoinedBoard_AddsCorrectly()
     {
-        var manager = new BoardManager();
+        var manager = new BoardManager<object, object>();
         var board = CreateBoard("A", 10, 10);
 
         manager.SetAnchorBoard(board);
@@ -33,7 +33,7 @@ public class BoardManagerTests
     [Fact]
     public void AddBoard_ThrowsIfAlreadyAdded()
     {
-        var manager = new BoardManager();
+        var manager = new BoardManager<object, object>();
         var board = CreateBoard("A", 10, 10);
 
         manager.SetAnchorBoard(board);
@@ -44,7 +44,7 @@ public class BoardManagerTests
     [Fact]
     public void BoardManager_LockedRotation_ThrowsIfManagedBoardRotated()
     {
-        var manager = new BoardManager();
+        var manager = new BoardManager<object, object>();
         var board = CreateBoard("A", 10, 10);
         manager.SetAnchorBoard(board);
 
@@ -54,7 +54,7 @@ public class BoardManagerTests
     [Fact]
     public void RemoveAnchor_ShiftsMapCorrectly()
     {
-        var manager = new BoardManager();
+        var manager = new BoardManager<object, object>();
         var anchor = CreateBoard("Anchor", 10, 10);
         anchor.HalfHexSides = BoardEdge.Right;
 
@@ -83,7 +83,7 @@ public class BoardManagerTests
     [Fact]
     public void GetDistance_AcrossJoinedBoards_ReturnsCorrectMath()
     {
-        var manager = new BoardManager();
+        var manager = new BoardManager<object, object>();
         var boardA = CreateBoard("A", 10, 10);
         boardA.HalfHexSides = BoardEdge.Right;
 

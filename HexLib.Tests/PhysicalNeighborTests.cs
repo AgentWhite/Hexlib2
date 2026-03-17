@@ -4,14 +4,14 @@ namespace HexLib.Tests;
 
 public class PhysicalNeighborTests
 {
-    private Board CreateBoard(string name, int width, int height)
+    private Board<object, object> CreateBoard(string name, int width, int height)
     {
-        var board = new Board(width, height) { Name = name };
+        var board = new Board<object, object>(width, height) { Name = name };
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                var hex = new Hex(HexMath.OffsetToCube(x, y)) { Id = $"{name}_{x}_{y}" };
+                var hex = new Hex<object>(HexMath.OffsetToCube(x, y)) { Id = $"{name}_{x}_{y}" };
                 board.AddHex(hex);
             }
         }

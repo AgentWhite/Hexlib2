@@ -1,3 +1,4 @@
+using HexLib;
 using System.Linq;
 
 namespace HexLib.Tests;
@@ -13,8 +14,8 @@ public class HexAliasTests
     [Fact]
     public void Hex_WithPrimaryAlias_SharesCounters()
     {
-        var primary = new Hex(new CubeCoordinate(0, 0, 0)) { Id = "Primary" };
-        var alias = new Hex(new CubeCoordinate(1, -1, 0)) { Id = "Alias" };
+        var primary = new Hex<object>(new CubeCoordinate(0, 0, 0)) { Id = "Primary" };
+        var alias = new Hex<object>(new CubeCoordinate(1, -1, 0)) { Id = "Alias" };
         
         alias.PrimaryHexAlias = primary;
 
@@ -42,7 +43,7 @@ public class HexAliasTests
     [Fact]
     public void Hex_WithoutPrimaryAlias_IsIndependent()
     {
-        var hex = new Hex(new CubeCoordinate(0, 0, 0)) { Id = "Independent" };
+        var hex = new Hex<object>(new CubeCoordinate(0, 0, 0)) { Id = "Independent" };
         hex.AddCounter(new TestCounter("C"));
 
         Assert.Single(hex.Counters);

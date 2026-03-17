@@ -13,7 +13,7 @@ public class HexTests
     [Fact]
     public void Hex_AddingCounter_IncreasesCount()
     {
-        var hex = new Hex(new CubeCoordinate(0, 0, 0));
+        var hex = new Hex<object>(new CubeCoordinate(0, 0, 0));
         var counter = new TestCounter("Infantry");
         hex.AddCounter(counter);
         Assert.Single(hex.Counters);
@@ -23,7 +23,7 @@ public class HexTests
     [Fact]
     public void Hex_RemovingCounter_DecreasesCount()
     {
-        var hex = new Hex(new CubeCoordinate(0, 0, 0));
+        var hex = new Hex<object>(new CubeCoordinate(0, 0, 0));
         var counter = new TestCounter("Tank");
         hex.AddCounter(counter);
         

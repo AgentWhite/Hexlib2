@@ -4,27 +4,29 @@ namespace HexLib;
 /// Manages a topological graph of independent Boards, translating their local coordinate spaces 
 /// into a unified global coordinate plane for overarching geometric math and pathfinding.
 /// </summary>
-public class BoardManager
+/// <typeparam name="THexMetadata">User-defined type for hex terrain or data.</typeparam>
+/// <typeparam name="TEdgeData">User-defined type for hexside data.</typeparam>
+public class BoardManager<THexMetadata, TEdgeData>
 {
-    private readonly Dictionary<string, Board> _boards = new Dictionary<string, Board>(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, Board<THexMetadata, TEdgeData>> _boards = new Dictionary<string, Board<THexMetadata, TEdgeData>>(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, (int GlobalOffsetX, int GlobalOffsetY)> _boardPositions = new Dictionary<string, (int, int)>(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
     /// The primary board defining the origin (0,0) of the global offset space.
     /// </summary>
-    public Board? AnchorBoard { get; private set; }
+    public Board<THexMetadata, TEdgeData>? AnchorBoard { get; private set; }
 
     /// <summary>
     /// Gets all boards currently managed by this instance.
     /// </summary>
-    public IReadOnlyCollection<Board> Boards => _boards.Values;
+    public IReadOnlyCollection<Board<THexMetadata, TEdgeData>> Boards => _boards.Values;
 
     /// <summary>
     /// Establishes the provided board as the (0,0) anchor of the global map, automatically importing 
     /// any boards already connected to it via its Neighbors graph.
     /// </summary>
     /// <param name="board">The board to set as the Anchor.</param>
-    public void SetAnchorBoard(Board board)
+    public void SetAnchorBoard(Board<THexMetadata, TEdgeData> board)
     {
         if (board == null) throw new ArgumentNullException(nameof(board));
         if (AnchorBoard != null) throw new InvalidOperationException("An Anchor board has already been set.");
@@ -38,7 +40,7 @@ public class BoardManager
     /// Adds a detached board explicitly at the provided global physical offsets.
     /// Automatically imports any boards already connected to it.
     /// </summary>
-    public void AddBoard(Board board, int globalOffsetX, int globalOffsetY)
+    public void AddBoard(Board<THexMetadata, TEdgeData> board, int globalOffsetX, int globalOffsetY)
     {
         if (board == null) throw new ArgumentNullException(nameof(board));
         if (AnchorBoard == null && _boards.Count > 0) throw new InvalidOperationException("Initial boards must be added via SetAnchorBoard.");
@@ -47,9 +49,9 @@ public class BoardManager
         RegisterBoardWithCluster(board, globalOffsetX, globalOffsetY);
     }
 
-    private void RegisterBoardWithCluster(Board rootBoard, int rootOffsetX, int rootOffsetY)
+    private void RegisterBoardWithCluster(Board<THexMetadata, TEdgeData> rootBoard, int rootOffsetX, int rootOffsetY)
     {
-        var pendingQueue = new Queue<(Board board, int ox, int oy)>();
+        var pendingQueue = new Queue<(Board<THexMetadata, TEdgeData> board, int ox, int oy)>();
         pendingQueue.Enqueue((rootBoard, rootOffsetX, rootOffsetY));
 
         while (pendingQueue.Count > 0)
@@ -78,15 +80,8 @@ public class BoardManager
         }
     }
 
-    private (int ox, int oy) CalculateNeighborGlobalOffset(Board sourceBoard, int sourceOx, int sourceOy, Board targetBoard, BoardEdge directionFromSource)
+    private (int ox, int oy) CalculateNeighborGlobalOffset(Board<THexMetadata, TEdgeData> sourceBoard, int sourceOx, int sourceOy, Board<THexMetadata, TEdgeData> targetBoard, BoardEdge directionFromSource)
     {
-        // Direction from source dictates the physical offset delta.
-        // Assuming hexes are strictly laid out: 
-        // A right join shifts the physical X offset by exactly Width.
-        // A bottom join shifts the physical Y offset by exactly Height.
-        
-        // Target Board dimension needs to be accounted for if shifting left/top
-
         if (directionFromSource == BoardEdge.Right)
         {
             return (sourceOx + sourceBoard.Width, sourceOy);
@@ -110,7 +105,7 @@ public class BoardManager
     /// <summary>
     /// Explicitly joins a detached board to an already managed board, calculating and registering its global offset.
     /// </summary>
-    public void JoinBoard(Board newBoard, Board existingBoard, BoardEdge directionFromExisting)
+    public void JoinBoard(Board<THexMetadata, TEdgeData> newBoard, Board<THexMetadata, TEdgeData> existingBoard, BoardEdge directionFromExisting)
     {
         if (newBoard == null) throw new ArgumentNullException(nameof(newBoard));
         if (existingBoard == null) throw new ArgumentNullException(nameof(existingBoard));
@@ -177,11 +172,10 @@ public class BoardManager
     /// <summary>
     /// Translates a given Hex's local logical coordinate into the Manager's unified global CubeCoordinate space.
     /// </summary>
-    public CubeCoordinate ToGlobalCoordinate(Hex hex)
+    public CubeCoordinate ToGlobalCoordinate(Hex<THexMetadata> hex)
     {
         // To find the global coordinate of a hex:
-        // 1. We must find its parent board. We assume it belongs to a managed board since Hexes don't strictly pointer-link to Boards globally right now.
-        // A robust solution usually maps hex directly, but for now we iterate to find the owner.
+        // 1. We must find its parent board. 
         var parentBoard = _boards.Values.FirstOrDefault(b => b.GetHexAt(hex.Location) == hex);
         if (parentBoard == null)
         {
@@ -189,29 +183,18 @@ public class BoardManager
         }
 
         var offset = _boardPositions[parentBoard.Name];
-        
-        // 1. Get the logical location of the hex on the parent board
-        // 2. We need its *physical offset* coordinate relative to the board's (0,0) based on rotation
-        // Actually, Board handles that via logical lookup. Let's write a helper to get physical cube from logical cube given orientation.
         var localPhysicalCube = GetPhysicalCubeFromLogical(hex.Location, parentBoard.Orientation);
-        
-        // 3. Convert that local physical cube to a local physical (X,Y) offset
         var localPhysicalOffset = localPhysicalCube.ToOffset(parentBoard.TopOrientation);
 
-        // 4. Add the board's Global Physical (X,Y) offset
         int globalX = localPhysicalOffset.col + offset.GlobalOffsetX;
         int globalY = localPhysicalOffset.row + offset.GlobalOffsetY;
 
-        // 5. Convert back to Global physical CubeCoordinate using the Anchor's orientation (defining the global plane)
         var globalOrientation = AnchorBoard?.TopOrientation ?? parentBoard.TopOrientation;
         return HexMath.OffsetToCube(globalX, globalY, globalOrientation);
     }
 
     private CubeCoordinate GetPhysicalCubeFromLogical(CubeCoordinate logical, BoardOrientation orientation)
     {
-        // Logical is what the Hex thinks it is natively.
-        // Physical is what it is when printed on the table rotated.
-        // This is the inverse of PhysicalToLogical.
         return orientation switch
         {
             BoardOrientation.Degree90 => logical.Rotate60(),   // Inverse of Rotate300
@@ -224,7 +207,7 @@ public class BoardManager
     /// <summary>
     /// Measures the exact physical distance in hexes between two hexes on the global map graph.
     /// </summary>
-    public int GetDistance(Hex a, Hex b)
+    public int GetDistance(Hex<THexMetadata> a, Hex<THexMetadata> b)
     {
         var globalA = ToGlobalCoordinate(a);
         var globalB = ToGlobalCoordinate(b);
