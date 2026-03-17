@@ -1,5 +1,0 @@
-<Solution>
-  <Project Path="HexLib.Tests/HexLib.Tests.csproj" />
-  <Project Path="HexLib/HexLib.csproj" />
-  <Project Path="HexLibConsole/HexLibConsole.csproj" />
-</Solution>
