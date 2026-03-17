@@ -6,8 +6,13 @@ namespace HexLib;
 /// </summary>
 public readonly struct CubeCoordinate : IEquatable<CubeCoordinate>
 {
+    /// <summary>The Q (column-like) axis of the cube coordinate.</summary>
     public int Q { get; }
+    
+    /// <summary>The R (row-like) axis of the cube coordinate.</summary>
     public int R { get; }
+    
+    /// <summary>The S axis of the cube coordinate, balancing the sum to zero.</summary>
     public int S { get; }
 
     /// <summary>
@@ -24,32 +29,52 @@ public readonly struct CubeCoordinate : IEquatable<CubeCoordinate>
         S = s;
     }
 
+    /// <summary>Adds two cube coordinates together.</summary>
     public static CubeCoordinate operator +(CubeCoordinate a, CubeCoordinate b) =>
         new CubeCoordinate(a.Q + b.Q, a.R + b.R, a.S + b.S);
 
+    /// <summary>Subtracts one cube coordinate from another.</summary>
     public static CubeCoordinate operator -(CubeCoordinate a, CubeCoordinate b) =>
         new CubeCoordinate(a.Q - b.Q, a.R - b.R, a.S - b.S);
 
+    /// <summary>Multiplies a cube coordinate by a scalar value.</summary>
     public static CubeCoordinate operator *(CubeCoordinate a, int multiplier) =>
         new CubeCoordinate(a.Q * multiplier, a.R * multiplier, a.S * multiplier);
 
+    /// <summary>Calculates the Manhattan distance (in hexes) to another cube coordinate.</summary>
+    /// <param name="other">The target coordinate.</param>
+    /// <returns>The distance in hexes.</returns>
     public int DistanceTo(CubeCoordinate other) =>
         (Math.Abs(Q - other.Q) + Math.Abs(R - other.R) + Math.Abs(S - other.S)) / 2;
 
+    /// <summary>Rotates the coordinate 60 degrees around the origin.</summary>
     public CubeCoordinate Rotate60() => new CubeCoordinate(-R, -S, -Q);
+    
+    /// <summary>Rotates the coordinate 120 degrees around the origin.</summary>
     public CubeCoordinate Rotate120() => new CubeCoordinate(S, Q, R);
+    
+    /// <summary>Rotates the coordinate 180 degrees around the origin.</summary>
     public CubeCoordinate Rotate180() => new CubeCoordinate(-Q, -R, -S);
+    
+    /// <summary>Rotates the coordinate 240 degrees around the origin.</summary>
     public CubeCoordinate Rotate240() => new CubeCoordinate(R, S, Q);
+    
+    /// <summary>Rotates the coordinate 300 degrees around the origin.</summary>
     public CubeCoordinate Rotate300() => new CubeCoordinate(-S, -Q, -R);
 
+    /// <inheritdoc />
     public bool Equals(CubeCoordinate other) => Q == other.Q && R == other.R && S == other.S;
 
+    /// <inheritdoc />
     public override bool Equals(object? obj) => obj is CubeCoordinate c && Equals(c);
 
+    /// <inheritdoc />
     public override int GetHashCode() => HashCode.Combine(Q, R, S);
 
+    /// <summary>Determines if two cube coordinates are equal.</summary>
     public static bool operator ==(CubeCoordinate left, CubeCoordinate right) => left.Equals(right);
 
+    /// <summary>Determines if two cube coordinates are not equal.</summary>
     public static bool operator !=(CubeCoordinate left, CubeCoordinate right) => !left.Equals(right);
 
     private static readonly CubeCoordinate[] Directions = new[]
@@ -62,6 +87,11 @@ public readonly struct CubeCoordinate : IEquatable<CubeCoordinate>
         new CubeCoordinate(0, 1, -1)
     };
 
+    /// <summary>
+    /// Gets the adjacent neighbor coordinate in the specified direction index (0-5).
+    /// </summary>
+    /// <param name="direction">The direction index to get the neighbor for.</param>
+    /// <returns>The neighboring cube coordinate.</returns>
     public CubeCoordinate GetNeighbor(int direction)
     {
         // Handle negative directions using modulo arithmetic

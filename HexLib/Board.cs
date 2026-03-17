@@ -16,6 +16,11 @@ public class Board
     private readonly int _physicalHeight;
 
     /// <summary>
+    /// The physical geometric layout of the hexes on this board.
+    /// </summary>
+    public HexTopOrientation TopOrientation { get; }
+
+    /// <summary>
     /// The effective width of the board, swapped dynamically if the board is rotated 90/270 degrees.
     /// </summary>
     public int Width => (_orientation == BoardOrientation.Degree90 || _orientation == BoardOrientation.Degree270) ? _physicalHeight : _physicalWidth;
@@ -99,15 +104,35 @@ public class Board
     private readonly Dictionary<CubeCoordinate, Hex> _hexes = new Dictionary<CubeCoordinate, Hex>();
     private readonly Dictionary<BoardEdge, Board> _neighbors = new Dictionary<BoardEdge, Board>();
 
+    /// <summary>
+    /// A read-only collection of all hexes strictly owned by this board, keyed by their logical coordinates.
+    /// </summary>
     public IReadOnlyDictionary<CubeCoordinate, Hex> Hexes => _hexes;
+
+    /// <summary>
+    /// A read-only collection of other boards physically joined to this board, keyed by the edge they attach to.
+    /// </summary>
     public IReadOnlyDictionary<BoardEdge, Board> Neighbors => _neighbors;
 
-    public Board(int width, int height)
+    /// <summary>
+    /// Initializes a new, unlinked <see cref="Board"/> with the specified physical width and height in hexes and physical orientation.
+    /// </summary>
+    /// <param name="width">The physical width of the board.</param>
+    /// <param name="height">The physical height of the board.</param>
+    /// <param name="topOrientation">The hex geometric layout (defaults to PointyTopped).</param>
+    public Board(int width, int height, HexTopOrientation topOrientation = HexTopOrientation.PointyTopped)
     {
         _physicalWidth = width;
         _physicalHeight = height;
+        TopOrientation = topOrientation;
     }
 
+    /// <summary>
+    /// Returns the opposite physical edge for a given edge alignment.
+    /// </summary>
+    /// <param name="edge">The edge to evaluate.</param>
+    /// <returns>The polar opposite edge.</returns>
+    /// <exception cref="ArgumentException">Thrown if an invalid or compound edge is passed.</exception>
     public BoardEdge GetOppositeEdge(BoardEdge edge)
     {
         return edge switch
@@ -120,6 +145,13 @@ public class Board
         };
     }
 
+    /// <summary>
+    /// Evaluates if another given board can be physically attached to this board on the specified edge.
+    /// Checks for valid half-hex edge configurations and dimension matching.
+    /// </summary>
+    /// <param name="other">The board attempting to connect.</param>
+    /// <param name="direction">The single physical edge direction on this board to join.</param>
+    /// <returns><c>true</c> if the join is valid; otherwise <c>false</c>.</returns>
     public bool CanJoin(Board other, BoardEdge direction)
     {
         if (other == null) return false;
@@ -159,10 +191,17 @@ public class Board
         return true;
     }
 
+    /// <summary>
+    /// Attempts to locate the adjacent hex in the specified physical direction, seamlessly crossing board boundaries 
+    /// if joined to a neighbor.
+    /// </summary>
+    /// <param name="physicalCoordinate">The starting physical coordinate.</param>
+    /// <param name="physicalDirection">The physical direction to travel.</param>
+    /// <returns>The neighboring hex if it exists, either natively or on a joined board, or <c>null</c>.</returns>
     public Hex? GetPhysicalNeighbor(CubeCoordinate physicalCoordinate, PhysicalDirection physicalDirection)
     {
         // 1. Calculate the target physical coordinate assuming it's on the same infinite grid
-        var offset = GetPhysicalOffset(physicalDirection);
+        var offset = GetPhysicalOffset_Internal(physicalDirection);
         var targetPhysical = physicalCoordinate + offset;
 
         // 2. Check if the targetPhysical coordinate exists natively on THIS board
@@ -189,7 +228,7 @@ public class Board
     private Hex? GetMirrorHexOnEdge(BoardEdge incomingEdge, CubeCoordinate originalPhysicalTarget, Board requestingBoard)
     {
         // Convert the incoming physical target to an offset coordinate relative to the requesting board
-        var offsetSource = HexMath.CubeToOffset(originalPhysicalTarget);
+        var offsetSource = originalPhysicalTarget.ToOffset(requestingBoard.TopOrientation);
 
         // Calculate what the local relative offset coordinate should be on exactly this joined edge
         int localCol = incomingEdge switch
@@ -211,7 +250,7 @@ public class Board
         // We ensure bounding is safe.
         if (localCol >= 0 && localCol < Width && localRow >= 0 && localRow < Height)
         {
-            var myPhysicalTarget = HexMath.OffsetToCube(localCol, localRow);
+            var myPhysicalTarget = HexMath.OffsetToCube(localCol, localRow, TopOrientation);
             var myLogicalTarget = PhysicalToLogical(myPhysicalTarget, _orientation);
             
             if (_hexes.TryGetValue(myLogicalTarget, out var hex))
@@ -225,8 +264,8 @@ public class Board
 
     private BoardEdge DetectCrossedEdge(CubeCoordinate fromCube, CubeCoordinate toCube)
     {
-        var fromOffset = HexMath.CubeToOffset(fromCube);
-        var toOffset = HexMath.CubeToOffset(toCube);
+        var fromOffset = fromCube.ToOffset(TopOrientation);
+        var toOffset = toCube.ToOffset(TopOrientation);
 
         if (toOffset.col < 0) return BoardEdge.Left;
         if (toOffset.col >= Width) return BoardEdge.Right;
@@ -236,19 +275,34 @@ public class Board
         return BoardEdge.None;
     }
 
-    private CubeCoordinate GetPhysicalOffset(PhysicalDirection dir)
+    internal CubeCoordinate GetPhysicalOffset_Internal(PhysicalDirection dir)
     {
-        // Standard pointy-top physical directions mapped to CubeCoordinate offsets
-        return dir switch
+        if (TopOrientation == HexTopOrientation.PointyTopped)
         {
-            PhysicalDirection.NorthWest => new CubeCoordinate(0, -1, 1),
-            PhysicalDirection.NorthEast => new CubeCoordinate(1, -1, 0),
-            PhysicalDirection.East => new CubeCoordinate(1, 0, -1),
-            PhysicalDirection.SouthEast => new CubeCoordinate(0, 1, -1),
-            PhysicalDirection.SouthWest => new CubeCoordinate(-1, 1, 0),
-            PhysicalDirection.West => new CubeCoordinate(-1, 0, 1),
-            _ => throw new ArgumentException()
-        };
+            return dir switch
+            {
+                PhysicalDirection.NorthWest => new CubeCoordinate(0, -1, 1),
+                PhysicalDirection.NorthEast => new CubeCoordinate(1, -1, 0),
+                PhysicalDirection.East => new CubeCoordinate(1, 0, -1),
+                PhysicalDirection.SouthEast => new CubeCoordinate(0, 1, -1),
+                PhysicalDirection.SouthWest => new CubeCoordinate(-1, 1, 0),
+                PhysicalDirection.West => new CubeCoordinate(-1, 0, 1),
+                _ => throw new ArgumentException($"Direction {dir} is not valid for PointyTopped boards.", nameof(dir))
+            };
+        }
+        else
+        {
+            return dir switch
+            {
+                PhysicalDirection.North => new CubeCoordinate(0, -1, 1),
+                PhysicalDirection.NorthEast => new CubeCoordinate(1, -1, 0),
+                PhysicalDirection.SouthEast => new CubeCoordinate(1, 0, -1),
+                PhysicalDirection.South => new CubeCoordinate(0, 1, -1),
+                PhysicalDirection.SouthWest => new CubeCoordinate(-1, 1, 0),
+                PhysicalDirection.NorthWest => new CubeCoordinate(-1, 0, 1),
+                _ => throw new ArgumentException($"Direction {dir} is not valid for FlatTopped boards.", nameof(dir))
+            };
+        }
     }
 
     // Rotates a purely physical coordinate into the board's logical orientation
@@ -263,6 +317,14 @@ public class Board
         };
     }
 
+    /// <summary>
+    /// Physically links another board to this board on the specified edge, establishing neighbor tracking and 
+    /// half-hex resolution.
+    /// </summary>
+    /// <param name="other">The board to join.</param>
+    /// <param name="direction">The edge on this board to connect.</param>
+    /// <param name="determinePrimaryHex">An optional selector function to determine which overlapping half-hex should act as the primary, physical hex.</param>
+    /// <exception cref="InvalidOperationException">Thrown if the join validation fails.</exception>
     public void Join(Board other, BoardEdge direction, Func<Hex, Hex, Hex>? determinePrimaryHex = null)
     {
         if (!CanJoin(other, direction))
@@ -300,6 +362,10 @@ public class Board
         // }
     }
 
+    /// <summary>
+    /// Severs the physical link and half-hex overlaps with the board joined on the specified edge.
+    /// </summary>
+    /// <param name="direction">The edge to unlink.</param>
     public void Unlink(BoardEdge direction)
     {
         if (_neighbors.TryGetValue(direction, out var other))
@@ -322,6 +388,12 @@ public class Board
         // }
     }
 
+    /// <summary>
+    /// Explicitly registers a hex to this board. The hex's logical location must be unique on the board.
+    /// </summary>
+    /// <param name="hex">The hex to add.</param>
+    /// <exception cref="ArgumentNullException">Thrown if the hex is null.</exception>
+    /// <exception cref="ArgumentException">Thrown if a hex already exists at the target logical location.</exception>
     public void AddHex(Hex hex)
     {
         if (hex == null) throw new ArgumentNullException(nameof(hex));
@@ -332,12 +404,22 @@ public class Board
         _hexes[hex.Location] = hex;
     }
 
+    /// <summary>
+    /// Attempts to retrieve a hex residing locally on this board given a strictly logical coordinate.
+    /// </summary>
+    /// <param name="location">The logical coordinate relative to this board's origin.</param>
+    /// <returns>The hex if found; otherwise, <c>null</c>.</returns>
     public Hex? GetHexAt(CubeCoordinate location)
     {
         _hexes.TryGetValue(location, out var hex);
         return hex;
     }
 
+    /// <summary>
+    /// Removes a hex at the specified logical coordinate from this board.
+    /// </summary>
+    /// <param name="location">The logical coordinate of the hex to remove.</param>
+    /// <returns><c>true</c> if a hex was found and removed; otherwise, <c>false</c>.</returns>
     public bool RemoveHexAt(CubeCoordinate location)
     {
         return _hexes.Remove(location);

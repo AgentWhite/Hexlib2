@@ -124,6 +124,11 @@ public class BoardManager
         RegisterBoardWithCluster(newBoard, newOx, newOy);
     }
 
+    /// <summary>
+    /// Unregisters and physically disconnects a board from the manager's global graph.
+    /// Re-anchors the global plane if the removed board was the anchor.
+    /// </summary>
+    /// <param name="boardName">The unique name of the board to remove.</param>
     public void RemoveBoard(string boardName)
     {
         if (!_boards.TryGetValue(boardName, out var boardToRemove))
@@ -191,14 +196,15 @@ public class BoardManager
         var localPhysicalCube = GetPhysicalCubeFromLogical(hex.Location, parentBoard.Orientation);
         
         // 3. Convert that local physical cube to a local physical (X,Y) offset
-        var localPhysicalOffset = HexMath.CubeToOffset(localPhysicalCube);
+        var localPhysicalOffset = localPhysicalCube.ToOffset(parentBoard.TopOrientation);
 
         // 4. Add the board's Global Physical (X,Y) offset
         int globalX = localPhysicalOffset.col + offset.GlobalOffsetX;
         int globalY = localPhysicalOffset.row + offset.GlobalOffsetY;
 
-        // 5. Convert back to Global physical CubeCoordinate
-        return HexMath.OffsetToCube(globalX, globalY);
+        // 5. Convert back to Global physical CubeCoordinate using the Anchor's orientation (defining the global plane)
+        var globalOrientation = AnchorBoard?.TopOrientation ?? parentBoard.TopOrientation;
+        return HexMath.OffsetToCube(globalX, globalY, globalOrientation);
     }
 
     private CubeCoordinate GetPhysicalCubeFromLogical(CubeCoordinate logical, BoardOrientation orientation)

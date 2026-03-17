@@ -36,6 +36,11 @@ public class Hex
         Location = location;
     }
 
+    /// <summary>
+    /// Adds a counter to this hex. If this hex delegates to a primary alias, the counter is added there instead.
+    /// </summary>
+    /// <param name="counter">The counter to add.</param>
+    /// <exception cref="ArgumentNullException">Thrown if the counter is null.</exception>
     public void AddCounter(ICounter counter)
     {
         if (PrimaryHexAlias != null)
@@ -48,6 +53,12 @@ public class Hex
         _localCounters.Add(counter);
     }
 
+    /// <summary>
+    /// Removes a counter from this hex. If this hex delegates to a primary alias, it is removed from there instead.
+    /// </summary>
+    /// <param name="counter">The counter to remove.</param>
+    /// <returns><c>true</c> if the counter was successfully found and removed; otherwise, <c>false</c>.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if the counter is null.</exception>
     public bool RemoveCounter(ICounter counter)
     {
         if (PrimaryHexAlias != null)
