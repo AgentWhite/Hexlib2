@@ -6,10 +6,12 @@ using System.Windows.Data;
 namespace ASLInputTool.Converters;
 
 /// <summary>
-/// Returns Collapsed if value is NOT null (or not empty string), Visible otherwise.
+/// Returns Visible if value is null or whitespace string, Collapsed otherwise.
+/// Useful for things that should only show if no data is present.
 /// </summary>
 public class NullToVisibilityConverter : IValueConverter
 {
+    /// <inheritdoc />
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         bool hasValue = value != null;
@@ -18,6 +20,7 @@ public class NullToVisibilityConverter : IValueConverter
         return hasValue ? Visibility.Collapsed : Visibility.Visible;
     }
 
+    /// <inheritdoc />
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
         throw new NotImplementedException();

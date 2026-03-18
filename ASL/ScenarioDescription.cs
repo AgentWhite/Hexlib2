@@ -28,6 +28,11 @@ public class ScenarioDescription
     public string DescriptionText { get; set; } = string.Empty;
 
     /// <summary>
+    /// Gets or sets the textual description of the historical outcome/aftermath.
+    /// </summary>
+    public string Aftermath { get; set; } = string.Empty;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="ScenarioDescription"/> class.
     /// </summary>
     public ScenarioDescription() { }
@@ -35,11 +40,12 @@ public class ScenarioDescription
     /// <summary>
     /// Initializes a new instance of the <see cref="ScenarioDescription"/> class with specified values.
     /// </summary>
-    public ScenarioDescription(string place, string date, string descriptionText, DateTime? preciseDate = null)
+    public ScenarioDescription(string place, string date, string descriptionText, string aftermath = "", DateTime? preciseDate = null)
     {
         Place = place;
         Date = date;
         DescriptionText = descriptionText;
+        Aftermath = aftermath;
         PreciseDate = preciseDate;
     }
 }

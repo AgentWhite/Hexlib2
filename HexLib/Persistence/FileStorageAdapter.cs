@@ -12,6 +12,10 @@ public class FileStorageAdapter : IStorageAdapter
 {
     private readonly string _rootDirectory;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FileStorageAdapter"/> class.
+    /// </summary>
+    /// <param name="rootDirectory">The root directory where files will be stored.</param>
     public FileStorageAdapter(string rootDirectory)
     {
         _rootDirectory = rootDirectory;
@@ -21,6 +25,7 @@ public class FileStorageAdapter : IStorageAdapter
         }
     }
 
+    /// <inheritdoc />
     public async Task SaveAsync(string key, string data)
     {
         string filePath = GetFilePath(key);
@@ -32,6 +37,7 @@ public class FileStorageAdapter : IStorageAdapter
         await File.WriteAllTextAsync(filePath, data);
     }
 
+    /// <inheritdoc />
     public async Task<string?> LoadAsync(string key)
     {
         string filePath = GetFilePath(key);
@@ -39,6 +45,7 @@ public class FileStorageAdapter : IStorageAdapter
         return await File.ReadAllTextAsync(filePath);
     }
 
+    /// <inheritdoc />
     public Task<IEnumerable<string>> ListKeysAsync(string category)
     {
         string categoryPath = Path.Combine(_rootDirectory, category);
@@ -49,6 +56,7 @@ public class FileStorageAdapter : IStorageAdapter
         return Task.FromResult(files);
     }
 
+    /// <inheritdoc />
     public Task DeleteAsync(string key)
     {
         string filePath = GetFilePath(key);

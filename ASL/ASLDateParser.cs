@@ -3,6 +3,9 @@ using System.Text.RegularExpressions;
 
 namespace ASL;
 
+/// <summary>
+/// Provides utility methods for parsing ASL-specific date strings.
+/// </summary>
 public static class ASLDateParser
 {
     /// <summary>

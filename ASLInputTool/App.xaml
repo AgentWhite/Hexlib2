@@ -28,9 +28,9 @@
                         <ControlTemplate TargetType="TextBox">
                             <Grid>
                                 <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
-                                    <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" VerticalAlignment="Center"/>
+                                    <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" VerticalAlignment="Stretch"/>
                                 </Border>
-                                <TextBlock x:Name="hintText" Text="{TemplateBinding Tag}" Margin="7,0,0,0" Foreground="Gray" IsHitTestVisible="False" Visibility="Collapsed" VerticalAlignment="Center" FontStyle="Italic"/>
+                                <TextBlock x:Name="hintText" Text="{TemplateBinding Tag}" Margin="7,5,0,0" Foreground="Gray" IsHitTestVisible="False" Visibility="Collapsed" VerticalAlignment="Top" FontStyle="Italic"/>
                             </Grid>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="Text" Value="">

@@ -24,4 +24,9 @@ public class Scenario
     /// Gets or sets the historical background and context of the scenario.
     /// </summary>
     public ScenarioDescription Description { get; set; } = new();
+
+    /// <summary>
+    /// Gets or sets the physical module this scenario belongs to.
+    /// </summary>
+    public Module? Module { get; set; }
 }

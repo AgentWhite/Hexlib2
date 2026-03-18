@@ -18,6 +18,11 @@ public class Crew : MultiManCounter
     /// <summary>
     /// Initializes a new instance of the <see cref="Crew"/> class with Elite class.
     /// </summary>
+    /// <param name="name">Crew identity/name.</param>
+    /// <param name="firepower">Base firepower.</param>
+    /// <param name="range">Base range.</param>
+    /// <param name="morale">Base morale.</param>
+    /// <param name="nationality">Nationality.</param>
     [System.Text.Json.Serialization.JsonConstructor]
     public Crew(string name, int firepower, int range, int morale, Nationality nationality) 
         : base(firepower, range, morale, name, UnitClass.Elite, nationality)

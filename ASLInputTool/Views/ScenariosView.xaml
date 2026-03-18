@@ -77,25 +77,30 @@
                     </Button.Template>
                 </Button>
 
-                <Label Content="Scenario Name:" FontWeight="SemiBold"/>
+                <Label Content="Scenario Name" FontWeight="SemiBold"/>
                 <TextBox Margin="0,0,0,10" Tag="e.g., FIGHTING WITHDRAWAL" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"/>
 
-                <Label Content="Reference (e.g., ASL SCENARIO 1):" FontWeight="SemiBold"/>
+                <Label Content="Reference (e.g., ASL SCENARIO 1)" FontWeight="SemiBold"/>
                 <TextBox Margin="0,0,0,10" Tag="e.g., ASL SCENARIO 1" Text="{Binding Reference, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"/>
 
                 <Separator Margin="0,10"/>
                 <TextBlock Text="Historical Context" FontSize="18" FontWeight="Bold" Margin="0,10"/>
 
-                <Label Content="Place:" FontWeight="SemiBold"/>
+                <Label Content="Place" FontWeight="SemiBold"/>
                 <TextBox Margin="0,0,0,10" Tag="e.g., SESTRORETSK ROAD, TERIJOKI" Text="{Binding Place, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <Label Content="Date (Text):" FontWeight="SemiBold"/>
+                <Label Content="Date (Text)" FontWeight="SemiBold"/>
                 <TextBox Margin="0,0,0,10" Tag="e.g., September 2nd, 1941" Text="{Binding Date, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <Label Content="Historical Description:" FontWeight="SemiBold"/>
-                <TextBox Margin="0,0,0,20" Height="150" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" 
+                <Label Content="Historical Description" FontWeight="SemiBold"/>
+                <TextBox Margin="0,0,0,10" Height="150" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" 
                          Tag="e.g., The Finns, seeking restitution for the Winter War of 1939..."
                          Text="{Binding DescriptionText, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <Label Content="Aftermath" FontWeight="SemiBold"/>
+                <TextBox Margin="0,0,0,20" Height="150" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" 
+                         Tag="e.g., The Finnish forces successfully outflanked the Soviet defenders..."
+                         Text="{Binding Aftermath, UpdateSourceTrigger=PropertyChanged}"/>
 
                 <Button Content="Save Scenario" Command="{Binding SaveCommand}" HorizontalAlignment="Right" Padding="20,10" Background="{StaticResource AccentBrush}" Foreground="White" FontWeight="Bold"/>
             </StackPanel>

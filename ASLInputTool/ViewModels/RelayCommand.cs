@@ -23,6 +23,7 @@ public class RelayCommand : ICommand
         _canExecute = canExecute;
     }
 
+    /// <inheritdoc />
     public event EventHandler? CanExecuteChanged
     {
         add => CommandManager.RequerySuggested += value;

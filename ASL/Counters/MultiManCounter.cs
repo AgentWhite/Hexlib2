@@ -16,13 +16,44 @@ public abstract class MultiManCounter : BaseASLCounter
     /// </summary>
     public int Range { get; set; }
     
+    /// <summary>
+    /// Gets or sets a value indicating whether the unit has Assault Fire capability.
+    /// </summary>
     public bool HasAssaultFire { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the unit has Spraying Fire capability.
+    /// </summary>
     public bool HasSprayingFire { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the unit has Experience Level Rating (ELR) capability.
+    /// </summary>
     public bool HasELR { get; set; }
+
+    /// <summary>
+    /// Gets or sets the morale level of the unit when it is broken.
+    /// </summary>
     public int BrokenMoraleLevel { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the unit can attempt Self Rally.
+    /// </summary>
     public bool CanSelfRally { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the unit has a Smoke placement exponent.
+    /// </summary>
     public bool HasSmokeExponent { get; set; }
+
+    /// <summary>
+    /// Gets or sets the numeric exponent used for smoke placement attempts.
+    /// </summary>
     public int SmokePlacementExponent { get; set; }
+
+    /// <summary>
+    /// Gets or sets the Basic Point Value (BPV) of the unit.
+    /// </summary>
     public int BPV { get; set; }
 
     /// <summary>

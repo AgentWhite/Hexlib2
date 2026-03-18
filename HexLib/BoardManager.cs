@@ -49,6 +49,9 @@ public class BoardManager<THexMetadata, TEdgeData>
         RegisterBoardWithCluster(board, globalOffsetX, globalOffsetY);
     }
 
+    /// <summary>
+    /// Recursively registers a board and all its connected neighbors into the manager.
+    /// </summary>
     private void RegisterBoardWithCluster(Board<THexMetadata, TEdgeData> rootBoard, int rootOffsetX, int rootOffsetY)
     {
         var pendingQueue = new Queue<(Board<THexMetadata, TEdgeData> board, int ox, int oy)>();
@@ -80,6 +83,9 @@ public class BoardManager<THexMetadata, TEdgeData>
         }
     }
 
+    /// <summary>
+    /// Calculates the global offset of a neighbor board relative to a source board based on join direction.
+    /// </summary>
     private (int ox, int oy) CalculateNeighborGlobalOffset(Board<THexMetadata, TEdgeData> sourceBoard, int sourceOx, int sourceOy, Board<THexMetadata, TEdgeData> targetBoard, BoardEdge directionFromSource)
     {
         if (directionFromSource == BoardEdge.Right)
@@ -193,6 +199,9 @@ public class BoardManager<THexMetadata, TEdgeData>
         return HexMath.OffsetToCube(globalX, globalY, globalOrientation);
     }
 
+    /// <summary>
+    /// Translates a logical cube coordinate to a physical cube coordinate based on board rotation.
+    /// </summary>
     private CubeCoordinate GetPhysicalCubeFromLogical(CubeCoordinate logical, BoardOrientation orientation)
     {
         return orientation switch

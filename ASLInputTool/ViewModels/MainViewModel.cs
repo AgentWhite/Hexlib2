@@ -34,7 +34,14 @@ public class MainViewModel : ViewModelBase
     /// </summary>
     public List<ViewModelBase> NavigationItems => _locator.GetAll().ToList();
 
+    /// <summary>
+    /// Command to save the current ASL project to a file.
+    /// </summary>
     public RelayCommand SaveCommand { get; }
+
+    /// <summary>
+    /// Command to load an ASL project from a file.
+    /// </summary>
     public RelayCommand LoadCommand { get; }
     
     /// <summary>

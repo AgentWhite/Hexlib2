@@ -13,6 +13,7 @@ namespace ASLInputTool.Converters;
 /// </summary>
 public class ImageSourceConverter : IValueConverter
 {
+    /// <inheritdoc />
     public object? Convert(object? value, Type targetType, object parameter, CultureInfo culture)
     {
         if (value is string path && !string.IsNullOrWhiteSpace(path) && File.Exists(path))
@@ -36,6 +37,7 @@ public class ImageSourceConverter : IValueConverter
         return null;
     }
 
+    /// <inheritdoc />
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
         throw new NotImplementedException();

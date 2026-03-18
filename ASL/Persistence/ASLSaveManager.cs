@@ -18,6 +18,10 @@ public class ASLSaveManager
     private readonly IStorageAdapter _storage;
     private readonly JsonSerializerOptions _jsonOptions;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ASLSaveManager"/> class.
+    /// </summary>
+    /// <param name="storage">The storage adapter to use for I/O operations.</param>
     public ASLSaveManager(IStorageAdapter storage)
     {
         _storage = storage;
@@ -30,12 +34,22 @@ public class ASLSaveManager
 
     // --- Counters ---
 
+    /// <summary>
+    /// Saves a collection of counters to storage.
+    /// </summary>
+    /// <param name="name">The name to save the counters under.</param>
+    /// <param name="counters">The collection of counters to save.</param>
     public async Task SaveCountersAsync(string name, IEnumerable<BaseASLCounter> counters)
     {
         string json = JsonSerializer.Serialize(counters, _jsonOptions);
         await _storage.SaveAsync($"Counters/{name}", json);
     }
 
+    /// <summary>
+    /// Loads a collection of counters from storage.
+    /// </summary>
+    /// <param name="name">The name of the counter collection to load.</param>
+    /// <returns>A list of loaded counters.</returns>
     public async Task<List<BaseASLCounter>> LoadCountersAsync(string name)
     {
         string? json = await _storage.LoadAsync($"Counters/{name}");
@@ -43,6 +57,10 @@ public class ASLSaveManager
         return JsonSerializer.Deserialize<List<BaseASLCounter>>(json, _jsonOptions) ?? new List<BaseASLCounter>();
     }
 
+    /// <summary>
+    /// Lists all available counter collections in storage.
+    /// </summary>
+    /// <returns>An enumerable of keys for counter collections.</returns>
     public Task<IEnumerable<string>> ListCountersAsync() => _storage.ListKeysAsync("Counters");
 
     // --- Project Level (Combined) ---
@@ -59,10 +77,12 @@ public class ASLSaveManager
         string imagesDir = Path.Combine(projectDir, "images");
         if (!Directory.Exists(imagesDir)) Directory.CreateDirectory(imagesDir);
 
-        // Deep copy via serialization to avoid modifying the in-memory UI state directly
+        // Deep copy via serialization to avoid modifying the in-memory UI state directly.
+        // This ensures that 'cleaning' the paths for saving doesn't affect the running app's state.
         string tempJson = SerializeProject(sourceProject);
         var project = DeserializeProject(tempJson) ?? new ASLProject();
 
+        // Iterate through all counters to localize their image paths
         foreach (var counter in project.Counters)
         {
             if (!string.IsNullOrEmpty(counter.ImagePathFront))
@@ -93,13 +113,15 @@ public class ASLSaveManager
         string fileName = Path.GetFileName(sourcePath);
         string extension = Path.GetExtension(sourcePath);
         
-        // If it's already in our target directory and named with a GUID, keep it
+        // If it's already in our target directory and named with a GUID, it's already "processed".
+        // This prevents re-copying and generating new GUIDs for the same file on subsequent saves.
         if (Path.GetDirectoryName(Path.GetFullPath(sourcePath))?.Equals(Path.GetFullPath(targetDir), StringComparison.OrdinalIgnoreCase) == true
             && Guid.TryParse(Path.GetFileNameWithoutExtension(fileName), out _))
         {
             return Path.Combine("images", fileName);
         }
 
+        // Generate a unique name to avoid collisions in the destination 'images' folder.
         string newFileName = $"{Guid.NewGuid()}{extension}";
         string destPath = Path.Combine(targetDir, newFileName);
 
@@ -114,11 +136,21 @@ public class ASLSaveManager
         }
     }
 
+    /// <summary>
+    /// Serializes an <see cref="ASLProject"/> to a JSON string.
+    /// </summary>
+    /// <param name="project">The project to serialize.</param>
+    /// <returns>A JSON string representation of the project.</returns>
     public string SerializeProject(ASLProject project)
     {
         return JsonSerializer.Serialize(project, _jsonOptions);
     }
 
+    /// <summary>
+    /// Deserializes an <see cref="ASLProject"/> from a JSON string.
+    /// </summary>
+    /// <param name="json">The JSON string to deserialize.</param>
+    /// <returns>The deserialized project, or null if deserialization fails.</returns>
     public ASLProject? DeserializeProject(string json)
     {
         if (string.IsNullOrEmpty(json)) return null;
@@ -127,12 +159,21 @@ public class ASLSaveManager
 
     // --- Scenarios ---
 
+    /// <summary>
+    /// Saves a scenario to storage.
+    /// </summary>
+    /// <param name="scenario">The scenario to save.</param>
     public async Task SaveScenarioAsync(Scenario scenario)
     {
         string json = JsonSerializer.Serialize(scenario, _jsonOptions);
         await _storage.SaveAsync($"Scenarios/{scenario.Name}", json);
     }
 
+    /// <summary>
+    /// Loads a scenario from storage.
+    /// </summary>
+    /// <param name="name">The name of the scenario to load.</param>
+    /// <returns>The loaded scenario, or null if not found.</returns>
     public async Task<Scenario?> LoadScenarioAsync(string name)
     {
         string? json = await _storage.LoadAsync($"Scenarios/{name}");
@@ -140,10 +181,19 @@ public class ASLSaveManager
         return JsonSerializer.Deserialize<Scenario>(json, _jsonOptions);
     }
 
+    /// <summary>
+    /// Lists all available scenarios in storage.
+    /// </summary>
+    /// <returns>An enumerable of scenario names.</returns>
     public Task<IEnumerable<string>> ListScenariosAsync() => _storage.ListKeysAsync("Scenarios");
 
     // --- Boards (Maps) ---
 
+    /// <summary>
+    /// Saves a board map to storage.
+    /// </summary>
+    /// <param name="name">The name to save the map under.</param>
+    /// <param name="board">The board to save.</param>
     public async Task SaveBoardAsync(string name, Board<ASLHexMetadata, ASLEdgeData> board)
     {
         // For Board, we need to handle the fact that it's generic and contains Hexes.
@@ -153,6 +203,11 @@ public class ASLSaveManager
         await _storage.SaveAsync($"Maps/{name}", json);
     }
 
+    /// <summary>
+    /// Loads a board map from storage.
+    /// </summary>
+    /// <param name="name">The name of the map to load.</param>
+    /// <returns>The loaded board, or null if not found.</returns>
     public async Task<Board<ASLHexMetadata, ASLEdgeData>?> LoadBoardAsync(string name)
     {
         string? json = await _storage.LoadAsync($"Maps/{name}");
@@ -161,6 +216,10 @@ public class ASLSaveManager
         return dto?.ToBoard();
     }
 
+    /// <summary>
+    /// Lists all available maps in storage.
+    /// </summary>
+    /// <returns>An enumerable of map names.</returns>
     public Task<IEnumerable<string>> ListMapsAsync() => _storage.ListKeysAsync("Maps");
 
     // Internal DTOs for Board serialization

@@ -2,6 +2,9 @@ using HexLib;
 
 namespace ASL;
 
+/// <summary>
+/// Provides utility methods for calculating movement costs in an ASL game.
+/// </summary>
 public static class MovementCalculator
 {
     /// <summary>

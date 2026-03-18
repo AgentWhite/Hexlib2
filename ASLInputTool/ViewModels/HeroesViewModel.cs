@@ -6,6 +6,9 @@ using System.Linq;
 
 namespace ASLInputTool.ViewModels;
 
+/// <summary>
+/// ViewModel for managing Hero counters.
+/// </summary>
 public class HeroesViewModel : CrudViewModelBase<Hero>
 {
     private string _name = string.Empty;
@@ -16,19 +19,53 @@ public class HeroesViewModel : CrudViewModelBase<Hero>
     private string? _imagePathFront;
     private string? _imagePathBack;
 
+    /// <summary>
+    /// Gets or sets the name of the hero.
+    /// </summary>
     public string Name { get => _name; set => SetProperty(ref _name, value); }
+    /// <summary>
+    /// Gets or sets the firepower rating of the hero.
+    /// </summary>
     public string Firepower { get => _firepower; set => SetProperty(ref _firepower, value); }
+    /// <summary>
+    /// Gets or sets the range rating of the hero.
+    /// </summary>
     public string Range { get => _range; set => SetProperty(ref _range, value); }
+    /// <summary>
+    /// Gets or sets the morale rating of the hero.
+    /// </summary>
     public string Morale { get => _morale; set => SetProperty(ref _morale, value); }
+    /// <summary>
+    /// Gets or sets the selected nationality of the hero.
+    /// </summary>
     public Nationality SelectedNationality { get => _selectedNationality; set => SetProperty(ref _selectedNationality, value); }
+    /// <summary>
+    /// Gets or sets the path to the front image of the hero.
+    /// </summary>
     public string? ImagePathFront { get => _imagePathFront; set => SetProperty(ref _imagePathFront, value); }
+    /// <summary>
+    /// Gets or sets the path to the back image of the hero.
+    /// </summary>
     public string? ImagePathBack { get => _imagePathBack; set => SetProperty(ref _imagePathBack, value); }
 
+    /// <summary>
+    /// Gets the list of available nationalities.
+    /// </summary>
     public IEnumerable<Nationality> Nationalities => Enum.GetValues(typeof(Nationality)).Cast<Nationality>();
 
+    /// <summary>
+    /// Command to pick the front image for the hero.
+    /// </summary>
     public RelayCommand PickFrontImageCommand { get; }
+    
+    /// <summary>
+    /// Command to pick the back image for the hero.
+    /// </summary>
     public RelayCommand PickBackImageCommand { get; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HeroesViewModel"/> class.
+    /// </summary>
     public HeroesViewModel()
     {
         DisplayName = "Heroes";
@@ -51,6 +88,7 @@ public class HeroesViewModel : CrudViewModelBase<Hero>
         }
     }
 
+    /// <inheritdoc />
     protected override void ResetForm()
     {
         Name = string.Empty;
@@ -62,6 +100,7 @@ public class HeroesViewModel : CrudViewModelBase<Hero>
         ImagePathBack = null;
     }
 
+    /// <inheritdoc />
     protected override void PopulateForm(Hero item)
     {
         Name = item.Name;
@@ -73,6 +112,7 @@ public class HeroesViewModel : CrudViewModelBase<Hero>
         ImagePathBack = item.ImagePathBack;
     }
 
+    /// <inheritdoc />
     protected override void OnSave(object? parameter)
     {
         int fp = int.TryParse(Firepower, out int f) ? f : 1;

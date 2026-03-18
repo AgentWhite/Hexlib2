@@ -62,7 +62,7 @@
 
                 <!-- Image Frames -->
                 <StackPanel Grid.Column="0" Margin="0,0,20,0">
-                    <Label Content="Front:" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                    <Label Content="Front" FontWeight="SemiBold" HorizontalAlignment="Center"/>
                     <Button Command="{Binding PickFrontImageCommand}" 
                             Width="120" Height="120" Margin="0,0,0,20">
                         <Button.Template>
@@ -79,7 +79,7 @@
                         </Button.Template>
                     </Button>
 
-                    <Label Content="Back:" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                    <Label Content="Back" FontWeight="SemiBold" HorizontalAlignment="Center"/>
                     <Button Command="{Binding PickBackImageCommand}" 
                             Width="120" Height="120">
                         <Button.Template>
@@ -98,10 +98,10 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="1">
-                    <Label Content="Hero Name:" FontWeight="SemiBold"/>
+                    <Label Content="Hero Name" FontWeight="SemiBold"/>
                     <TextBox Margin="0,0,0,10" Tag="e.g., Sgt. Rock" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
 
-                    <Label Content="Nationality:" FontWeight="SemiBold"/>
+                    <Label Content="Nationality" FontWeight="SemiBold"/>
                     <ComboBox Margin="0,0,0,10" Padding="5"
                               ItemsSource="{Binding Nationalities}"
                               SelectedItem="{Binding SelectedNationality}"/>
@@ -113,15 +113,15 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Margin="0,0,20,0">
-                            <Label Content="Firepower:" FontWeight="SemiBold"/>
+                            <Label Content="Firepower" FontWeight="SemiBold"/>
                             <TextBox Width="50" HorizontalAlignment="Left" Tag="1" Text="{Binding Firepower, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Margin="0,0,20,0">
-                            <Label Content="Range:" FontWeight="SemiBold"/>
+                            <Label Content="Range" FontWeight="SemiBold"/>
                             <TextBox Width="50" HorizontalAlignment="Left" Tag="4" Text="{Binding Range, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                         <StackPanel Grid.Column="2">
-                            <Label Content="Morale:" FontWeight="SemiBold"/>
+                            <Label Content="Morale" FontWeight="SemiBold"/>
                             <TextBox Width="50" HorizontalAlignment="Left" Tag="9" Text="{Binding Morale, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                     </Grid>

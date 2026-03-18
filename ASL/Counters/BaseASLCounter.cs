@@ -45,6 +45,11 @@ public abstract class BaseASLCounter : ICounter
     public Nationality Nationality { get; set; }
 
     /// <summary>
+    /// Gets or sets the physical module/box this counter belongs to.
+    /// </summary>
+    public Module? Module { get; set; }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="BaseASLCounter"/> class.
     /// </summary>
     /// <param name="name">The name or identity of the counter.</param>

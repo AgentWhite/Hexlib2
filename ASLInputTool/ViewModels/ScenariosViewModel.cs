@@ -16,15 +16,41 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>
     private string _place = string.Empty;
     private string _date = string.Empty;
     private string _descriptionText = string.Empty;
+    private string _aftermath = string.Empty;
     private string? _imagePath;
 
+    /// <summary>
+    /// Gets or sets the name of the scenario.
+    /// </summary>
     public string Name { get => _name; set { SetProperty(ref _name, value); ClearErrors(nameof(Name)); } }
+    /// <summary>
+    /// Gets or sets the reference ID or publication source for the scenario.
+    /// </summary>
     public string Reference { get => _reference; set { SetProperty(ref _reference, value); ClearErrors(nameof(Reference)); } }
+    /// <summary>
+    /// Gets or sets the historical place where the scenario occurred.
+    /// </summary>
     public string Place { get => _place; set => SetProperty(ref _place, value); }
+    /// <summary>
+    /// Gets or sets the date/year of the scenario.
+    /// </summary>
     public string Date { get => _date; set => SetProperty(ref _date, value); }
+    /// <summary>
+    /// Gets or sets the historical description text.
+    /// </summary>
     public string DescriptionText { get => _descriptionText; set => SetProperty(ref _descriptionText, value); }
+    /// <summary>
+    /// Gets or sets the aftermath text for the scenario.
+    /// </summary>
+    public string Aftermath { get => _aftermath; set => SetProperty(ref _aftermath, value); }
+    /// <summary>
+    /// Gets or sets the path to the image representing the scenario (e.g., from the scenario card).
+    /// </summary>
     public string? ImagePath { get => _imagePath; set => SetProperty(ref _imagePath, value); }
 
+    /// <summary>
+    /// Command to pick an image for the scenario.
+    /// </summary>
     public RelayCommand PickImageCommand { get; }
 
     /// <summary>
@@ -50,6 +76,7 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>
         }
     }
 
+    /// <inheritdoc />
     protected override void ResetForm()
     {
         Name = string.Empty;
@@ -57,10 +84,12 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>
         Place = string.Empty;
         Date = string.Empty;
         DescriptionText = string.Empty;
+        Aftermath = string.Empty;
         ImagePath = null;
         ClearErrors();
     }
 
+    /// <inheritdoc />
     protected override void PopulateForm(Scenario item)
     {
         Name = item.Name;
@@ -69,8 +98,10 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>
         Place = item.Description.Place;
         Date = item.Description.Date;
         DescriptionText = item.Description.DescriptionText;
+        Aftermath = item.Description.Aftermath;
     }
 
+    /// <inheritdoc />
     protected override void OnSave(object? parameter)
     {
         ClearErrors();
@@ -114,7 +145,7 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>
             Name = Name,
             Reference = Reference,
             ImagePath = ImagePath,
-            Description = new ScenarioDescription(Place, Date, DescriptionText)
+            Description = new ScenarioDescription(Place, Date, DescriptionText, Aftermath)
         };
 
         if (EditingItem != null)

@@ -61,6 +61,9 @@ public class Board<THexMetadata, TEdgeData>
     }
     
     private BoardEdge _physicalHalfHexSides;
+    /// <summary>
+    /// Specifies which edges of the board contain half-hexes, used for seamless joining.
+    /// </summary>
     public BoardEdge HalfHexSides
     {
         get => GetEffectiveHalfHexSides(_physicalHalfHexSides, _orientation);
@@ -121,7 +124,7 @@ public class Board<THexMetadata, TEdgeData>
     public IReadOnlyDictionary<BoardEdge, Board<THexMetadata, TEdgeData>> Neighbors => _neighbors;
 
     /// <summary>
-    /// Initializes a new, unlinked <see cref="Board"/> with the specified physical width and height in hexes and physical orientation.
+    /// Initializes a new, unlinked <see cref="Board{THexMetadata, TEdgeData}"/> with the specified physical width and height in hexes and physical orientation.
     /// </summary>
     /// <param name="width">The physical width of the board.</param>
     /// <param name="height">The physical height of the board.</param>
@@ -231,6 +234,10 @@ public class Board<THexMetadata, TEdgeData>
         return null;
     }
 
+    /// <summary>
+    /// Helper for <see cref="GetPhysicalNeighbor"/> to retrieve a hex from a neighbor board 
+    /// that aligns with a specified incoming edge.
+    /// </summary>
     private Hex<THexMetadata>? GetMirrorHexOnEdge(BoardEdge incomingEdge, CubeCoordinate originalPhysicalTarget, Board<THexMetadata, TEdgeData> requestingBoard)
     {
         // Convert the incoming physical target to an offset coordinate relative to the requesting board
@@ -268,6 +275,9 @@ public class Board<THexMetadata, TEdgeData>
         return null;
     }
 
+    /// <summary>
+    /// Determines which logical board edge was crossed when moving from one coordinate to another.
+    /// </summary>
     private BoardEdge DetectCrossedEdge(CubeCoordinate fromCube, CubeCoordinate toCube)
     {
         var fromOffset = fromCube.ToOffset(TopOrientation);
@@ -281,6 +291,9 @@ public class Board<THexMetadata, TEdgeData>
         return BoardEdge.None;
     }
 
+    /// <summary>
+    /// Internal helper to get a cube-coordinate offset for a specific physical direction.
+    /// </summary>
     internal CubeCoordinate GetPhysicalOffset_Internal(PhysicalDirection dir)
     {
         if (TopOrientation == HexTopOrientation.PointyTopped)

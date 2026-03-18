@@ -6,6 +6,9 @@ using System.Linq;
 
 namespace ASLInputTool.ViewModels;
 
+/// <summary>
+/// ViewModel for managing Leader counters.
+/// </summary>
 public class LeadersViewModel : CrudViewModelBase<Leader>
 {
     private string _name = string.Empty;
@@ -15,18 +18,49 @@ public class LeadersViewModel : CrudViewModelBase<Leader>
     private string? _imagePathFront;
     private string? _imagePathBack;
 
+    /// <summary>
+    /// Gets or sets the name of the leader.
+    /// </summary>
     public string Name { get => _name; set => SetProperty(ref _name, value); }
+    /// <summary>
+    /// Gets or sets the morale rating of the leader.
+    /// </summary>
     public string Morale { get => _morale; set => SetProperty(ref _morale, value); }
+    /// <summary>
+    /// Gets or sets the leadership modifier string (e.g., "-1", "0").
+    /// </summary>
     public string Leadership { get => _leadership; set => SetProperty(ref _leadership, value); }
+    /// <summary>
+    /// Gets or sets the selected nationality of the leader.
+    /// </summary>
     public Nationality SelectedNationality { get => _selectedNationality; set => SetProperty(ref _selectedNationality, value); }
+    /// <summary>
+    /// Gets or sets the path to the front image of the leader.
+    /// </summary>
     public string? ImagePathFront { get => _imagePathFront; set => SetProperty(ref _imagePathFront, value); }
+    /// <summary>
+    /// Gets or sets the path to the back image of the leader.
+    /// </summary>
     public string? ImagePathBack { get => _imagePathBack; set => SetProperty(ref _imagePathBack, value); }
 
+    /// <summary>
+    /// Gets the list of available nationalities.
+    /// </summary>
     public IEnumerable<Nationality> Nationalities => Enum.GetValues(typeof(Nationality)).Cast<Nationality>();
 
+    /// <summary>
+    /// Command to pick the front image for the leader.
+    /// </summary>
     public RelayCommand PickFrontImageCommand { get; }
+
+    /// <summary>
+    /// Command to pick the back image for the leader.
+    /// </summary>
     public RelayCommand PickBackImageCommand { get; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LeadersViewModel"/> class.
+    /// </summary>
     public LeadersViewModel()
     {
         DisplayName = "Leaders";
@@ -49,6 +83,7 @@ public class LeadersViewModel : CrudViewModelBase<Leader>
         }
     }
 
+    /// <inheritdoc />
     protected override void ResetForm()
     {
         Name = string.Empty;
@@ -59,6 +94,7 @@ public class LeadersViewModel : CrudViewModelBase<Leader>
         ImagePathBack = null;
     }
 
+    /// <inheritdoc />
     protected override void PopulateForm(Leader item)
     {
         Name = item.Name;
@@ -69,6 +105,7 @@ public class LeadersViewModel : CrudViewModelBase<Leader>
         ImagePathBack = item.ImagePathBack;
     }
 
+    /// <inheritdoc />
     protected override void OnSave(object? parameter)
     {
         int morale = int.TryParse(Morale, out int m) ? m : 7;
