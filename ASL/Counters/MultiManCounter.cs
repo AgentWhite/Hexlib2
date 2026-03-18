@@ -1,10 +1,29 @@
 namespace ASL.Counters;
 
+/// <summary>
+/// Base class for Multi-Man Counters (MMC) such as Squads, Half-Squads, and Crews.
+/// MMCs have more complex characteristics like fire types, ELR, and smoke capabilities.
+/// </summary>
 public abstract class MultiManCounter : BaseASLCounter
 {
+    /// <summary>
+    /// Gets or sets the base firepower of the unit.
+    /// </summary>
     public int Firepower { get; set; }
+
+    /// <summary>
+    /// Gets or sets the normal range of the unit.
+    /// </summary>
     public int Range { get; set; }
+
+    /// <summary>
+    /// Gets or sets the unit's specific identity (e.g., "1st Squad", "2nd Section").
+    /// </summary>
     public string Identity { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the class of the unit (Elite, 1st Line, etc.).
+    /// </summary>
     public virtual UnitClass Class { get; set; }
     
     public bool HasAssaultFire { get; set; }
@@ -16,8 +35,12 @@ public abstract class MultiManCounter : BaseASLCounter
     public int SmokePlacementExponent { get; set; }
     public int BPV { get; set; }
 
+    /// <inheritdoc />
     public override string Stats => $"FP: {Firepower}, Range: {Range}, Morale: {Morale}";
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MultiManCounter"/> class.
+    /// </summary>
     protected MultiManCounter(int fp, int range, int morale, string identity, UnitClass @class, Nationality nationality) 
         : base(identity, morale, nationality)
     {
