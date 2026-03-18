@@ -16,9 +16,6 @@ public class Hero : BaseASLCounter
     /// </summary>
     public int Range { get; set; }
 
-    /// <inheritdoc />
-    public override string Stats => $"FP: {Firepower}, Range: {Range}, Morale: {Morale}";
-
     /// <summary>
     /// Initializes a new instance of the <see cref="Hero"/> class.
     /// </summary>
@@ -27,5 +24,6 @@ public class Hero : BaseASLCounter
     {
         Firepower = firepower;
         Range = range;
+        AslClass = UnitClass.Elite;
     }
 }

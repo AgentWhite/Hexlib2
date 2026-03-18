@@ -56,7 +56,7 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Nationality" Binding="{Binding Nationality}" Width="120" />
                     <DataGridTextColumn Header="Unit class" Binding="{Binding AslClass}" Width="120" />
-                    <DataGridTextColumn Header="Stats" Binding="{Binding Stats}" Width="*" />
+                    <DataGridTextColumn Header="Stats" Binding="{Binding ., Converter={StaticResource CounterStats}}" Width="*" />
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>

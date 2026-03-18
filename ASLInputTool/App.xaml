@@ -15,6 +15,7 @@
             <BooleanToVisibilityConverter x:Key="BoolToVis" />
             <c:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVis" />
             <c:NullToVisibilityConverter x:Key="NullToVis" />
+            <c:CounterStatsConverter x:Key="CounterStats" />
             <c:InverseBooleanConverter x:Key="InverseBool" />
 
             <Style TargetType="TextBox">

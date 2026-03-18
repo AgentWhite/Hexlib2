@@ -115,27 +115,26 @@ public class CountersViewModel : CrudViewModelBase<BaseASLCounter>
         SelectedNationality = item.Nationality;
         ImagePath = item.ImagePath;
 
-        if (item is Leader leader)
+        switch (item)
         {
-            IsLeader = true;
-            Leadership = leader.Leadership.ToString();
-        }
-        else if (item is Hero hero)
-        {
-            IsLeader = false;
-            Firepower = hero.Firepower.ToString();
-            Range = hero.Range.ToString();
-        }
-        else if (item is MultiManCounter mmc)
-        {
-            // For now, only Squad is directly handled, but MultiManCounter properties are here
-            IsLeader = false; // MMCs use the MMC tab in UI
-            Firepower = mmc.Firepower.ToString();
-            Range = mmc.Range.ToString();
-            SelectedClass = mmc.AslClass;
-            HasAssaultFire = mmc.HasAssaultFire;
-            HasSprayingFire = mmc.HasSprayingFire;
-            CanSelfRally = mmc.CanSelfRally;
+            case Leader leader:
+                IsLeader = true;
+                Leadership = leader.Leadership.ToString();
+                break;
+            case Hero hero:
+                IsLeader = false;
+                Firepower = hero.Firepower.ToString();
+                Range = hero.Range.ToString();
+                break;
+            case MultiManCounter mmc:
+                IsLeader = false; 
+                Firepower = mmc.Firepower.ToString();
+                Range = mmc.Range.ToString();
+                SelectedClass = mmc.AslClass;
+                HasAssaultFire = mmc.HasAssaultFire;
+                HasSprayingFire = mmc.HasSprayingFire;
+                CanSelfRally = mmc.CanSelfRally;
+                break;
         }
     }
 

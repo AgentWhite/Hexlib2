@@ -20,11 +20,6 @@ public abstract class MultiManCounter : BaseASLCounter
     /// Gets or sets the unit's specific identity (e.g., "1st Squad", "2nd Section").
     /// </summary>
     public string Identity { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the class of the unit (Elite, 1st Line, etc.).
-    /// </summary>
-    public virtual UnitClass AslClass { get; set; }
     
     public bool HasAssaultFire { get; set; }
     public bool HasSprayingFire { get; set; }
@@ -34,9 +29,6 @@ public abstract class MultiManCounter : BaseASLCounter
     public bool HasSmokeExponent { get; set; }
     public int SmokePlacementExponent { get; set; }
     public int BPV { get; set; }
-
-    /// <inheritdoc />
-    public override string Stats => $"FP: {Firepower}, Range: {Range}, Morale: {Morale}";
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MultiManCounter"/> class.

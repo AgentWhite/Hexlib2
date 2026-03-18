@@ -11,9 +11,6 @@ public class Leader : BaseASLCounter
     /// </summary>
     public int Leadership { get; set; }
 
-    /// <inheritdoc />
-    public override string Stats => $"Morale: {Morale}, Leadership: {Leadership}";
-
     /// <summary>
     /// Initializes a new instance of the <see cref="Leader"/> class.
     /// </summary>
@@ -25,5 +22,6 @@ public class Leader : BaseASLCounter
     public Leader(string name, int morale, int leadership, Nationality nationality) : base(name, morale, nationality)
     {
         Leadership = leadership;
+        AslClass = UnitClass.Elite;
     }
 }

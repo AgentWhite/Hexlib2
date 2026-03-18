@@ -25,6 +25,11 @@ public abstract class BaseASLCounter : ICounter
     public string? ImagePath { get; set; }
 
     /// <summary>
+    /// Gets or sets the class of the unit (Elite, 1st Line, etc.).
+    /// </summary>
+    public virtual UnitClass AslClass { get; set; }
+
+    /// <summary>
     /// Gets the base morale level of the unit.
     /// </summary>
     public int Morale { get; set; }
@@ -33,11 +38,6 @@ public abstract class BaseASLCounter : ICounter
     /// Gets or sets the nationality/allegiance of the unit.
     /// </summary>
     public Nationality Nationality { get; set; }
-
-    /// <summary>
-    /// Gets a summarized string representation of the unit's key statistics for UI display.
-    /// </summary>
-    public abstract string Stats { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BaseASLCounter"/> class.
