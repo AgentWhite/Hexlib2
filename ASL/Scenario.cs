@@ -16,6 +16,11 @@ public class Scenario
     public string Reference { get; set; } = string.Empty;
 
     /// <summary>
+    /// Gets or sets the file path to the image representing this scenario.
+    /// </summary>
+    public string? ImagePath { get; set; }
+
+    /// <summary>
     /// Gets or sets the historical background and context of the scenario.
     /// </summary>
     public ScenarioDescription Description { get; set; } = new();

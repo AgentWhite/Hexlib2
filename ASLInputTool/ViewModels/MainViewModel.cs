@@ -62,13 +62,16 @@ public class MainViewModel : ViewModelBase
 
         if (saveDialog.ShowDialog() == true)
         {
-            var project = new ASLProject
+            var sourceProject = new ASLProject
             {
                 Counters = _locator.Get<CountersViewModel>().Items.ToList(),
                 Scenarios = _locator.Get<ScenariosViewModel>().Items.ToList()
             };
 
-            string json = _saveManager.SerializeProject(project);
+            // Process images and get a version of the project with relative GUID-based paths
+            var projectToSave = _saveManager.PrepareProjectForSaving(sourceProject, saveDialog.FileName);
+
+            string json = _saveManager.SerializeProject(projectToSave);
             File.WriteAllText(saveDialog.FileName, json);
         }
     }
@@ -84,6 +87,7 @@ public class MainViewModel : ViewModelBase
 
         if (openDialog.ShowDialog() == true)
         {
+            string projectDir = Path.GetDirectoryName(openDialog.FileName) ?? string.Empty;
             string json = File.ReadAllText(openDialog.FileName);
             var project = _saveManager.DeserializeProject(json);
 
@@ -91,6 +95,19 @@ public class MainViewModel : ViewModelBase
             {
                 var countersVm = _locator.Get<CountersViewModel>();
                 var scenariosVm = _locator.Get<ScenariosViewModel>();
+
+                // Resolve relative paths to absolute for the UI to display
+                foreach (var c in project.Counters.Where(c => !string.IsNullOrEmpty(c.ImagePath)))
+                {
+                    if (!Path.IsPathRooted(c.ImagePath))
+                        c.ImagePath = Path.GetFullPath(Path.Combine(projectDir, c.ImagePath!));
+                }
+
+                foreach (var s in project.Scenarios.Where(s => !string.IsNullOrEmpty(s.ImagePath)))
+                {
+                    if (!Path.IsPathRooted(s.ImagePath))
+                        s.ImagePath = Path.GetFullPath(Path.Combine(projectDir, s.ImagePath!));
+                }
 
                 countersVm.Items.Clear();
                 foreach (var c in project.Counters) countersVm.Items.Add(c);

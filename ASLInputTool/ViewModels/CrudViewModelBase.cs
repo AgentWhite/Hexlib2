@@ -33,18 +33,37 @@ public abstract class CrudViewModelBase<T> : ViewModelBase
     public RelayCommand AddCommand { get; }
     public RelayCommand CancelCommand { get; }
     public RelayCommand SaveCommand { get; }
+    public RelayCommand EditCommand { get; }
+
+    protected T? EditingItem { get; set; }
 
     protected CrudViewModelBase()
     {
-        AddCommand = new RelayCommand(_ => { ResetForm(); IsAdding = true; });
-        CancelCommand = new RelayCommand(_ => IsAdding = false);
+        AddCommand = new RelayCommand(_ => { EditingItem = default; ResetForm(); IsAdding = true; });
+        CancelCommand = new RelayCommand(_ => { EditingItem = default; IsAdding = false; });
         SaveCommand = new RelayCommand(p => OnSave(p));
+        EditCommand = new RelayCommand(p => ExecuteEdit(p));
+    }
+
+    private void ExecuteEdit(object? parameter)
+    {
+        if (parameter is T item)
+        {
+            EditingItem = item;
+            PopulateForm(item);
+            IsAdding = true;
+        }
     }
 
     /// <summary>
     /// Resets the entry form to its default state.
     /// </summary>
     protected abstract void ResetForm();
+
+    /// <summary>
+    /// Populates the entry form with data from an existing item.
+    /// </summary>
+    protected abstract void PopulateForm(T item);
 
     /// <summary>
     /// Logic to handle the save operation.

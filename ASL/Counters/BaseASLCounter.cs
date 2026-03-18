@@ -20,7 +20,12 @@ public abstract class BaseASLCounter : ICounter
     public string Name { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the morale level of the unit.
+    /// Gets or sets the file path to the image representing this counter.
+    /// </summary>
+    public string? ImagePath { get; set; }
+
+    /// <summary>
+    /// Gets the base morale level of the unit.
     /// </summary>
     public int Morale { get; set; }
 

@@ -20,6 +20,7 @@ public class CountersViewModel : CrudViewModelBase<BaseASLCounter>
     private string _leadership = string.Empty;
     private string _firepower = string.Empty;
     private string _range = string.Empty;
+    private string? _imagePath;
     private bool _isLeader = true;
     private bool _hasAssaultFire;
     private bool _hasSprayingFire;
@@ -30,10 +31,13 @@ public class CountersViewModel : CrudViewModelBase<BaseASLCounter>
     public string Leadership { get => _leadership; set => SetProperty(ref _leadership, value); }
     public string Firepower { get => _firepower; set => SetProperty(ref _firepower, value); }
     public string Range { get => _range; set => SetProperty(ref _range, value); }
+    public string? ImagePath { get => _imagePath; set => SetProperty(ref _imagePath, value); }
     public bool IsLeader { get => _isLeader; set => SetProperty(ref _isLeader, value); }
     public bool HasAssaultFire { get => _hasAssaultFire; set => SetProperty(ref _hasAssaultFire, value); }
     public bool HasSprayingFire { get => _hasSprayingFire; set => SetProperty(ref _hasSprayingFire, value); }
     public bool CanSelfRally { get => _canSelfRally; set => SetProperty(ref _canSelfRally, value); }
+
+    public RelayCommand PickImageCommand { get; }
 
     /// <summary>
     /// Gets or sets the currently selected nationality in the entry form.
@@ -71,6 +75,21 @@ public class CountersViewModel : CrudViewModelBase<BaseASLCounter>
         DisplayName = "Counters";
         _selectedNationality = Nationality.German;
         _selectedClass = UnitClass.FirstLine;
+        PickImageCommand = new RelayCommand(_ => ExecutePickImage());
+    }
+
+    private void ExecutePickImage()
+    {
+        var openDialog = new Microsoft.Win32.OpenFileDialog
+        {
+            Filter = "Image files (*.jpg, *.png)|*.jpg;*.png",
+            Title = "Select Counter Image"
+        };
+
+        if (openDialog.ShowDialog() == true)
+        {
+            ImagePath = openDialog.FileName;
+        }
     }
 
     protected override void ResetForm()
@@ -80,12 +99,44 @@ public class CountersViewModel : CrudViewModelBase<BaseASLCounter>
         Leadership = string.Empty;
         Firepower = string.Empty;
         Range = string.Empty;
+        ImagePath = null;
         IsLeader = true;
         HasAssaultFire = false;
         HasSprayingFire = false;
         CanSelfRally = false;
         SelectedNationality = Nationality.German;
         SelectedClass = UnitClass.FirstLine;
+    }
+
+    protected override void PopulateForm(BaseASLCounter item)
+    {
+        Name = item.Name;
+        Morale = item.Morale.ToString();
+        SelectedNationality = item.Nationality;
+        ImagePath = item.ImagePath;
+
+        if (item is Leader leader)
+        {
+            IsLeader = true;
+            Leadership = leader.Leadership.ToString();
+        }
+        else if (item is Hero hero)
+        {
+            IsLeader = false;
+            Firepower = hero.Firepower.ToString();
+            Range = hero.Range.ToString();
+        }
+        else if (item is MultiManCounter mmc)
+        {
+            // For now, only Squad is directly handled, but MultiManCounter properties are here
+            IsLeader = false; // MMCs use the MMC tab in UI
+            Firepower = mmc.Firepower.ToString();
+            Range = mmc.Range.ToString();
+            SelectedClass = mmc.AslClass;
+            HasAssaultFire = mmc.HasAssaultFire;
+            HasSprayingFire = mmc.HasSprayingFire;
+            CanSelfRally = mmc.CanSelfRally;
+        }
     }
 
     protected override void OnSave(object? parameter)
@@ -117,7 +168,18 @@ public class CountersViewModel : CrudViewModelBase<BaseASLCounter>
         {
             counter = new Hero(Name, firepower, range, morale, SelectedNationality);
         }
-        Items.Add(counter);
+        counter.ImagePath = ImagePath;
+
+        if (EditingItem != null)
+        {
+            int index = Items.IndexOf(EditingItem);
+            if (index >= 0) Items[index] = counter;
+        }
+        else
+        {
+            Items.Add(counter);
+        }
+        
         IsAdding = false;
     }
 
@@ -131,9 +193,20 @@ public class CountersViewModel : CrudViewModelBase<BaseASLCounter>
         {
             HasAssaultFire = HasAssaultFire,
             HasSprayingFire = HasSprayingFire,
-            CanSelfRally = CanSelfRally
+            CanSelfRally = CanSelfRally,
+            ImagePath = ImagePath
         };
-        Items.Add(squad);
+
+        if (EditingItem != null)
+        {
+            int index = Items.IndexOf(EditingItem);
+            if (index >= 0) Items[index] = squad;
+        }
+        else
+        {
+            Items.Add(squad);
+        }
+
         IsAdding = false;
     }
 }

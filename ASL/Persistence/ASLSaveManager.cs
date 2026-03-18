@@ -4,6 +4,9 @@ using System.Threading.Tasks;
 using ASL.Counters;
 using HexLib;
 using HexLib.Persistence;
+using System.IO;
+using System;
+using System.Linq;
 
 namespace ASL.Persistence;
 
@@ -43,6 +46,55 @@ public class ASLSaveManager
     public Task<IEnumerable<string>> ListCountersAsync() => _storage.ListKeysAsync("Counters");
 
     // --- Project Level (Combined) ---
+
+    /// <summary>
+    /// Processes the project for saving: copies images to a local folder and renames them with GUIDs.
+    /// Returns a new project instance with updated relative image paths.
+    /// </summary>
+    public ASLProject PrepareProjectForSaving(ASLProject sourceProject, string targetProjectFile)
+    {
+        string? projectDir = Path.GetDirectoryName(targetProjectFile);
+        if (projectDir == null) return sourceProject;
+
+        string imagesDir = Path.Combine(projectDir, "images");
+        if (!Directory.Exists(imagesDir)) Directory.CreateDirectory(imagesDir);
+
+        // Deep copy via serialization to avoid modifying the in-memory UI state directly
+        string tempJson = SerializeProject(sourceProject);
+        var project = DeserializeProject(tempJson) ?? new ASLProject();
+
+        foreach (var counter in project.Counters.Where(c => !string.IsNullOrEmpty(c.ImagePath)))
+        {
+            counter.ImagePath = ProcessImage(counter.ImagePath!, imagesDir);
+        }
+
+        foreach (var scenario in project.Scenarios.Where(s => !string.IsNullOrEmpty(s.ImagePath)))
+        {
+            scenario.ImagePath = ProcessImage(scenario.ImagePath!, imagesDir);
+        }
+
+        return project;
+    }
+
+    private string ProcessImage(string sourcePath, string targetDir)
+    {
+        if (!File.Exists(sourcePath)) return sourcePath;
+
+        // If the path is already relative and inside our target dir, skip
+        // (Simple check: if it's just a filename with GUID pattern)
+        string fileName = Path.GetFileName(sourcePath);
+        if (sourcePath.Contains(targetDir) && Guid.TryParse(Path.GetFileNameWithoutExtension(fileName), out _))
+        {
+            return Path.Combine("images", fileName);
+        }
+
+        string extension = Path.GetExtension(sourcePath);
+        string newFileName = $"{Guid.NewGuid()}{extension}";
+        string destPath = Path.Combine(targetDir, newFileName);
+
+        File.Copy(sourcePath, destPath, true);
+        return Path.Combine("images", newFileName);
+    }
 
     public string SerializeProject(ASLProject project)
     {
