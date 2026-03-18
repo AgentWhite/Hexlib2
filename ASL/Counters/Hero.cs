@@ -22,9 +22,10 @@ public class Hero : BaseASLCounter
     /// <summary>
     /// Initializes a new instance of the <see cref="Hero"/> class.
     /// </summary>
-    public Hero(string name, int fp, int range, int morale, Nationality nationality) : base(name, morale, nationality)
+    [System.Text.Json.Serialization.JsonConstructor]
+    public Hero(string name, int firepower, int range, int morale, Nationality nationality) : base(name, morale, nationality)
     {
-        Firepower = fp;
+        Firepower = firepower;
         Range = range;
     }
 }

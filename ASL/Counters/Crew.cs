@@ -9,7 +9,7 @@ public class Crew : MultiManCounter
     /// <summary>
     /// Gets or sets the class of the unit. Crews are always Elite.
     /// </summary>
-    public override UnitClass Class 
+    public override UnitClass AslClass 
     { 
         get => UnitClass.Elite; 
         set { /* Crews are always Elite, ignore setter */ } 
@@ -18,8 +18,9 @@ public class Crew : MultiManCounter
     /// <summary>
     /// Initializes a new instance of the <see cref="Crew"/> class with Elite class.
     /// </summary>
-    public Crew(string name, int fp, int range, int morale, Nationality nationality) 
-        : base(fp, range, morale, name, UnitClass.Elite, nationality)
+    [System.Text.Json.Serialization.JsonConstructor]
+    public Crew(string identity, int firepower, int range, int morale, Nationality nationality) 
+        : base(firepower, range, morale, identity, UnitClass.Elite, nationality)
     {
     }
 }

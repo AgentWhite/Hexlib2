@@ -50,7 +50,7 @@
             <DataGrid ItemsSource="{Binding Counters}" AutoGenerateColumns="False" IsReadOnly="True" Background="LightSkyBlue">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Nationality" Binding="{Binding Nationality}" Width="120" />
-                    <DataGridTextColumn Header="Unit class" Binding="{Binding Class}" Width="120" />
+                    <DataGridTextColumn Header="Unit class" Binding="{Binding AslClass}" Width="120" />
                     <DataGridTextColumn Header="Stats" Binding="{Binding Stats}" Width="*" />
                 </DataGrid.Columns>
             </DataGrid>

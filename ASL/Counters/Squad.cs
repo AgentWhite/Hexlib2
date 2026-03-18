@@ -8,8 +8,9 @@ public class Squad : MultiManCounter
     /// <summary>
     /// Initializes a new instance of the <see cref="Squad"/> class.
     /// </summary>
-    public Squad(string name, int fp, int range, int morale, UnitClass unitClass, Nationality nationality) 
-        : base(fp, range, morale, name, unitClass, nationality)
+    [System.Text.Json.Serialization.JsonConstructor]
+    public Squad(string identity, int firepower, int range, int morale, UnitClass aslClass, Nationality nationality) 
+        : base(firepower, range, morale, identity, aslClass, nationality)
     {
     }
 }

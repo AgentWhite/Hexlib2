@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using HexLib;
 
 namespace ASL.Counters;
@@ -6,12 +7,17 @@ namespace ASL.Counters;
 /// Base class for all Advanced Squad Leader (ASL) counters.
 /// Provides core properties shared by all unit types.
 /// </summary>
+[JsonDerivedType(typeof(Leader), typeDiscriminator: "Leader")]
+[JsonDerivedType(typeof(Squad), typeDiscriminator: "Squad")]
+[JsonDerivedType(typeof(HalfSquad), typeDiscriminator: "HalfSquad")]
+[JsonDerivedType(typeof(Crew), typeDiscriminator: "Crew")]
+[JsonDerivedType(typeof(Hero), typeDiscriminator: "Hero")]
 public abstract class BaseASLCounter : ICounter
 {
     /// <summary>
     /// Gets the name or specific identity of the counter.
     /// </summary>
-    public string Name { get; protected set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the morale level of the unit.

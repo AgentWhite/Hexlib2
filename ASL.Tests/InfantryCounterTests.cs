@@ -38,7 +38,7 @@ public class InfantryCounterTests
         Assert.Equal(4, squad.Firepower);
         Assert.Equal(6, squad.Range);
         Assert.Equal(7, squad.Morale);
-        Assert.Equal(UnitClass.FirstLine, squad.Class);
+        Assert.Equal(UnitClass.FirstLine, squad.AslClass);
         Assert.Equal(8, squad.BrokenMoraleLevel);
         Assert.True(squad.HasAssaultFire);
         Assert.Equal(Nationality.Finnish, squad.Nationality);
@@ -48,12 +48,12 @@ public class InfantryCounterTests
     public void Crew_IsAlwaysElite()
     {
         var crew = new Crew("Gun Crew", 2, 2, 8, Nationality.German);
-        Assert.Equal(UnitClass.Elite, crew.Class);
+        Assert.Equal(UnitClass.Elite, crew.AslClass);
         Assert.Equal(Nationality.German, crew.Nationality);
 
         // Attempting to change class should be ignored
-        crew.Class = UnitClass.Conscript;
-        Assert.Equal(UnitClass.Elite, crew.Class);
+        crew.AslClass = UnitClass.Conscript;
+        Assert.Equal(UnitClass.Elite, crew.AslClass);
     }
 
     [Fact]

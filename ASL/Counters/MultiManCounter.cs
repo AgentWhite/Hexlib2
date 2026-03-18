@@ -24,7 +24,7 @@ public abstract class MultiManCounter : BaseASLCounter
     /// <summary>
     /// Gets or sets the class of the unit (Elite, 1st Line, etc.).
     /// </summary>
-    public virtual UnitClass Class { get; set; }
+    public virtual UnitClass AslClass { get; set; }
     
     public bool HasAssaultFire { get; set; }
     public bool HasSprayingFire { get; set; }
@@ -41,12 +41,12 @@ public abstract class MultiManCounter : BaseASLCounter
     /// <summary>
     /// Initializes a new instance of the <see cref="MultiManCounter"/> class.
     /// </summary>
-    protected MultiManCounter(int fp, int range, int morale, string identity, UnitClass @class, Nationality nationality) 
+    protected MultiManCounter(int firepower, int range, int morale, string identity, UnitClass aslClass, Nationality nationality) 
         : base(identity, morale, nationality)
     {
-        Firepower = fp;
+        Firepower = firepower;
         Range = range;
         Identity = identity;
-        Class = @class;
+        AslClass = aslClass;
     }
 }

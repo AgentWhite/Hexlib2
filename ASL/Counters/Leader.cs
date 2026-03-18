@@ -21,6 +21,7 @@ public class Leader : BaseASLCounter
     /// <param name="morale">Leader morale.</param>
     /// <param name="leadership">Leadership modifier.</param>
     /// <param name="nationality">Nationality.</param>
+    [System.Text.Json.Serialization.JsonConstructor]
     public Leader(string name, int morale, int leadership, Nationality nationality) : base(name, morale, nationality)
     {
         Leadership = leadership;
