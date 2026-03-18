@@ -13,7 +13,9 @@ public class ViewModelLocator
     public ViewModelLocator()
     {
         // Register default instances
-        Register<CountersViewModel>(new CountersViewModel());
+        Register<LeadersViewModel>(new LeadersViewModel());
+        Register<HeroesViewModel>(new HeroesViewModel());
+        Register<SquadsViewModel>(new SquadsViewModel());
         Register<ScenariosViewModel>(new ScenariosViewModel());
     }
 

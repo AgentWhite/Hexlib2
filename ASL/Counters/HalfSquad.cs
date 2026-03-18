@@ -10,8 +10,8 @@ public class HalfSquad : MultiManCounter
     /// Initializes a new instance of the <see cref="HalfSquad"/> class.
     /// </summary>
     [System.Text.Json.Serialization.JsonConstructor]
-    public HalfSquad(string identity, int firepower, int range, int morale, UnitClass aslClass, Nationality nationality) 
-        : base(firepower, range, morale, identity, aslClass, nationality)
+    public HalfSquad(string name, int firepower, int range, int morale, UnitClass aslClass, Nationality nationality) 
+        : base(firepower, range, morale, name, aslClass, nationality)
     {
     }
 }

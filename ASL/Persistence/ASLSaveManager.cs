@@ -78,22 +78,36 @@ public class ASLSaveManager
 
     private string ProcessImage(string sourcePath, string targetDir)
     {
+        // If path is already relative to the images folder, just return it
+        if (!Path.IsPathRooted(sourcePath) && sourcePath.StartsWith("images"))
+        {
+            return sourcePath;
+        }
+
         if (!File.Exists(sourcePath)) return sourcePath;
 
-        // If the path is already relative and inside our target dir, skip
-        // (Simple check: if it's just a filename with GUID pattern)
         string fileName = Path.GetFileName(sourcePath);
-        if (sourcePath.Contains(targetDir) && Guid.TryParse(Path.GetFileNameWithoutExtension(fileName), out _))
+        string extension = Path.GetExtension(sourcePath);
+        
+        // If it's already in our target directory and named with a GUID, keep it
+        if (Path.GetDirectoryName(Path.GetFullPath(sourcePath))?.Equals(Path.GetFullPath(targetDir), StringComparison.OrdinalIgnoreCase) == true
+            && Guid.TryParse(Path.GetFileNameWithoutExtension(fileName), out _))
         {
             return Path.Combine("images", fileName);
         }
 
-        string extension = Path.GetExtension(sourcePath);
         string newFileName = $"{Guid.NewGuid()}{extension}";
         string destPath = Path.Combine(targetDir, newFileName);
 
-        File.Copy(sourcePath, destPath, true);
-        return Path.Combine("images", newFileName);
+        try
+        {
+            File.Copy(sourcePath, destPath, true);
+            return Path.Combine("images", newFileName);
+        }
+        catch
+        {
+            return sourcePath; // Fallback to original path if copy fails
+        }
     }
 
     public string SerializeProject(ASLProject project)

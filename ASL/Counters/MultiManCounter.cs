@@ -15,11 +15,6 @@ public abstract class MultiManCounter : BaseASLCounter
     /// Gets or sets the normal range of the unit.
     /// </summary>
     public int Range { get; set; }
-
-    /// <summary>
-    /// Gets or sets the unit's specific identity (e.g., "1st Squad", "2nd Section").
-    /// </summary>
-    public string Identity { get; set; } = string.Empty;
     
     public bool HasAssaultFire { get; set; }
     public bool HasSprayingFire { get; set; }
@@ -33,12 +28,11 @@ public abstract class MultiManCounter : BaseASLCounter
     /// <summary>
     /// Initializes a new instance of the <see cref="MultiManCounter"/> class.
     /// </summary>
-    protected MultiManCounter(int firepower, int range, int morale, string identity, UnitClass aslClass, Nationality nationality) 
-        : base(identity, morale, nationality)
+    protected MultiManCounter(int firepower, int range, int morale, string name, UnitClass aslClass, Nationality nationality) 
+        : base(name, morale, nationality)
     {
         Firepower = firepower;
         Range = range;
-        Identity = identity;
         AslClass = aslClass;
     }
 }

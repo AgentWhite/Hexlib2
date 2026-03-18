@@ -50,8 +50,14 @@
                 </Setter>
             </Style>
 
-            <DataTemplate DataType="{x:Type vm:CountersViewModel}">
-                <v:CountersView />
+            <DataTemplate DataType="{x:Type vm:LeadersViewModel}">
+                <v:LeadersView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:HeroesViewModel}">
+                <v:HeroesView />
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:SquadsViewModel}">
+                <v:SquadsView />
             </DataTemplate>
             <DataTemplate DataType="{x:Type vm:ScenariosViewModel}">
                 <v:ScenariosView />

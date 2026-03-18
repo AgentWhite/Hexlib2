@@ -19,8 +19,8 @@ public class Crew : MultiManCounter
     /// Initializes a new instance of the <see cref="Crew"/> class with Elite class.
     /// </summary>
     [System.Text.Json.Serialization.JsonConstructor]
-    public Crew(string identity, int firepower, int range, int morale, Nationality nationality) 
-        : base(firepower, range, morale, identity, UnitClass.Elite, nationality)
+    public Crew(string name, int firepower, int range, int morale, Nationality nationality) 
+        : base(firepower, range, morale, name, UnitClass.Elite, nationality)
     {
     }
 }

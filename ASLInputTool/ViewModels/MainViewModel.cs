@@ -1,4 +1,5 @@
 using ASL;
+using ASL.Counters;
 using ASL.Persistence;
 using HexLib.Persistence;
 using Microsoft.Win32;
@@ -62,17 +63,29 @@ public class MainViewModel : ViewModelBase
 
         if (saveDialog.ShowDialog() == true)
         {
-            var sourceProject = new ASLProject
+            try
             {
-                Counters = _locator.Get<CountersViewModel>().Items.ToList(),
-                Scenarios = _locator.Get<ScenariosViewModel>().Items.ToList()
-            };
+                var allCounters = new List<BaseASLCounter>();
+                allCounters.AddRange(_locator.Get<LeadersViewModel>().Items);
+                allCounters.AddRange(_locator.Get<HeroesViewModel>().Items);
+                allCounters.AddRange(_locator.Get<SquadsViewModel>().Items);
 
-            // Process images and get a version of the project with relative GUID-based paths
-            var projectToSave = _saveManager.PrepareProjectForSaving(sourceProject, saveDialog.FileName);
+                var sourceProject = new ASLProject
+                {
+                    Counters = allCounters,
+                    Scenarios = _locator.Get<ScenariosViewModel>().Items.ToList()
+                };
 
-            string json = _saveManager.SerializeProject(projectToSave);
-            File.WriteAllText(saveDialog.FileName, json);
+                // Process images and get a version of the project with relative GUID-based paths
+                var projectToSave = _saveManager.PrepareProjectForSaving(sourceProject, saveDialog.FileName);
+
+                string json = _saveManager.SerializeProject(projectToSave);
+                File.WriteAllText(saveDialog.FileName, json);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"Failed to save project: {ex.Message}\n\n{ex.StackTrace}", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+            }
         }
     }
 
@@ -87,33 +100,54 @@ public class MainViewModel : ViewModelBase
 
         if (openDialog.ShowDialog() == true)
         {
-            string projectDir = Path.GetDirectoryName(openDialog.FileName) ?? string.Empty;
-            string json = File.ReadAllText(openDialog.FileName);
-            var project = _saveManager.DeserializeProject(json);
-
-            if (project != null)
+            try
             {
-                var countersVm = _locator.Get<CountersViewModel>();
-                var scenariosVm = _locator.Get<ScenariosViewModel>();
+                string projectDir = Path.GetDirectoryName(openDialog.FileName) ?? string.Empty;
+                string json = File.ReadAllText(openDialog.FileName);
+                var project = _saveManager.DeserializeProject(json);
 
-                // Resolve relative paths to absolute for the UI to display
-                foreach (var c in project.Counters.Where(c => !string.IsNullOrEmpty(c.ImagePath)))
+                if (project != null)
                 {
-                    if (!Path.IsPathRooted(c.ImagePath))
-                        c.ImagePath = Path.GetFullPath(Path.Combine(projectDir, c.ImagePath!));
+                    var leadersVm = _locator.Get<LeadersViewModel>();
+                    var heroesVm = _locator.Get<HeroesViewModel>();
+                    var squadsVm = _locator.Get<SquadsViewModel>();
+                    var scenariosVm = _locator.Get<ScenariosViewModel>();
+
+                    // Resolve relative paths to absolute for the UI to display
+                    foreach (var c in project.Counters.Where(c => !string.IsNullOrEmpty(c.ImagePath)))
+                    {
+                        if (!Path.IsPathRooted(c.ImagePath))
+                            c.ImagePath = Path.GetFullPath(Path.Combine(projectDir, c.ImagePath!));
+                    }
+
+                    foreach (var s in project.Scenarios.Where(s => !string.IsNullOrEmpty(s.ImagePath)))
+                    {
+                        if (!Path.IsPathRooted(s.ImagePath))
+                            s.ImagePath = Path.GetFullPath(Path.Combine(projectDir, s.ImagePath!));
+                    }
+
+                    // Clear and distribute counters
+                    leadersVm.Items.Clear();
+                    heroesVm.Items.Clear();
+                    squadsVm.Items.Clear();
+
+                    foreach (var counter in project.Counters)
+                    {
+                        switch (counter)
+                        {
+                            case Leader l: leadersVm.Items.Add(l); break;
+                            case Hero h: heroesVm.Items.Add(h); break;
+                            case MultiManCounter m: squadsVm.Items.Add(m); break;
+                        }
+                    }
+
+                    scenariosVm.Items.Clear();
+                    foreach (var s in project.Scenarios) scenariosVm.Items.Add(s);
                 }
-
-                foreach (var s in project.Scenarios.Where(s => !string.IsNullOrEmpty(s.ImagePath)))
-                {
-                    if (!Path.IsPathRooted(s.ImagePath))
-                        s.ImagePath = Path.GetFullPath(Path.Combine(projectDir, s.ImagePath!));
-                }
-
-                countersVm.Items.Clear();
-                foreach (var c in project.Counters) countersVm.Items.Add(c);
-
-                scenariosVm.Items.Clear();
-                foreach (var s in project.Scenarios) scenariosVm.Items.Add(s);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"Failed to load project: {ex.Message}\n\n{ex.StackTrace}", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
             }
         }
     }

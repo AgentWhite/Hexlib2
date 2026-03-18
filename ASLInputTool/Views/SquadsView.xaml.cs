@@ -2,9 +2,9 @@ using System.Windows.Controls;
 
 namespace ASLInputTool.Views;
 
-public partial class CountersView : UserControl
+public partial class SquadsView : UserControl
 {
-    public CountersView()
+    public SquadsView()
     {
         InitializeComponent();
     }
