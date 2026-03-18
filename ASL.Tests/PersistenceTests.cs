@@ -23,6 +23,9 @@ public class PersistenceTests
         {
             new Leader("Sgt. Steiner", 9, 2, Nationality.German),
             new Squad("1st Squad", 4, 6, 7, UnitClass.FirstLine, Nationality.German)
+            {
+                HasAssaultFire = true
+            }
         };
 
         // Act
@@ -31,10 +34,21 @@ public class PersistenceTests
 
         // Assert
         Assert.Equal(2, loaded.Count);
-        Assert.IsType<Leader>(loaded[0]);
-        Assert.IsType<Squad>(loaded[1]);
-        Assert.Equal("Sgt. Steiner", loaded[0].Name);
-        Assert.Equal(9, loaded[0].Morale);
+        
+        var leader = Assert.IsType<Leader>(loaded[0]);
+        Assert.Equal("Sgt. Steiner", leader.Name);
+        Assert.Equal(9, leader.Morale);
+        Assert.Equal(2, leader.Leadership);
+        Assert.Equal(Nationality.German, leader.Nationality);
+
+        var squad = Assert.IsType<Squad>(loaded[1]);
+        Assert.Equal("1st Squad", squad.Name);
+        Assert.Equal(4, squad.Firepower);
+        Assert.Equal(6, squad.Range);
+        Assert.Equal(7, squad.Morale);
+        Assert.Equal(UnitClass.FirstLine, squad.AslClass);
+        Assert.Equal(Nationality.German, squad.Nationality);
+        Assert.True(squad.HasAssaultFire);
         
         // Cleanup
         Directory.Delete(_testDataDir, true);
