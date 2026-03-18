@@ -60,22 +60,42 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Image Frame -->
-                <Button Grid.Column="0" Command="{Binding PickImageCommand}" 
-                        Width="120" Height="120" Margin="0,0,20,20" VerticalAlignment="Top">
-                    <Button.Template>
-                        <ControlTemplate TargetType="Button">
-                            <Border BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="2" Background="White">
-                                <Grid>
-                                    <Image Source="{Binding ImagePath}" Stretch="UniformToFill"/>
-                                    <TextBlock Text="Click to add image" Visibility="{Binding ImagePath, Converter={StaticResource NullToVis}}" 
-                                               VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" 
-                                               Foreground="Gray" TextWrapping="Wrap" Padding="10"/>
-                                </Grid>
-                            </Border>
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
+                <!-- Image Frames -->
+                <StackPanel Grid.Column="0" Margin="0,0,20,0">
+                    <Label Content="Front:" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                    <Button Command="{Binding PickFrontImageCommand}" 
+                            Width="120" Height="120" Margin="0,0,0,20">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="2" Background="White">
+                                    <Grid>
+                                        <Image Source="{Binding ImagePathFront, Converter={StaticResource ImageSource}}" Stretch="UniformToFill"/>
+                                        <TextBlock Text="Click for Front" Visibility="{Binding ImagePathFront, Converter={StaticResource NullToVis}}" 
+                                                   VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" 
+                                                   Foreground="Gray" TextWrapping="Wrap" Padding="10"/>
+                                    </Grid>
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <Label Content="Back:" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                    <Button Command="{Binding PickBackImageCommand}" 
+                            Width="120" Height="120">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="2" Background="White">
+                                    <Grid>
+                                        <Image Source="{Binding ImagePathBack, Converter={StaticResource ImageSource}}" Stretch="UniformToFill"/>
+                                        <TextBlock Text="Click for Back" Visibility="{Binding ImagePathBack, Converter={StaticResource NullToVis}}" 
+                                                   VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" 
+                                                   Foreground="Gray" TextWrapping="Wrap" Padding="10"/>
+                                    </Grid>
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </StackPanel>
 
                 <StackPanel Grid.Column="1">
                     <Label Content="Leader Name:" FontWeight="SemiBold"/>

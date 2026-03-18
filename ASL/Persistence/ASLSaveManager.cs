@@ -63,9 +63,13 @@ public class ASLSaveManager
         string tempJson = SerializeProject(sourceProject);
         var project = DeserializeProject(tempJson) ?? new ASLProject();
 
-        foreach (var counter in project.Counters.Where(c => !string.IsNullOrEmpty(c.ImagePath)))
+        foreach (var counter in project.Counters)
         {
-            counter.ImagePath = ProcessImage(counter.ImagePath!, imagesDir);
+            if (!string.IsNullOrEmpty(counter.ImagePathFront))
+                counter.ImagePathFront = ProcessImage(counter.ImagePathFront!, imagesDir);
+            
+            if (!string.IsNullOrEmpty(counter.ImagePathBack))
+                counter.ImagePathBack = ProcessImage(counter.ImagePathBack!, imagesDir);
         }
 
         foreach (var scenario in project.Scenarios.Where(s => !string.IsNullOrEmpty(s.ImagePath)))

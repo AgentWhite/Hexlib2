@@ -20,9 +20,14 @@ public abstract class BaseASLCounter : ICounter
     public string Name { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the file path to the image representing this counter.
+    /// Gets or sets the file path to the front image of the counter.
     /// </summary>
-    public string? ImagePath { get; set; }
+    public string? ImagePathFront { get; set; }
+
+    /// <summary>
+    /// Gets or sets the file path to the back image of the counter.
+    /// </summary>
+    public string? ImagePathBack { get; set; }
 
     /// <summary>
     /// Gets or sets the class of the unit (Elite, 1st Line, etc.).

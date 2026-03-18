@@ -60,14 +60,14 @@
         <!-- Form View -->
         <ScrollViewer Grid.Row="1" Padding="10" Visibility="{Binding IsAdding, Converter={StaticResource BoolToVis}}" Background="{StaticResource WindowBackgroundBrush}">
             <StackPanel>
-                <!-- Image Frame (Landscape) -->
+                <!-- Image Frame (Landscape 1.35:1) -->
                 <Button Command="{Binding PickImageCommand}" 
-                        Width="240" Height="150" Margin="0,0,0,20" HorizontalAlignment="Center">
+                        Width="270" Height="200" Margin="0,0,0,20" HorizontalAlignment="Center">
                     <Button.Template>
                         <ControlTemplate TargetType="Button">
                             <Border BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="2" Background="White">
                                 <Grid>
-                                    <Image Source="{Binding ImagePath}" Stretch="UniformToFill"/>
+                                    <Image Source="{Binding ImagePath, Converter={StaticResource ImageSource}}" Stretch="UniformToFill"/>
                                     <TextBlock Text="Click to add scenario image" Visibility="{Binding ImagePath, Converter={StaticResource NullToVis}}" 
                                                VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" 
                                                Foreground="Gray" TextWrapping="Wrap" Padding="10"/>

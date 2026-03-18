@@ -13,36 +13,41 @@ public class HeroesViewModel : CrudViewModelBase<Hero>
     private string _range = string.Empty;
     private string _morale = string.Empty;
     private Nationality _selectedNationality = Nationality.German;
-    private string? _imagePath;
+    private string? _imagePathFront;
+    private string? _imagePathBack;
 
     public string Name { get => _name; set => SetProperty(ref _name, value); }
     public string Firepower { get => _firepower; set => SetProperty(ref _firepower, value); }
     public string Range { get => _range; set => SetProperty(ref _range, value); }
     public string Morale { get => _morale; set => SetProperty(ref _morale, value); }
     public Nationality SelectedNationality { get => _selectedNationality; set => SetProperty(ref _selectedNationality, value); }
-    public string? ImagePath { get => _imagePath; set => SetProperty(ref _imagePath, value); }
+    public string? ImagePathFront { get => _imagePathFront; set => SetProperty(ref _imagePathFront, value); }
+    public string? ImagePathBack { get => _imagePathBack; set => SetProperty(ref _imagePathBack, value); }
 
     public IEnumerable<Nationality> Nationalities => Enum.GetValues(typeof(Nationality)).Cast<Nationality>();
 
-    public RelayCommand PickImageCommand { get; }
+    public RelayCommand PickFrontImageCommand { get; }
+    public RelayCommand PickBackImageCommand { get; }
 
     public HeroesViewModel()
     {
         DisplayName = "Heroes";
-        PickImageCommand = new RelayCommand(_ => ExecutePickImage());
+        PickFrontImageCommand = new RelayCommand(_ => ExecutePickImage(true));
+        PickBackImageCommand = new RelayCommand(_ => ExecutePickImage(false));
     }
 
-    private void ExecutePickImage()
+    private void ExecutePickImage(bool front)
     {
         var openDialog = new Microsoft.Win32.OpenFileDialog
         {
             Filter = "Image files (*.jpg, *.png)|*.jpg;*.png",
-            Title = "Select Hero Image"
+            Title = front ? "Select Hero Front Image" : "Select Hero Back Image"
         };
 
         if (openDialog.ShowDialog() == true)
         {
-            ImagePath = openDialog.FileName;
+            if (front) ImagePathFront = openDialog.FileName;
+            else ImagePathBack = openDialog.FileName;
         }
     }
 
@@ -53,7 +58,8 @@ public class HeroesViewModel : CrudViewModelBase<Hero>
         Range = string.Empty;
         Morale = string.Empty;
         SelectedNationality = Nationality.German;
-        ImagePath = null;
+        ImagePathFront = null;
+        ImagePathBack = null;
     }
 
     protected override void PopulateForm(Hero item)
@@ -63,7 +69,8 @@ public class HeroesViewModel : CrudViewModelBase<Hero>
         Range = item.Range.ToString();
         Morale = item.Morale.ToString();
         SelectedNationality = item.Nationality;
-        ImagePath = item.ImagePath;
+        ImagePathFront = item.ImagePathFront;
+        ImagePathBack = item.ImagePathBack;
     }
 
     protected override void OnSave(object? parameter)
@@ -74,7 +81,8 @@ public class HeroesViewModel : CrudViewModelBase<Hero>
 
         var hero = new Hero(Name, fp, range, morale, SelectedNationality)
         {
-            ImagePath = ImagePath
+            ImagePathFront = ImagePathFront,
+            ImagePathBack = ImagePathBack
         };
 
         if (EditingItem != null)

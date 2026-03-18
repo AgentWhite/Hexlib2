@@ -14,7 +14,8 @@ public class SquadsViewModel : CrudViewModelBase<MultiManCounter>
     private string _morale = string.Empty;
     private Nationality _selectedNationality = Nationality.German;
     private UnitClass _selectedClass = UnitClass.FirstLine;
-    private string? _imagePath;
+    private string? _imagePathFront;
+    private string? _imagePathBack;
     private bool _isHalfSquad;
     private bool _hasAssaultFire;
     private bool _hasSprayingFire;
@@ -26,7 +27,8 @@ public class SquadsViewModel : CrudViewModelBase<MultiManCounter>
     public string Morale { get => _morale; set => SetProperty(ref _morale, value); }
     public Nationality SelectedNationality { get => _selectedNationality; set => SetProperty(ref _selectedNationality, value); }
     public UnitClass SelectedClass { get => _selectedClass; set => SetProperty(ref _selectedClass, value); }
-    public string? ImagePath { get => _imagePath; set => SetProperty(ref _imagePath, value); }
+    public string? ImagePathFront { get => _imagePathFront; set => SetProperty(ref _imagePathFront, value); }
+    public string? ImagePathBack { get => _imagePathBack; set => SetProperty(ref _imagePathBack, value); }
     public bool IsHalfSquad { get => _isHalfSquad; set => SetProperty(ref _isHalfSquad, value); }
     public bool HasAssaultFire { get => _hasAssaultFire; set => SetProperty(ref _hasAssaultFire, value); }
     public bool HasSprayingFire { get => _hasSprayingFire; set => SetProperty(ref _hasSprayingFire, value); }
@@ -35,25 +37,28 @@ public class SquadsViewModel : CrudViewModelBase<MultiManCounter>
     public IEnumerable<Nationality> Nationalities => Enum.GetValues(typeof(Nationality)).Cast<Nationality>();
     public IEnumerable<UnitClass> UnitClasses => Enum.GetValues(typeof(UnitClass)).Cast<UnitClass>();
 
-    public RelayCommand PickImageCommand { get; }
+    public RelayCommand PickFrontImageCommand { get; }
+    public RelayCommand PickBackImageCommand { get; }
 
     public SquadsViewModel()
     {
         DisplayName = "Squads";
-        PickImageCommand = new RelayCommand(_ => ExecutePickImage());
+        PickFrontImageCommand = new RelayCommand(_ => ExecutePickImage(true));
+        PickBackImageCommand = new RelayCommand(_ => ExecutePickImage(false));
     }
 
-    private void ExecutePickImage()
+    private void ExecutePickImage(bool front)
     {
         var openDialog = new Microsoft.Win32.OpenFileDialog
         {
             Filter = "Image files (*.jpg, *.png)|*.jpg;*.png",
-            Title = "Select Squad Image"
+            Title = front ? "Select Squad Front Image" : "Select Squad Back Image"
         };
 
         if (openDialog.ShowDialog() == true)
         {
-            ImagePath = openDialog.FileName;
+            if (front) ImagePathFront = openDialog.FileName;
+            else ImagePathBack = openDialog.FileName;
         }
     }
 
@@ -65,7 +70,8 @@ public class SquadsViewModel : CrudViewModelBase<MultiManCounter>
         Morale = string.Empty;
         SelectedNationality = Nationality.German;
         SelectedClass = UnitClass.FirstLine;
-        ImagePath = null;
+        ImagePathFront = null;
+        ImagePathBack = null;
         IsHalfSquad = false;
         HasAssaultFire = false;
         HasSprayingFire = false;
@@ -80,7 +86,8 @@ public class SquadsViewModel : CrudViewModelBase<MultiManCounter>
         Morale = item.Morale.ToString();
         SelectedNationality = item.Nationality;
         SelectedClass = item.AslClass;
-        ImagePath = item.ImagePath;
+        ImagePathFront = item.ImagePathFront;
+        ImagePathBack = item.ImagePathBack;
         IsHalfSquad = item is HalfSquad;
         HasAssaultFire = item.HasAssaultFire;
         HasSprayingFire = item.HasSprayingFire;
@@ -102,8 +109,9 @@ public class SquadsViewModel : CrudViewModelBase<MultiManCounter>
         {
             counter = new Squad(Name, fp, range, morale, SelectedClass, SelectedNationality);
         }
-
-        counter.ImagePath = ImagePath;
+        
+        counter.ImagePathFront = ImagePathFront;
+        counter.ImagePathBack = ImagePathBack;
         counter.HasAssaultFire = HasAssaultFire;
         counter.HasSprayingFire = HasSprayingFire;
         counter.CanSelfRally = CanSelfRally;

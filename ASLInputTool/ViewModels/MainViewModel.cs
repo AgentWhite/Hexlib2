@@ -114,10 +114,13 @@ public class MainViewModel : ViewModelBase
                     var scenariosVm = _locator.Get<ScenariosViewModel>();
 
                     // Resolve relative paths to absolute for the UI to display
-                    foreach (var c in project.Counters.Where(c => !string.IsNullOrEmpty(c.ImagePath)))
+                    foreach (var c in project.Counters)
                     {
-                        if (!Path.IsPathRooted(c.ImagePath))
-                            c.ImagePath = Path.GetFullPath(Path.Combine(projectDir, c.ImagePath!));
+                        if (!string.IsNullOrEmpty(c.ImagePathFront) && !Path.IsPathRooted(c.ImagePathFront))
+                            c.ImagePathFront = Path.GetFullPath(Path.Combine(projectDir, c.ImagePathFront!));
+
+                        if (!string.IsNullOrEmpty(c.ImagePathBack) && !Path.IsPathRooted(c.ImagePathBack))
+                            c.ImagePathBack = Path.GetFullPath(Path.Combine(projectDir, c.ImagePathBack!));
                     }
 
                     foreach (var s in project.Scenarios.Where(s => !string.IsNullOrEmpty(s.ImagePath)))

@@ -17,6 +17,7 @@
             <c:NullToVisibilityConverter x:Key="NullToVis" />
             <c:CounterStatsConverter x:Key="CounterStats" />
             <c:InverseBooleanConverter x:Key="InverseBool" />
+            <c:ImageSourceConverter x:Key="ImageSource" />
 
             <Style TargetType="TextBox">
                 <Setter Property="Padding" Value="5"/>
