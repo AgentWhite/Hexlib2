@@ -31,8 +31,7 @@ public class InfantryCounterTests
     [Fact]
     public void Squad_PropertyAssignment()
     {
-        var squad = new Squad("1st Squad", 4, 6, 7, Nationality.Finnish);
-        squad.Class = UnitClass.FirstLine;
+        var squad = new Squad("1st Squad", 4, 6, 7, UnitClass.FirstLine, Nationality.Finnish);
         squad.BrokenMoraleLevel = 8;
         squad.HasAssaultFire = true;
 
@@ -62,7 +61,7 @@ public class InfantryCounterTests
     {
         var hex = new Hex<ASLHexMetadata>(new CubeCoordinate(0, 0, 0));
         var leader = new Leader("Lt. Dan", 8, 1, Nationality.Partisan);
-        var squad = new Squad("A Co", 4, 4, 7, Nationality.Partisan);
+        var squad = new Squad("A Co", 4, 4, 7, UnitClass.FirstLine, Nationality.Partisan);
 
         hex.AddCounter(leader);
         hex.AddCounter(squad);

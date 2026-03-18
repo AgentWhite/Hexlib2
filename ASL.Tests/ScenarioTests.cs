@@ -23,13 +23,13 @@ public class ScenarioTests
         string historicalDesc = "The Finns, seeking restitution for the Winter War of 1939, had erupted across the borders and breached the Soviet Karelian Front even as the crisis to the south of Leningrad came. ... if they could.";
 
         var desc = new ScenarioDescription(place, date, historicalDesc);
-        var scenario = new Scenario(name, reference, desc);
+        var scenario = new Scenario { Name = name, Reference = reference, Description = desc };
 
         Assert.Equal(name, scenario.Name);
         Assert.Equal(reference, scenario.Reference);
         Assert.Equal(place, scenario.Description.Place);
         Assert.Equal(date, scenario.Description.Date);
-        Assert.Equal(historicalDesc, scenario.Description.HistoricalDescription);
+        Assert.Equal(historicalDesc, scenario.Description.DescriptionText);
     }
 
     [Fact]
@@ -46,8 +46,8 @@ public class ScenarioTests
     public void ScenarioDescription_CanStoreTypedDate()
     {
         var desc = new ScenarioDescription("Place", "Date", "Desc");
-        desc.DateValue = ASLDateParser.Parse("September 2nd, 1941");
+        desc.PreciseDate = ASLDateParser.Parse("September 2nd, 1941");
 
-        Assert.Equal(new DateTime(1941, 9, 2), desc.DateValue!.Value);
+        Assert.Equal(new DateTime(1941, 9, 2), desc.PreciseDate!.Value);
     }
 }
