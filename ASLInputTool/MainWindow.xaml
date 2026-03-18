@@ -7,15 +7,15 @@
         xmlns:v="clr-namespace:ASLInputTool.Views"
         mc:Ignorable="d"
         Title="ASL Input Tool" Height="650" Width="850"
-        Background="LightSkyBlue">
+        Background="{StaticResource WindowBackgroundBrush}">
     
     <Window.Resources>
         <Style TargetType="TabControl">
-            <Setter Property="BorderBrush" Value="CornflowerBlue"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ControlBorderBrush}"/>
             <Setter Property="BorderThickness" Value="2"/>
         </Style>
         <Style TargetType="TabItem">
-            <Setter Property="BorderBrush" Value="CornflowerBlue"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ControlBorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="10,5"/>
         </Style>
@@ -27,7 +27,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Menu Grid.Row="0" Background="LightSkyBlue" BorderBrush="CornflowerBlue" BorderThickness="0,0,0,1">
+        <Menu Grid.Row="0" Background="{StaticResource WindowBackgroundBrush}" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="0,0,0,1">
             <MenuItem Header="_File">
                 <MenuItem Header="_Load" Command="{Binding LoadCommand}"/>
                 <MenuItem Header="_Save" Command="{Binding SaveCommand}"/>
@@ -39,8 +39,8 @@
         <TabControl Grid.Row="1"
                     ItemsSource="{Binding NavigationItems}" 
                     Padding="10"
-                    Background="LightSkyBlue"
-                    BorderBrush="CornflowerBlue"
+                    Background="{StaticResource WindowBackgroundBrush}"
+                    BorderBrush="{StaticResource ControlBorderBrush}"
                     BorderThickness="2">
             <TabControl.ItemTemplate>
                 <DataTemplate DataType="{x:Type vm:ViewModelBase}">

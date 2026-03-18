@@ -8,28 +8,28 @@
              d:DesignHeight="600" d:DesignWidth="800">
     <UserControl.Resources>
         <Style TargetType="TabItem">
-            <Setter Property="Background" Value="LightSkyBlue"/>
-            <Setter Property="BorderBrush" Value="CornflowerBlue"/>
+            <Setter Property="Background" Value="{StaticResource WindowBackgroundBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ControlBorderBrush}"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Margin" Value="0,0,2,0"/>
         </Style>
         <Style TargetType="TabControl">
-            <Setter Property="BorderBrush" Value="CornflowerBlue"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ControlBorderBrush}"/>
             <Setter Property="BorderThickness" Value="2"/>
         </Style>
         <Style TargetType="Button">
-            <Setter Property="BorderBrush" Value="CornflowerBlue"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ControlBorderBrush}"/>
             <Setter Property="BorderThickness" Value="2"/>
         </Style>
         <Style TargetType="DataGrid">
-            <Setter Property="BorderBrush" Value="CornflowerBlue"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ControlBorderBrush}"/>
             <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="HorizontalGridLinesBrush" Value="CornflowerBlue"/>
-            <Setter Property="VerticalGridLinesBrush" Value="CornflowerBlue"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="{StaticResource ControlBorderBrush}"/>
+            <Setter Property="VerticalGridLinesBrush" Value="{StaticResource ControlBorderBrush}"/>
         </Style>
     </UserControl.Resources>
     
-    <Grid Margin="20" Background="LightSkyBlue">
+    <Grid Margin="20" Background="{StaticResource WindowBackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -37,17 +37,17 @@
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="0,0,0,20">
             <TextBlock Text="Counters" FontSize="24" FontWeight="Bold" VerticalAlignment="Center"/>
-            <Button Content="Add Counter" Command="{Binding AddCounterCommand}" 
-                    Visibility="{Binding IsAddingCounter, Converter={StaticResource InverseBoolToVis}}"
-                    Margin="20,0,0,0" Padding="15,5" Background="CornflowerBlue" Foreground="White" FontWeight="Bold"/>
-            <Button Content="Back to List" Command="{Binding CancelAddCommand}" 
-                    Visibility="{Binding IsAddingCounter, Converter={StaticResource BoolToVis}}"
+            <Button Content="Add Counter" Command="{Binding AddCommand}" 
+                    Visibility="{Binding IsAdding, Converter={StaticResource InverseBoolToVis}}"
+                    Margin="20,0,0,0" Padding="15,5" Background="{StaticResource ControlBorderBrush}" Foreground="White" FontWeight="Bold"/>
+            <Button Content="Back to List" Command="{Binding CancelCommand}" 
+                    Visibility="{Binding IsAdding, Converter={StaticResource BoolToVis}}"
                     Margin="20,0,0,0" Padding="15,5"/>
         </StackPanel>
 
         <!-- List View -->
-        <Grid Grid.Row="1" Visibility="{Binding IsAddingCounter, Converter={StaticResource InverseBoolToVis}}">
-            <DataGrid ItemsSource="{Binding Counters}" AutoGenerateColumns="False" IsReadOnly="True" Background="LightSkyBlue">
+        <Grid Grid.Row="1" Visibility="{Binding IsAdding, Converter={StaticResource InverseBoolToVis}}">
+            <DataGrid ItemsSource="{Binding Items}" AutoGenerateColumns="False" IsReadOnly="True" Background="{StaticResource WindowBackgroundBrush}">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Nationality" Binding="{Binding Nationality}" Width="120" />
                     <DataGridTextColumn Header="Unit class" Binding="{Binding AslClass}" Width="120" />
@@ -57,9 +57,9 @@
         </Grid>
 
         <!-- Form View (The original entry form) -->
-        <TabControl Grid.Row="1" Visibility="{Binding IsAddingCounter, Converter={StaticResource BoolToVis}}" Background="LightSkyBlue">
+        <TabControl Grid.Row="1" Visibility="{Binding IsAdding, Converter={StaticResource BoolToVis}}" Background="{StaticResource WindowBackgroundBrush}">
             <TabItem Header="Single Man (SMC)">
-                <ScrollViewer Padding="10" Background="LightSkyBlue">
+                <ScrollViewer Padding="10" Background="{StaticResource WindowBackgroundBrush}">
                     <StackPanel>
                         <Label Content="Counter Name:" FontWeight="SemiBold"/>
                         <TextBox Margin="0,0,0,10" Tag="e.g., Sgt. Steiner" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
@@ -99,13 +99,13 @@
                                 </StackPanel>
                             </StackPanel>
                         </GroupBox>
-                        <Button Content="Save Counter" Command="{Binding SaveCounterCommand}" CommandParameter="SMC" Margin="0,20,0,0" Padding="20,10" HorizontalAlignment="Right" Background="Green" Foreground="White" FontWeight="Bold"/>
+                        <Button Content="Save Counter" Command="{Binding SaveCommand}" CommandParameter="SMC" Margin="0,20,0,0" Padding="20,10" HorizontalAlignment="Right" Background="{StaticResource AccentBrush}" Foreground="White" FontWeight="Bold"/>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
             
             <TabItem Header="Multi Man (MMC)">
-                <ScrollViewer Padding="10" Background="LightSkyBlue">
+                <ScrollViewer Padding="10" Background="{StaticResource WindowBackgroundBrush}">
                     <StackPanel>
                         <Label Content="Counter Name / Unit Identity:" FontWeight="SemiBold"/>
                         <TextBox Margin="0,0,0,10" Tag="e.g., 1st Squad" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
@@ -153,7 +153,7 @@
                         <CheckBox Content="Has Spraying Fire" IsChecked="{Binding HasSprayingFire}" Margin="0,5"/>
                         <CheckBox Content="Can Self Rally" IsChecked="{Binding CanSelfRally}" Margin="0,5"/>
 
-                        <Button Content="Save MMC Counter" Command="{Binding SaveCounterCommand}" CommandParameter="MMC" Margin="0,20,0,0" Padding="20,10" HorizontalAlignment="Right" Background="CornflowerBlue" Foreground="White" FontWeight="Bold"/>
+                        <Button Content="Save MMC Counter" Command="{Binding SaveCommand}" CommandParameter="MMC" Margin="0,20,0,0" Padding="20,10" HorizontalAlignment="Right" Background="CornflowerBlue" Foreground="White" FontWeight="Bold"/>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>

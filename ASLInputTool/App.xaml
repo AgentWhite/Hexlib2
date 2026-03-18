@@ -8,13 +8,17 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Themes/Brushes.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
             <BooleanToVisibilityConverter x:Key="BoolToVis" />
             <c:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVis" />
             <c:InverseBooleanConverter x:Key="InverseBool" />
 
             <Style TargetType="TextBox">
                 <Setter Property="Padding" Value="5"/>
-                <Setter Property="BorderBrush" Value="CornflowerBlue"/>
+                <Setter Property="BorderBrush" Value="{StaticResource ControlBorderBrush}"/>
                 <Setter Property="BorderThickness" Value="1"/>
                 <Setter Property="Template">
                     <Setter.Value>
@@ -34,9 +38,9 @@
                                 </Trigger>
                                 <Trigger Property="Validation.HasError" Value="true">
                                     <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
-                                    <Setter Property="BorderBrush" Value="Red"/>
+                                    <Setter Property="BorderBrush" Value="{StaticResource ValidationErrorBrush}"/>
                                     <Setter Property="BorderThickness" Value="2"/>
-                                    <Setter Property="Background" Value="#FFF0F0"/>
+                                    <Setter Property="Background" Value="{StaticResource ValidationBackgroundBrush}"/>
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>

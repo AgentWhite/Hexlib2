@@ -16,6 +16,7 @@ public class MainViewModel : ViewModelBase
 {
     private ViewModelBase? _currentView;
     private readonly ASLSaveManager _saveManager;
+    private readonly ViewModelLocator _locator;
 
     /// <summary>
     /// Gets or sets the currently active view model being displayed in the main content area.
@@ -30,7 +31,7 @@ public class MainViewModel : ViewModelBase
     /// Gets the list of available view models for navigation.
     /// Used by the TabControl for item generation.
     /// </summary>
-    public List<ViewModelBase> NavigationItems { get; }
+    public List<ViewModelBase> NavigationItems => _locator.GetAll().ToList();
 
     public RelayCommand SaveCommand { get; }
     public RelayCommand LoadCommand { get; }
@@ -41,16 +42,10 @@ public class MainViewModel : ViewModelBase
     /// </summary>
     public MainViewModel()
     {
-        // Use a dummy adapter for memory-only project serialization
+        _locator = new ViewModelLocator();
         _saveManager = new ASLSaveManager(new FileStorageAdapter(Path.GetTempPath()));
 
-        NavigationItems = new List<ViewModelBase>
-        {
-            new CountersViewModel(),
-            new ScenariosViewModel()
-        };
-
-        CurrentView = NavigationItems[0];
+        CurrentView = NavigationItems.FirstOrDefault();
 
         SaveCommand = new RelayCommand(_ => ExecuteSave());
         LoadCommand = new RelayCommand(_ => ExecuteLoad());
@@ -69,8 +64,8 @@ public class MainViewModel : ViewModelBase
         {
             var project = new ASLProject
             {
-                Counters = (NavigationItems[0] as CountersViewModel)?.Counters.ToList() ?? new(),
-                Scenarios = (NavigationItems[1] as ScenariosViewModel)?.Scenarios.ToList() ?? new()
+                Counters = _locator.Get<CountersViewModel>().Items.ToList(),
+                Scenarios = _locator.Get<ScenariosViewModel>().Items.ToList()
             };
 
             string json = _saveManager.SerializeProject(project);
@@ -94,20 +89,14 @@ public class MainViewModel : ViewModelBase
 
             if (project != null)
             {
-                var countersVm = NavigationItems[0] as CountersViewModel;
-                var scenariosVm = NavigationItems[1] as ScenariosViewModel;
+                var countersVm = _locator.Get<CountersViewModel>();
+                var scenariosVm = _locator.Get<ScenariosViewModel>();
 
-                if (countersVm != null)
-                {
-                    countersVm.Counters.Clear();
-                    foreach (var c in project.Counters) countersVm.Counters.Add(c);
-                }
+                countersVm.Items.Clear();
+                foreach (var c in project.Counters) countersVm.Items.Add(c);
 
-                if (scenariosVm != null)
-                {
-                    scenariosVm.Scenarios.Clear();
-                    foreach (var s in project.Scenarios) scenariosVm.Scenarios.Add(s);
-                }
+                scenariosVm.Items.Clear();
+                foreach (var s in project.Scenarios) scenariosVm.Items.Add(s);
             }
         }
     }

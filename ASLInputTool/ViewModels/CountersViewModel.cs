@@ -2,6 +2,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using ASL;
 using ASL.Counters;
+using System;
+using System.Collections.Generic;
 
 namespace ASLInputTool.ViewModels;
 
@@ -9,7 +11,7 @@ namespace ASLInputTool.ViewModels;
 /// ViewModel for the Counter entry and list view.
 /// Handles management of SMC and MMC counters.
 /// </summary>
-public class CountersViewModel : ViewModelBase
+public class CountersViewModel : CrudViewModelBase<BaseASLCounter>
 {
     private Nationality _selectedNationality;
     private UnitClass _selectedClass;
@@ -62,38 +64,6 @@ public class CountersViewModel : ViewModelBase
     public IEnumerable<UnitClass> UnitClasses => Enum.GetValues(typeof(UnitClass)).Cast<UnitClass>();
 
     /// <summary>
-    /// Gets the collection of counters that have been entered.
-    /// </summary>
-    public ObservableCollection<BaseASLCounter> Counters { get; } = new();
-
-    private bool _isAddingCounter;
-
-    /// <summary>
-    /// Gets or sets a value indicating whether the user is currently in the "Add Counter" form view.
-    /// When false, the UI displays the list (table) of counters instead.
-    /// </summary>
-    public bool IsAddingCounter
-    {
-        get => _isAddingCounter;
-        set => SetProperty(ref _isAddingCounter, value);
-    }
-
-    /// <summary>
-    /// Command to switch the view from the list to the "Add Counter" form.
-    /// </summary>
-    public RelayCommand AddCounterCommand { get; }
-
-    /// <summary>
-    /// Command to cancel the current add operation and return to the list view.
-    /// </summary>
-    public RelayCommand CancelAddCommand { get; }
-
-    /// <summary>
-    /// Command to save the current counter and return to the list view.
-    /// </summary>
-    public RelayCommand SaveCounterCommand { get; }
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="CountersViewModel"/> class.
     /// </summary>
     public CountersViewModel()
@@ -101,14 +71,9 @@ public class CountersViewModel : ViewModelBase
         DisplayName = "Counters";
         _selectedNationality = Nationality.German;
         _selectedClass = UnitClass.FirstLine;
-        IsAddingCounter = false;
-
-        AddCounterCommand = new RelayCommand(_ => { ResetForm(); IsAddingCounter = true; });
-        CancelAddCommand = new RelayCommand(_ => IsAddingCounter = false);
-        SaveCounterCommand = new RelayCommand(p => SaveCounter(p));
     }
 
-    private void ResetForm()
+    protected override void ResetForm()
     {
         Name = string.Empty;
         Morale = string.Empty;
@@ -123,7 +88,7 @@ public class CountersViewModel : ViewModelBase
         SelectedClass = UnitClass.FirstLine;
     }
 
-    private void SaveCounter(object? parameter)
+    protected override void OnSave(object? parameter)
     {
         string? type = parameter as string;
         if (type == "SMC")
@@ -152,8 +117,8 @@ public class CountersViewModel : ViewModelBase
         {
             counter = new Hero(Name, firepower, range, morale, SelectedNationality);
         }
-        Counters.Add(counter);
-        IsAddingCounter = false;
+        Items.Add(counter);
+        IsAdding = false;
     }
 
     private void SaveMMC()
@@ -168,7 +133,7 @@ public class CountersViewModel : ViewModelBase
             HasSprayingFire = HasSprayingFire,
             CanSelfRally = CanSelfRally
         };
-        Counters.Add(squad);
-        IsAddingCounter = false;
+        Items.Add(squad);
+        IsAdding = false;
     }
 }
