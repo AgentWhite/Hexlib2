@@ -92,7 +92,7 @@ public class PersistenceTests
         {
             Metadata = new ASLHexMetadata { Terrain = TerrainType.Woods }
         };
-        hex.AddCounter(new Squad("1st Squad", 4, 6, 7, UnitClass.FirstLine, Nationality.German));
+        hex.AddCounter(new Squad("1st Squad", 4, 6, 7, UnitClass.FirstLine, Nationality.German) { HasAssaultFire = true });
         board.AddHex(hex);
 
         // Act
@@ -106,8 +106,9 @@ public class PersistenceTests
         Assert.NotNull(loadedHex);
         Assert.Equal(TerrainType.Woods, loadedHex!.Metadata.Terrain);
         Assert.Single(loadedHex.Counters);
-        Assert.IsType<Squad>(loadedHex.Counters[0]);
-        Assert.Equal("1st Squad", loadedHex.Counters[0].Name);
+        var squad = Assert.IsType<Squad>(loadedHex.Counters[0]);
+        Assert.Equal("1st Squad", squad.Name);
+        Assert.True(squad.HasAssaultFire);
 
         // Cleanup
         Directory.Delete(_testDataDir, true);
