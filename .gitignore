@@ -46,6 +46,13 @@ obj/
 # Mono
 *.pidb
 
+# Build error logs
+build_*.txt
+asl_errors.txt
+asl_tests_errors.txt
+build_errors.txt
+build_log.txt
+
 # OS files
 Thumbs.db
 Desktop.ini
