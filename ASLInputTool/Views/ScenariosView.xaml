@@ -5,7 +5,36 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800">
-    <Grid Margin="20">
+    <UserControl.Resources>
+        <Style TargetType="TabItem">
+            <Setter Property="Background" Value="LightSkyBlue"/>
+            <Setter Property="BorderBrush" Value="CornflowerBlue"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,5"/>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="BorderBrush" Value="CornflowerBlue"/>
+            <Setter Property="BorderThickness" Value="2"/>
+        </Style>
+        <Style TargetType="DataGrid">
+            <Setter Property="BorderBrush" Value="CornflowerBlue"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="CornflowerBlue"/>
+            <Setter Property="VerticalGridLinesBrush" Value="CornflowerBlue"/>
+        </Style>
+        <Style TargetType="TextBox">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="true">
+                    <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}"/>
+                    <Setter Property="BorderBrush" Value="Red"/>
+                    <Setter Property="BorderThickness" Value="2"/>
+                    <Setter Property="Background" Value="#FFF0F0"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+    
+    <Grid Margin="20" Background="LightSkyBlue">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -23,7 +52,7 @@
 
         <!-- List View -->
         <Grid Grid.Row="1" Visibility="{Binding IsAddingScenario, Converter={StaticResource InverseBoolToVis}}">
-            <DataGrid ItemsSource="{Binding Scenarios}" AutoGenerateColumns="False" IsReadOnly="True" Background="White">
+            <DataGrid ItemsSource="{Binding Scenarios}" AutoGenerateColumns="False" IsReadOnly="True" Background="LightSkyBlue">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" />
                     <DataGridTextColumn Header="Reference" Binding="{Binding Reference}" Width="150" />
@@ -34,28 +63,37 @@
         </Grid>
 
         <!-- Form View -->
-        <ScrollViewer Grid.Row="1" Padding="10" Visibility="{Binding IsAddingScenario, Converter={StaticResource BoolToVis}}">
+        <ScrollViewer Grid.Row="1" Padding="10" Visibility="{Binding IsAddingScenario, Converter={StaticResource BoolToVis}}" Background="LightSkyBlue">
             <StackPanel>
                 <Label Content="Scenario Name:" FontWeight="SemiBold"/>
-                <TextBox Margin="0,0,0,10" Padding="5"/>
+                <TextBox Margin="0,0,0,10" Tag="e.g., FIGHTING WITHDRAWAL" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"/>
 
                 <Label Content="Reference (e.g., ASL SCENARIO 1):" FontWeight="SemiBold"/>
-                <TextBox Margin="0,0,0,10" Padding="5"/>
+                <TextBox Margin="0,0,0,10" Tag="e.g., ASL SCENARIO 1" Text="{Binding Reference, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"/>
 
                 <Separator Margin="0,10"/>
                 <TextBlock Text="Historical Context" FontSize="18" FontWeight="Bold" Margin="0,10"/>
 
                 <Label Content="Place:" FontWeight="SemiBold"/>
-                <TextBox Margin="0,0,0,10" Padding="5"/>
+                <TextBox Margin="0,0,0,10" Tag="e.g., SESTRORETSK ROAD, TERIJOKI" Text="{Binding Place, UpdateSourceTrigger=PropertyChanged}"/>
 
                 <Label Content="Date (Text):" FontWeight="SemiBold"/>
-                <TextBox Margin="0,0,0,10" Padding="5"/>
+                <TextBox Margin="0,0,0,10" Tag="e.g., September 2nd, 1941" Text="{Binding Date, UpdateSourceTrigger=PropertyChanged}"/>
 
                 <Label Content="Historical Description:" FontWeight="SemiBold"/>
-                <TextBox Margin="0,0,0,20" Padding="5" Height="150" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"/>
+                <TextBox Margin="0,0,0,20" Height="150" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" 
+                         Tag="e.g., The Finns, seeking restitution for the Winter War of 1939..."
+                         Text="{Binding DescriptionText, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <Button Content="Save Scenario" HorizontalAlignment="Right" Padding="20,10" Background="Green" Foreground="White" FontWeight="Bold"/>
+                <Button Content="Save Scenario" Command="{Binding SaveScenarioCommand}" HorizontalAlignment="Right" Padding="20,10" Background="Green" Foreground="White" FontWeight="Bold"/>
             </StackPanel>
         </ScrollViewer>
+
+        <!-- Toast Notification -->
+        <Border Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,40"
+                Background="#CC333333" CornerRadius="10" Padding="20,10"
+                Visibility="{Binding IsToastVisible, Converter={StaticResource BoolToVis}}">
+            <TextBlock Text="{Binding ToastMessage}" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
+        </Border>
     </Grid>
 </UserControl>

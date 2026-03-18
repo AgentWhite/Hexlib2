@@ -6,11 +6,27 @@
         xmlns:vm="clr-namespace:ASLInputTool.ViewModels"
         xmlns:v="clr-namespace:ASLInputTool.Views"
         mc:Ignorable="d"
-        Title="ASL Input Tool" Height="650" Width="850">
+        Title="ASL Input Tool" Height="650" Width="850"
+        Background="LightSkyBlue">
+    
+    <Window.Resources>
+        <Style TargetType="TabControl">
+            <Setter Property="BorderBrush" Value="CornflowerBlue"/>
+            <Setter Property="BorderThickness" Value="2"/>
+        </Style>
+        <Style TargetType="TabItem">
+            <Setter Property="BorderBrush" Value="CornflowerBlue"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,5"/>
+        </Style>
+    </Window.Resources>
     
     <Grid>
         <TabControl ItemsSource="{Binding NavigationItems}" 
-                    Padding="10">
+                    Padding="10"
+                    Background="LightSkyBlue"
+                    BorderBrush="CornflowerBlue"
+                    BorderThickness="2">
             <TabControl.ItemTemplate>
                 <DataTemplate DataType="{x:Type vm:ViewModelBase}">
                     <TextBlock Text="{Binding DisplayName}" FontSize="14" FontWeight="SemiBold" Margin="10,2"/>

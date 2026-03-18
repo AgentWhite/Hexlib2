@@ -6,7 +6,30 @@
              xmlns:asl="clr-namespace:ASL;assembly=ASL"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800">
-    <Grid Margin="20">
+    <UserControl.Resources>
+        <Style TargetType="TabItem">
+            <Setter Property="Background" Value="LightSkyBlue"/>
+            <Setter Property="BorderBrush" Value="CornflowerBlue"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Margin" Value="0,0,2,0"/>
+        </Style>
+        <Style TargetType="TabControl">
+            <Setter Property="BorderBrush" Value="CornflowerBlue"/>
+            <Setter Property="BorderThickness" Value="2"/>
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="BorderBrush" Value="CornflowerBlue"/>
+            <Setter Property="BorderThickness" Value="2"/>
+        </Style>
+        <Style TargetType="DataGrid">
+            <Setter Property="BorderBrush" Value="CornflowerBlue"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="CornflowerBlue"/>
+            <Setter Property="VerticalGridLinesBrush" Value="CornflowerBlue"/>
+        </Style>
+    </UserControl.Resources>
+    
+    <Grid Margin="20" Background="LightSkyBlue">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -24,7 +47,7 @@
 
         <!-- List View -->
         <Grid Grid.Row="1" Visibility="{Binding IsAddingCounter, Converter={StaticResource InverseBoolToVis}}">
-            <DataGrid ItemsSource="{Binding Counters}" AutoGenerateColumns="False" IsReadOnly="True" Background="White">
+            <DataGrid ItemsSource="{Binding Counters}" AutoGenerateColumns="False" IsReadOnly="True" Background="LightSkyBlue">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Nationality" Binding="{Binding Nationality}" Width="120" />
                     <DataGridTextColumn Header="Unit class" Binding="{Binding Class}" Width="120" />
@@ -34,12 +57,12 @@
         </Grid>
 
         <!-- Form View (The original entry form) -->
-        <TabControl Grid.Row="1" Visibility="{Binding IsAddingCounter, Converter={StaticResource BoolToVis}}">
+        <TabControl Grid.Row="1" Visibility="{Binding IsAddingCounter, Converter={StaticResource BoolToVis}}" Background="LightSkyBlue">
             <TabItem Header="Single Man (SMC)">
-                <ScrollViewer Padding="10">
+                <ScrollViewer Padding="10" Background="LightSkyBlue">
                     <StackPanel>
                         <Label Content="Counter Name:" FontWeight="SemiBold"/>
-                        <TextBox Margin="0,0,0,10" Padding="5"/>
+                        <TextBox Margin="0,0,0,10" Tag="e.g., Sgt. Steiner" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
 
                         <Label Content="Nationality:" FontWeight="SemiBold"/>
                         <ComboBox Margin="0,0,0,10" Padding="5"
@@ -47,18 +70,18 @@
                                   SelectedItem="{Binding SelectedNationality}"/>
 
                         <Label Content="Morale:" FontWeight="SemiBold"/>
-                        <TextBox Margin="0,0,0,10" Padding="5" Width="50" HorizontalAlignment="Left"/>
+                        <TextBox Margin="0,0,0,10" Width="50" HorizontalAlignment="Left" Tag="7" Text="{Binding Morale, UpdateSourceTrigger=PropertyChanged}"/>
 
                         <GroupBox Header="Type Specific" Margin="0,10,0,0">
                             <StackPanel Margin="10">
-                                <RadioButton Content="Leader" IsChecked="True" Margin="0,0,0,5"/>
-                                <StackPanel Margin="20,0,0,10">
+                                <RadioButton Content="Leader" IsChecked="{Binding IsLeader}" Margin="0,0,0,5"/>
+                                <StackPanel Margin="20,0,0,10" IsEnabled="{Binding IsLeader}">
                                     <Label Content="Leadership Modifier:"/>
-                                    <TextBox Width="50" HorizontalAlignment="Left" Padding="5"/>
+                                    <TextBox Width="50" HorizontalAlignment="Left" Tag="0" Text="{Binding Leadership, UpdateSourceTrigger=PropertyChanged}"/>
                                 </StackPanel>
 
-                                <RadioButton Content="Hero" Margin="0,0,0,5"/>
-                                <StackPanel Margin="20,0,0,10">
+                                <RadioButton Content="Hero" IsChecked="{Binding IsLeader, Converter={StaticResource InverseBool}}" Margin="0,0,0,5"/>
+                                <StackPanel Margin="20,0,0,10" IsEnabled="{Binding IsLeader, Converter={StaticResource InverseBool}}">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
@@ -66,26 +89,26 @@
                                         </Grid.ColumnDefinitions>
                                         <StackPanel Grid.Column="0" Margin="0,0,20,0">
                                             <Label Content="Firepower:"/>
-                                            <TextBox Width="50" HorizontalAlignment="Left" Padding="5"/>
+                                            <TextBox Width="50" HorizontalAlignment="Left" Tag="1" Text="{Binding Firepower, UpdateSourceTrigger=PropertyChanged}"/>
                                         </StackPanel>
                                         <StackPanel Grid.Column="1">
                                             <Label Content="Range:"/>
-                                            <TextBox Width="50" HorizontalAlignment="Left" Padding="5"/>
+                                            <TextBox Width="50" HorizontalAlignment="Left" Tag="4" Text="{Binding Range, UpdateSourceTrigger=PropertyChanged}"/>
                                         </StackPanel>
                                     </Grid>
                                 </StackPanel>
                             </StackPanel>
                         </GroupBox>
-                        <Button Content="Save Counter" Margin="0,20,0,0" Padding="20,10" HorizontalAlignment="Right" Background="Green" Foreground="White" FontWeight="Bold"/>
+                        <Button Content="Save Counter" Command="{Binding SaveCounterCommand}" CommandParameter="SMC" Margin="0,20,0,0" Padding="20,10" HorizontalAlignment="Right" Background="Green" Foreground="White" FontWeight="Bold"/>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
             
             <TabItem Header="Multi Man (MMC)">
-                <ScrollViewer Padding="10">
+                <ScrollViewer Padding="10" Background="LightSkyBlue">
                     <StackPanel>
                         <Label Content="Counter Name / Unit Identity:" FontWeight="SemiBold"/>
-                        <TextBox Margin="0,0,0,10" Padding="5"/>
+                        <TextBox Margin="0,0,0,10" Tag="e.g., 1st Squad" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
 
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -114,23 +137,23 @@
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0" Margin="0,0,20,0">
                                 <Label Content="Firepower:"/>
-                                <TextBox Width="50" HorizontalAlignment="Left" Padding="5"/>
+                                <TextBox Width="50" HorizontalAlignment="Left" Tag="4" Text="{Binding Firepower, UpdateSourceTrigger=PropertyChanged}"/>
                             </StackPanel>
                             <StackPanel Grid.Column="1" Margin="0,0,20,0">
                                 <Label Content="Range:"/>
-                                <TextBox Width="50" HorizontalAlignment="Left" Padding="5"/>
+                                <TextBox Width="50" HorizontalAlignment="Left" Tag="6" Text="{Binding Range, UpdateSourceTrigger=PropertyChanged}"/>
                             </StackPanel>
                             <StackPanel Grid.Column="2">
                                 <Label Content="Morale:"/>
-                                <TextBox Width="50" HorizontalAlignment="Left" Padding="5"/>
+                                <TextBox Width="50" HorizontalAlignment="Left" Tag="7" Text="{Binding Morale, UpdateSourceTrigger=PropertyChanged}"/>
                             </StackPanel>
                         </Grid>
 
-                        <CheckBox Content="Has Assault Fire" Margin="0,5"/>
-                        <CheckBox Content="Has Spraying Fire" Margin="0,5"/>
-                        <CheckBox Content="Can Self Rally" Margin="0,5"/>
+                        <CheckBox Content="Has Assault Fire" IsChecked="{Binding HasAssaultFire}" Margin="0,5"/>
+                        <CheckBox Content="Has Spraying Fire" IsChecked="{Binding HasSprayingFire}" Margin="0,5"/>
+                        <CheckBox Content="Can Self Rally" IsChecked="{Binding CanSelfRally}" Margin="0,5"/>
 
-                        <Button Content="Save MMC Counter" Margin="0,20,0,0" Padding="20,10" HorizontalAlignment="Right" Background="CornflowerBlue" Foreground="White" FontWeight="Bold"/>
+                        <Button Content="Save MMC Counter" Command="{Binding SaveCounterCommand}" CommandParameter="MMC" Margin="0,20,0,0" Padding="20,10" HorizontalAlignment="Right" Background="CornflowerBlue" Foreground="White" FontWeight="Bold"/>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
