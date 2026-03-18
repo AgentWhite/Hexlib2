@@ -22,7 +22,22 @@
     </Window.Resources>
     
     <Grid>
-        <TabControl ItemsSource="{Binding NavigationItems}" 
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0" Background="LightSkyBlue" BorderBrush="CornflowerBlue" BorderThickness="0,0,0,1">
+            <MenuItem Header="_File">
+                <MenuItem Header="_Load" Command="{Binding LoadCommand}"/>
+                <MenuItem Header="_Save" Command="{Binding SaveCommand}"/>
+                <Separator/>
+                <MenuItem Header="_Exit" Click="MenuItem_Exit_Click"/>
+            </MenuItem>
+        </Menu>
+
+        <TabControl Grid.Row="1"
+                    ItemsSource="{Binding NavigationItems}" 
                     Padding="10"
                     Background="LightSkyBlue"
                     BorderBrush="CornflowerBlue"

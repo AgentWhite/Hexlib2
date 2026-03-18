@@ -42,6 +42,19 @@ public class ASLSaveManager
 
     public Task<IEnumerable<string>> ListCountersAsync() => _storage.ListKeysAsync("Counters");
 
+    // --- Project Level (Combined) ---
+
+    public string SerializeProject(ASLProject project)
+    {
+        return JsonSerializer.Serialize(project, _jsonOptions);
+    }
+
+    public ASLProject? DeserializeProject(string json)
+    {
+        if (string.IsNullOrEmpty(json)) return null;
+        return JsonSerializer.Deserialize<ASLProject>(json, _jsonOptions);
+    }
+
     // --- Scenarios ---
 
     public async Task SaveScenarioAsync(Scenario scenario)
