@@ -104,7 +104,7 @@
 
                 <StackPanel Grid.Column="1">
                     <Label Content="Unit Identity / Name" FontWeight="SemiBold"/>
-                    <TextBox Margin="0,0,0,10" Tag="e.g., 1st Squad" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBox Margin="0,0,0,10" Tag="e.g., 1st Squad" Text="{Binding Name, ValidatesOnNotifyDataErrors=True}" LostFocus="OnTextBoxLostFocus"/>
 
                     <CheckBox Content="Is Half-Squad" IsChecked="{Binding IsHalfSquad}" Margin="0,0,0,10"/>
 
@@ -131,23 +131,23 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Margin="0,0,20,0">
                             <Label Content="Firepower" FontWeight="SemiBold"/>
-                            <TextBox Width="50" HorizontalAlignment="Left" Tag="4" Text="{Binding Firepower, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBox Width="50" HorizontalAlignment="Left" Tag="4" Text="{Binding Firepower, ValidatesOnNotifyDataErrors=True}" LostFocus="OnTextBoxLostFocus"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Margin="0,0,20,0">
                             <Label Content="Range" FontWeight="SemiBold"/>
-                            <TextBox Width="50" HorizontalAlignment="Left" Tag="6" Text="{Binding Range, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBox Width="50" HorizontalAlignment="Left" Tag="6" Text="{Binding Range, ValidatesOnNotifyDataErrors=True}" LostFocus="OnTextBoxLostFocus"/>
                         </StackPanel>
                         <StackPanel Grid.Column="2">
                             <Label Content="Morale" FontWeight="SemiBold"/>
-                            <TextBox Width="50" HorizontalAlignment="Left" Tag="7" Text="{Binding Morale, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBox Width="50" HorizontalAlignment="Left" Tag="7" Text="{Binding Morale, ValidatesOnNotifyDataErrors=True}" LostFocus="OnTextBoxLostFocus"/>
                         </StackPanel>
                     </Grid>
 
                     <StackPanel Orientation="Horizontal" Margin="0,10">
-                        <CheckBox Content="Assault Fire" IsChecked="{Binding HasAssaultFire}" VerticalAlignment="Center" Margin="0,0,20,0"/>
-                        <CheckBox Content="Spraying Fire" IsChecked="{Binding HasSprayingFire}" VerticalAlignment="Center" Margin="0,0,20,0"/>
-                        <CheckBox Content="Self Rally" IsChecked="{Binding CanSelfRally}" VerticalAlignment="Center" Margin="0,0,20,0"/>
-                        <CheckBox Content="Smoke Exponent" IsChecked="{Binding HasSmokeExponent}" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        <CheckBox Content="Assault Fire" IsChecked="{Binding HasAssaultFire}" IsEnabled="{Binding CanHaveFullSquadTraits}" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                        <CheckBox Content="Spraying Fire" IsChecked="{Binding HasSprayingFire}" IsEnabled="{Binding CanHaveFullSquadTraits}" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                        <CheckBox Content="Self Rally" IsChecked="{Binding CanSelfRally}" IsEnabled="{Binding CanHaveFullSquadTraits}" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                        <CheckBox Content="Smoke Exponent" IsChecked="{Binding HasSmokeExponent}" IsEnabled="{Binding CanHaveFullSquadTraits}" VerticalAlignment="Center" Margin="0,0,5,0"/>
                         <TextBox Width="50" IsEnabled="{Binding HasSmokeExponent}" 
                                  Text="{Binding SmokePlacementExponent, UpdateSourceTrigger=PropertyChanged}" 
                                  VerticalAlignment="Center">

@@ -82,10 +82,10 @@
                 </Button>
 
                 <Label Content="Scenario Name" FontWeight="SemiBold"/>
-                <TextBox Margin="0,0,0,10" Tag="e.g., FIGHTING WITHDRAWAL" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"/>
+                <TextBox Margin="0,0,0,10" Tag="e.g., FIGHTING WITHDRAWAL" Text="{Binding Name, ValidatesOnNotifyDataErrors=True}"/>
 
                 <Label Content="Reference (e.g., ASL SCENARIO 1)" FontWeight="SemiBold"/>
-                <TextBox Margin="0,0,0,10" Tag="e.g., ASL SCENARIO 1" Text="{Binding Reference, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"/>
+                <TextBox Margin="0,0,0,10" Tag="e.g., ASL SCENARIO 1" Text="{Binding Reference, ValidatesOnNotifyDataErrors=True}"/>
 
                 <Separator Margin="0,10"/>
                 <TextBlock Text="Historical Context" FontSize="18" FontWeight="Bold" Margin="0,10"/>

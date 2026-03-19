@@ -22,11 +22,11 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>
     /// <summary>
     /// Gets or sets the name of the scenario.
     /// </summary>
-    public string Name { get => _name; set { SetProperty(ref _name, value); ClearErrors(nameof(Name)); } }
+    public string Name { get => _name; set { SetProperty(ref _name, value); ValidateName(); } }
     /// <summary>
     /// Gets or sets the reference ID or publication source for the scenario.
     /// </summary>
-    public string Reference { get => _reference; set { SetProperty(ref _reference, value); ClearErrors(nameof(Reference)); } }
+    public string Reference { get => _reference; set { SetProperty(ref _reference, value); ValidateReference(); } }
     /// <summary>
     /// Gets or sets the historical place where the scenario occurred.
     /// </summary>
@@ -62,6 +62,36 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>
         PickImageCommand = new RelayCommand(_ => ExecutePickImage());
     }
 
+    private void ValidateName()
+    {
+        ClearErrors(nameof(Name));
+        if (string.IsNullOrWhiteSpace(Name))
+        {
+            AddError(nameof(Name), "Scenario name is required.");
+            ShowToast("Scenario name is required.");
+        }
+        else if (Items.Any(s => s.Item != EditingItem && s.Item.Name.Equals(Name, StringComparison.OrdinalIgnoreCase)))
+        {
+            AddError(nameof(Name), "A scenario with this name already exists.");
+            ShowToast("Duplicate scenario name found!");
+        }
+    }
+
+    private void ValidateReference()
+    {
+        ClearErrors(nameof(Reference));
+        if (string.IsNullOrWhiteSpace(Reference))
+        {
+            AddError(nameof(Reference), "Reference is required.");
+            ShowToast("Reference is required.");
+        }
+        else if (Items.Any(s => s.Item != EditingItem && s.Item.Reference.Equals(Reference, StringComparison.OrdinalIgnoreCase)))
+        {
+            AddError(nameof(Reference), "A scenario with this reference already exists.");
+            ShowToast("Duplicate scenario reference found!");
+        }
+    }
+
     private void ExecutePickImage()
     {
         var openDialog = new Microsoft.Win32.OpenFileDialog
@@ -79,12 +109,18 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>
     /// <inheritdoc />
     protected override void ResetForm()
     {
-        Name = string.Empty;
-        Reference = string.Empty;
-        Place = string.Empty;
-        Date = string.Empty;
-        DescriptionText = string.Empty;
-        Aftermath = string.Empty;
+        _name = string.Empty;
+        _reference = string.Empty;
+        _place = string.Empty;
+        _date = string.Empty;
+        _descriptionText = string.Empty;
+        _aftermath = string.Empty;
+        OnPropertyChanged(nameof(Name));
+        OnPropertyChanged(nameof(Reference));
+        OnPropertyChanged(nameof(Place));
+        OnPropertyChanged(nameof(Date));
+        OnPropertyChanged(nameof(DescriptionText));
+        OnPropertyChanged(nameof(Aftermath));
         ImagePath = null;
         ClearErrors();
     }
@@ -92,51 +128,27 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>
     /// <inheritdoc />
     protected override void PopulateForm(Scenario item)
     {
-        Name = item.Name;
-        Reference = item.Reference;
+        _name = item.Name;
+        _reference = item.Reference;
+        OnPropertyChanged(nameof(Name));
+        OnPropertyChanged(nameof(Reference));
         ImagePath = item.ImagePath;
         Place = item.Description.Place;
         Date = item.Description.Date;
         DescriptionText = item.Description.DescriptionText;
         Aftermath = item.Description.Aftermath;
+        ClearErrors();
     }
 
     /// <inheritdoc />
     protected override void OnSave(object? parameter)
     {
-        ClearErrors();
-        bool hasValidationError = false;
+        ValidateName();
+        ValidateReference();
 
-        if (string.IsNullOrWhiteSpace(Name))
+        if (HasErrors)
         {
-            AddError(nameof(Name), "Name is required.");
-            hasValidationError = true;
-        }
-
-        if (string.IsNullOrWhiteSpace(Reference))
-        {
-            AddError(nameof(Reference), "Reference is required.");
-            hasValidationError = true;
-        }
-
-        if (hasValidationError)
-        {
-            ShowToast("Please fill in all required fields.");
-            return;
-        }
-
-        // Only check for duplicates if we aren't editing the item itself
-        if (Items.Any(s => s.Item != EditingItem && (s.Item.Name.Equals(Name, StringComparison.OrdinalIgnoreCase))))
-        {
-            AddError(nameof(Name), "A scenario with this name already exists.");
-            ShowToast("Duplicate scenario name found!");
-            return;
-        }
-
-        if (Items.Any(s => s.Item != EditingItem && (s.Item.Reference.Equals(Reference, StringComparison.OrdinalIgnoreCase))))
-        {
-            AddError(nameof(Reference), "A scenario with this reference already exists.");
-            ShowToast("Duplicate scenario reference found!");
+            ShowToast("Please fix the validation errors.");
             return;
         }
 

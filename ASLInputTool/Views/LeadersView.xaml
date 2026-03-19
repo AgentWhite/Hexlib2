@@ -102,8 +102,7 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="1">
-                    <Label Content="Leader Name" FontWeight="SemiBold"/>
-                    <TextBox Margin="0,0,0,10" Tag="e.g., Sgt. Steiner" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBox Margin="0,0,0,10" Tag="e.g., Sgt. Steiner" Text="{Binding Name, ValidatesOnNotifyDataErrors=True}" LostFocus="OnTextBoxLostFocus"/>
 
                     <Label Content="Nationality" FontWeight="SemiBold"/>
                     <ComboBox Margin="0,0,0,10" Padding="5"
@@ -117,11 +116,11 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Margin="0,0,20,0">
                             <Label Content="Morale" FontWeight="SemiBold"/>
-                            <TextBox Width="50" HorizontalAlignment="Left" Tag="9" Text="{Binding Morale, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBox Width="50" HorizontalAlignment="Left" Tag="9" Text="{Binding Morale, ValidatesOnNotifyDataErrors=True}" LostFocus="OnTextBoxLostFocus"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1">
                             <Label Content="Leadership" FontWeight="SemiBold"/>
-                            <TextBox Width="50" HorizontalAlignment="Left" Tag="0" Text="{Binding Leadership, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBox Width="50" HorizontalAlignment="Left" Tag="0" Text="{Binding Leadership, ValidatesOnNotifyDataErrors=True}" LostFocus="OnTextBoxLostFocus"/>
                         </StackPanel>
                     </Grid>
 

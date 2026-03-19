@@ -22,23 +22,33 @@ public class HeroesViewModel : CrudViewModelBase<Hero>
     /// <summary>
     /// Gets or sets the name of the hero.
     /// </summary>
-    public string Name { get => _name; set => SetProperty(ref _name, value); }
+    public string Name { get => _name; set { SetProperty(ref _name, value); ValidateName(); } }
     /// <summary>
     /// Gets or sets the firepower rating of the hero.
     /// </summary>
-    public string Firepower { get => _firepower; set => SetProperty(ref _firepower, value); }
+    public string Firepower { get => _firepower; set { SetProperty(ref _firepower, value); ValidateFirepower(); } }
     /// <summary>
     /// Gets or sets the range rating of the hero.
     /// </summary>
-    public string Range { get => _range; set => SetProperty(ref _range, value); }
+    public string Range { get => _range; set { SetProperty(ref _range, value); ValidateRange(); } }
     /// <summary>
     /// Gets or sets the morale rating of the hero.
     /// </summary>
-    public string Morale { get => _morale; set => SetProperty(ref _morale, value); }
+    public string Morale { get => _morale; set { SetProperty(ref _morale, value); ValidateMorale(); } }
     /// <summary>
     /// Gets or sets the selected nationality of the hero.
     /// </summary>
-    public Nationality SelectedNationality { get => _selectedNationality; set => SetProperty(ref _selectedNationality, value); }
+    public Nationality SelectedNationality 
+    { 
+        get => _selectedNationality; 
+        set 
+        { 
+            if (SetProperty(ref _selectedNationality, value))
+            {
+                ValidateName();
+            }
+        } 
+    }
     /// <summary>
     /// Gets or sets the path to the front image of the hero.
     /// </summary>
@@ -73,6 +83,68 @@ public class HeroesViewModel : CrudViewModelBase<Hero>
         PickBackImageCommand = new RelayCommand(_ => ExecutePickImage(false));
     }
 
+    private void ValidateName()
+    {
+        ClearErrors(nameof(Name));
+        if (string.IsNullOrWhiteSpace(Name))
+        {
+            AddError(nameof(Name), "Hero name is required.");
+            ShowToast("Hero name is required.");
+        }
+        else if (Items.Any(i => i.Item != EditingItem && 
+                               i.Item.Name.Equals(Name, StringComparison.OrdinalIgnoreCase) && 
+                               i.Item.Nationality == SelectedNationality))
+        {
+            AddError(nameof(Name), "A hero with this name already exists for this nationality.");
+            ShowToast("Duplicate hero name!");
+        }
+    }
+
+    private void ValidateFirepower()
+    {
+        ClearErrors(nameof(Firepower));
+        if (string.IsNullOrWhiteSpace(Firepower))
+        {
+            AddError(nameof(Firepower), "Firepower is required.");
+            ShowToast("Firepower is required.");
+        }
+        else if (!int.TryParse(Firepower, out int f) || f <= 0)
+        {
+            AddError(nameof(Firepower), "Firepower must be a positive number.");
+            ShowToast("Firepower must be a positive number.");
+        }
+    }
+
+    private void ValidateRange()
+    {
+        ClearErrors(nameof(Range));
+        if (string.IsNullOrWhiteSpace(Range))
+        {
+            AddError(nameof(Range), "Range is required.");
+            ShowToast("Range is required.");
+        }
+        else if (!int.TryParse(Range, out int r) || r <= 0)
+        {
+            AddError(nameof(Range), "Range must be a positive number.");
+            ShowToast("Range must be a positive number.");
+        }
+    }
+
+    private void ValidateMorale()
+    {
+        ClearErrors(nameof(Morale));
+        if (string.IsNullOrWhiteSpace(Morale))
+        {
+            AddError(nameof(Morale), "Morale is required.");
+            ShowToast("Morale is required.");
+        }
+        else if (!int.TryParse(Morale, out int m) || m <= 0)
+        {
+            AddError(nameof(Morale), "Morale must be a positive number.");
+            ShowToast("Morale must be a positive number.");
+        }
+    }
+
     private void ExecutePickImage(bool front)
     {
         var openDialog = new Microsoft.Win32.OpenFileDialog
@@ -91,10 +163,15 @@ public class HeroesViewModel : CrudViewModelBase<Hero>
     /// <inheritdoc />
     protected override void ResetForm()
     {
-        Name = string.Empty;
-        Firepower = string.Empty;
-        Range = string.Empty;
-        Morale = string.Empty;
+        ClearErrors();
+        _name = string.Empty;
+        _firepower = string.Empty;
+        _range = string.Empty;
+        _morale = string.Empty;
+        OnPropertyChanged(nameof(Name));
+        OnPropertyChanged(nameof(Firepower));
+        OnPropertyChanged(nameof(Range));
+        OnPropertyChanged(nameof(Morale));
         SelectedNationality = Nationality.German;
         ImagePathFront = null;
         ImagePathBack = null;
@@ -103,10 +180,15 @@ public class HeroesViewModel : CrudViewModelBase<Hero>
     /// <inheritdoc />
     protected override void PopulateForm(Hero item)
     {
-        Name = item.Name;
-        Firepower = item.Firepower.ToString();
-        Range = item.Range.ToString();
-        Morale = item.Morale.ToString();
+        ClearErrors();
+        _name = item.Name;
+        _firepower = item.Firepower.ToString();
+        _range = item.Range.ToString();
+        _morale = item.Morale.ToString();
+        OnPropertyChanged(nameof(Name));
+        OnPropertyChanged(nameof(Firepower));
+        OnPropertyChanged(nameof(Range));
+        OnPropertyChanged(nameof(Morale));
         SelectedNationality = item.Nationality;
         ImagePathFront = item.ImagePathFront;
         ImagePathBack = item.ImagePathBack;
@@ -115,9 +197,20 @@ public class HeroesViewModel : CrudViewModelBase<Hero>
     /// <inheritdoc />
     protected override void OnSave(object? parameter)
     {
-        int fp = int.TryParse(Firepower, out int f) ? f : 1;
-        int range = int.TryParse(Range, out int r) ? r : 4;
-        int morale = int.TryParse(Morale, out int m) ? m : 9;
+        ValidateName();
+        ValidateFirepower();
+        ValidateRange();
+        ValidateMorale();
+
+        if (HasErrors)
+        {
+            ShowToast("Please fix the validation errors.");
+            return;
+        }
+
+        int fp = int.Parse(Firepower);
+        int range = int.Parse(Range);
+        int morale = int.Parse(Morale);
 
         var hero = new Hero(Name, fp, range, morale, SelectedNationality)
         {

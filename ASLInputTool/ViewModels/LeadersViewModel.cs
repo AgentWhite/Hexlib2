@@ -21,19 +21,29 @@ public class LeadersViewModel : CrudViewModelBase<Leader>
     /// <summary>
     /// Gets or sets the name of the leader.
     /// </summary>
-    public string Name { get => _name; set => SetProperty(ref _name, value); }
+    public string Name { get => _name; set { SetProperty(ref _name, value); ValidateName(); } }
     /// <summary>
     /// Gets or sets the morale rating of the leader.
     /// </summary>
-    public string Morale { get => _morale; set => SetProperty(ref _morale, value); }
+    public string Morale { get => _morale; set { SetProperty(ref _morale, value); ValidateMorale(); } }
     /// <summary>
     /// Gets or sets the leadership modifier string (e.g., "-1", "0").
     /// </summary>
-    public string Leadership { get => _leadership; set => SetProperty(ref _leadership, value); }
+    public string Leadership { get => _leadership; set { SetProperty(ref _leadership, value); ValidateLeadership(); } }
     /// <summary>
     /// Gets or sets the selected nationality of the leader.
     /// </summary>
-    public Nationality SelectedNationality { get => _selectedNationality; set => SetProperty(ref _selectedNationality, value); }
+    public Nationality SelectedNationality 
+    { 
+        get => _selectedNationality; 
+        set 
+        { 
+            if (SetProperty(ref _selectedNationality, value))
+            {
+                ValidateName();
+            }
+        } 
+    }
     /// <summary>
     /// Gets or sets the path to the front image of the leader.
     /// </summary>
@@ -68,6 +78,53 @@ public class LeadersViewModel : CrudViewModelBase<Leader>
         PickBackImageCommand = new RelayCommand(_ => ExecutePickImage(false));
     }
 
+    private void ValidateName()
+    {
+        ClearErrors(nameof(Name));
+        if (string.IsNullOrWhiteSpace(Name))
+        {
+            AddError(nameof(Name), "Leader name is required.");
+            ShowToast("Leader name is required.");
+        }
+        else if (Items.Any(i => i.Item != EditingItem && 
+                               i.Item.Name.Equals(Name, StringComparison.OrdinalIgnoreCase) && 
+                               i.Item.Nationality == SelectedNationality))
+        {
+            AddError(nameof(Name), "A leader with this name already exists for this nationality.");
+            ShowToast("Duplicate leader name!");
+        }
+    }
+
+    private void ValidateMorale()
+    {
+        ClearErrors(nameof(Morale));
+        if (string.IsNullOrWhiteSpace(Morale))
+        {
+            AddError(nameof(Morale), "Morale is required.");
+            ShowToast("Morale is required.");
+        }
+        else if (!int.TryParse(Morale, out int m) || m <= 0)
+        {
+            AddError(nameof(Morale), "Morale must be a positive number.");
+            ShowToast("Morale must be a positive number.");
+        }
+    }
+
+    private void ValidateLeadership()
+    {
+        ClearErrors(nameof(Leadership));
+        if (string.IsNullOrWhiteSpace(Leadership))
+        {
+            AddError(nameof(Leadership), "Leadership is required.");
+            ShowToast("Leadership is required.");
+        }
+        else if (!int.TryParse(Leadership, out _))
+        {
+            AddError(nameof(Leadership), "Leadership must be a number.");
+            ShowToast("Leadership must be a number.");
+        }
+    }
+
     private void ExecutePickImage(bool front)
     {
         var openDialog = new Microsoft.Win32.OpenFileDialog
@@ -86,9 +143,13 @@ public class LeadersViewModel : CrudViewModelBase<Leader>
     /// <inheritdoc />
     protected override void ResetForm()
     {
-        Name = string.Empty;
-        Morale = string.Empty;
-        Leadership = string.Empty;
+        ClearErrors();
+        _name = string.Empty;
+        _morale = string.Empty;
+        _leadership = string.Empty;
+        OnPropertyChanged(nameof(Name));
+        OnPropertyChanged(nameof(Morale));
+        OnPropertyChanged(nameof(Leadership));
         SelectedNationality = Nationality.German;
         ImagePathFront = null;
         ImagePathBack = null;
@@ -97,9 +158,13 @@ public class LeadersViewModel : CrudViewModelBase<Leader>
     /// <inheritdoc />
     protected override void PopulateForm(Leader item)
     {
-        Name = item.Name;
-        Morale = item.Morale.ToString();
-        Leadership = item.Leadership.ToString();
+        ClearErrors();
+        _name = item.Name;
+        _morale = item.Morale.ToString();
+        _leadership = item.Leadership.ToString();
+        OnPropertyChanged(nameof(Name));
+        OnPropertyChanged(nameof(Morale));
+        OnPropertyChanged(nameof(Leadership));
         SelectedNationality = item.Nationality;
         ImagePathFront = item.ImagePathFront;
         ImagePathBack = item.ImagePathBack;
@@ -108,8 +173,18 @@ public class LeadersViewModel : CrudViewModelBase<Leader>
     /// <inheritdoc />
     protected override void OnSave(object? parameter)
     {
-        int morale = int.TryParse(Morale, out int m) ? m : 7;
-        int leadership = int.TryParse(Leadership, out int l) ? l : 0;
+        ValidateName();
+        ValidateMorale();
+        ValidateLeadership();
+
+        if (HasErrors)
+        {
+            ShowToast("Please fix the validation errors.");
+            return;
+        }
+
+        int morale = int.Parse(Morale);
+        int leadership = int.Parse(Leadership);
 
         var leader = new Leader(Name, morale, leadership, SelectedNationality)
         {
