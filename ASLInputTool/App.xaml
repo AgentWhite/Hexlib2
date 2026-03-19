@@ -63,6 +63,9 @@
             <DataTemplate DataType="{x:Type vm:ScenariosViewModel}">
                 <v:ScenariosView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:ModulesViewModel}">
+                <v:ModulesView />
+            </DataTemplate>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

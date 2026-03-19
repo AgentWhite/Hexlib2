@@ -17,4 +17,9 @@ public class ASLProject
     /// Gets or sets the list of scenarios in the project.
     /// </summary>
     public List<Scenario> Scenarios { get; set; } = new();
+
+    /// <summary>
+    /// Gets or sets the list of game modules in the project.
+    /// </summary>
+    public List<AslModule> Modules { get; set; } = new();
 }

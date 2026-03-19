@@ -126,14 +126,14 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>
         }
 
         // Only check for duplicates if we aren't editing the item itself
-        if (Items.Any(s => s != EditingItem && (s.Name.Equals(Name, StringComparison.OrdinalIgnoreCase))))
+        if (Items.Any(s => s.Item != EditingItem && (s.Item.Name.Equals(Name, StringComparison.OrdinalIgnoreCase))))
         {
             AddError(nameof(Name), "A scenario with this name already exists.");
             ShowToast("Duplicate scenario name found!");
             return;
         }
 
-        if (Items.Any(s => s != EditingItem && (s.Reference.Equals(Reference, StringComparison.OrdinalIgnoreCase))))
+        if (Items.Any(s => s.Item != EditingItem && (s.Item.Reference.Equals(Reference, StringComparison.OrdinalIgnoreCase))))
         {
             AddError(nameof(Reference), "A scenario with this reference already exists.");
             ShowToast("Duplicate scenario reference found!");
@@ -150,12 +150,16 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>
 
         if (EditingItem != null)
         {
-            int index = Items.IndexOf(EditingItem);
-            if (index >= 0) Items[index] = scenario;
+            var wrapper = Items.FirstOrDefault(i => i.Item == EditingItem);
+            if (wrapper != null)
+            {
+                int index = Items.IndexOf(wrapper);
+                if (index >= 0) Items[index] = new SelectableItem<Scenario>(scenario, NotifySelectionChanged);
+            }
         }
         else
         {
-            Items.Add(scenario);
+            Items.Add(new SelectableItem<Scenario>(scenario, NotifySelectionChanged));
         }
 
         IsAdding = false;

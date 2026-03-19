@@ -119,12 +119,16 @@ public class LeadersViewModel : CrudViewModelBase<Leader>
 
         if (EditingItem != null)
         {
-            int index = Items.IndexOf(EditingItem);
-            if (index >= 0) Items[index] = leader;
+            var wrapper = Items.FirstOrDefault(i => i.Item == EditingItem);
+            if (wrapper != null)
+            {
+                int index = Items.IndexOf(wrapper);
+                if (index >= 0) Items[index] = new SelectableItem<Leader>(leader, NotifySelectionChanged);
+            }
         }
         else
         {
-            Items.Add(leader);
+            Items.Add(new SelectableItem<Leader>(leader, NotifySelectionChanged));
         }
         
         IsAdding = false;

@@ -147,4 +147,39 @@ public class PersistenceTests
         // Cleanup
         Directory.Delete(_testDataDir, true);
     }
+    
+    [Fact]
+    public void CanSerializeFullProject()
+    {
+        // Setup - mirroring the user's scenario
+        var manager = new ASLSaveManager(new FileStorageAdapter(Path.GetTempPath()));
+        var project = new ASLProject
+        {
+            Counters = new List<BaseASLCounter>
+            {
+                new Squad("1st Squad", 4, 6, 7, UnitClass.FirstLine, Nationality.German),
+                new Leader("Sgt. Steiner", 9, 2, Nationality.German),
+                new Hero("Hero", 1, 4, 9, Nationality.German),
+                new HalfSquad("HS", 2, 6, 7, UnitClass.FirstLine, Nationality.German)
+            },
+            Scenarios = new List<Scenario>
+            {
+                new Scenario { Name = "S1", Reference = "REF1" }
+            }
+        };
+
+        // Act
+        string json = manager.SerializeProject(project);
+        var loaded = manager.DeserializeProject(json);
+
+        // Assert
+        Assert.NotNull(loaded);
+        Assert.Equal(4, loaded!.Counters.Count);
+        Assert.Single(loaded.Scenarios);
+        
+        Assert.IsType<Squad>(loaded.Counters[0]);
+        Assert.IsType<Leader>(loaded.Counters[1]);
+        Assert.IsType<Hero>(loaded.Counters[2]);
+        Assert.IsType<HalfSquad>(loaded.Counters[3]);
+    }
 }

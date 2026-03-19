@@ -1,0 +1,121 @@
+<UserControl x:Class="ASLInputTool.Views.ModulesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Style TargetType="Button">
+            <Setter Property="BorderBrush" Value="{StaticResource ControlBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+        </Style>
+    </UserControl.Resources>
+    
+    <Grid Margin="20" Background="{StaticResource WindowBackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="0,0,0,20">
+            <TextBlock Text="Modules" FontSize="24" FontWeight="Bold" VerticalAlignment="Center"/>
+            <Button Content="Add Module" Command="{Binding AddCommand}" 
+                    Visibility="{Binding IsAdding, Converter={StaticResource InverseBoolToVis}}"
+                    Margin="20,0,0,0" Padding="15,5" Background="{StaticResource ControlBorderBrush}" Foreground="White" FontWeight="Bold"/>
+            <Button Content="Delete Selected" Command="{Binding DeleteSelectedCommand}"
+                    Visibility="{Binding HasSelectedItems, Converter={StaticResource BoolToVis}}"
+                    Margin="10,0,0,0" Padding="15,5" Background="{StaticResource ValidationErrorBrush}" Foreground="White" FontWeight="Bold"/>
+            <Button Content="Back to List" Command="{Binding CancelCommand}" 
+                    Visibility="{Binding IsAdding, Converter={StaticResource BoolToVis}}"
+                    Margin="20,0,0,0" Padding="15,5"/>
+        </StackPanel>
+
+        <!-- List View -->
+        <Grid Grid.Row="1" Visibility="{Binding IsAdding, Converter={StaticResource InverseBoolToVis}}">
+            <DataGrid ItemsSource="{Binding Items}" AutoGenerateColumns="False" IsReadOnly="False" Background="{StaticResource WindowBackgroundBrush}">
+                <DataGrid.InputBindings>
+                    <MouseBinding MouseAction="LeftDoubleClick" 
+                                  Command="{Binding EditCommand}" 
+                                  CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                </DataGrid.InputBindings>
+                <DataGrid.Columns>
+                    <DataGridCheckBoxColumn Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" Width="30" IsReadOnly="False" />
+                    <DataGridTextColumn Header="Full Name" Binding="{Binding Item.FullName}" Width="*" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Type" Binding="{Binding Item.Module}" Width="150" IsReadOnly="True" />
+                    <DataGridCheckBoxColumn Header="Finished" Binding="{Binding Item.IsFinished}" Width="80" IsReadOnly="True" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+
+        <!-- Form View -->
+        <ScrollViewer Grid.Row="1" Padding="10" Visibility="{Binding IsAdding, Converter={StaticResource BoolToVis}}" Background="{StaticResource WindowBackgroundBrush}">
+            <StackPanel>
+                <Grid Margin="0,0,0,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    
+                    <!-- Front Image -->
+                    <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                        <Label Content="Front Box Image" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                        <Button Command="{Binding PickFrontImageCommand}" Width="200" Height="250">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="2" Background="White">
+                                        <Grid>
+                                            <Image Source="{Binding FrontImage, Converter={StaticResource ImageSource}}" Stretch="Uniform"/>
+                                            <TextBlock Text="Add Front Image" Visibility="{Binding FrontImage, Converter={StaticResource NullToVis}}" 
+                                                       VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Gray"/>
+                                        </Grid>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </StackPanel>
+
+                    <!-- Back Image -->
+                    <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                        <Label Content="Back Box Image" HorizontalAlignment="Center" FontWeight="SemiBold"/>
+                        <Button Command="{Binding PickBackImageCommand}" Width="200" Height="250">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="2" Background="White">
+                                        <Grid>
+                                            <Image Source="{Binding BackImage, Converter={StaticResource ImageSource}}" Stretch="Uniform"/>
+                                            <TextBlock Text="Add Back Image" Visibility="{Binding BackImage, Converter={StaticResource NullToVis}}" 
+                                                       VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Gray"/>
+                                        </Grid>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+
+                <Label Content="Full Module Name" FontWeight="SemiBold"/>
+                <TextBox Margin="0,0,0,10" Tag="e.g., Beyond Valor (3rd Edition)" Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True}"/>
+
+                <Label Content="Module Identity (Type)" FontWeight="SemiBold"/>
+                <ComboBox Margin="0,0,0,10" ItemsSource="{Binding AvailableModuleTypes}" SelectedItem="{Binding ModuleType}" Padding="5"/>
+
+                <CheckBox Content="Module implementation is finished" IsChecked="{Binding IsFinished}" Margin="0,10" FontWeight="SemiBold"/>
+
+                <Label Content="Description" FontWeight="SemiBold"/>
+                <TextBox Margin="0,0,0,20" Height="150" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" 
+                         Tag="e.g., Contains Germans and Russians..."
+                         Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <Button Content="Save Module" Command="{Binding SaveCommand}" HorizontalAlignment="Right" Padding="20,10" Background="{StaticResource AccentBrush}" Foreground="White" FontWeight="Bold"/>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Toast Notification -->
+        <Border Grid.Row="1" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,40"
+                Background="#CC333333" CornerRadius="10" Padding="20,10"
+                Visibility="{Binding IsToastVisible, Converter={StaticResource BoolToVis}}">
+            <TextBlock Text="{Binding ToastMessage}" Foreground="White" FontSize="14" FontWeight="SemiBold"/>
+        </Border>
+    </Grid>
+</UserControl>

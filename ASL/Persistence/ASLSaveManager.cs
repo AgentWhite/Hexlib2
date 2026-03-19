@@ -97,6 +97,15 @@ public class ASLSaveManager
             scenario.ImagePath = ProcessImage(scenario.ImagePath!, imagesDir);
         }
 
+        foreach (var module in project.Modules)
+        {
+            if (!string.IsNullOrEmpty(module.FrontImage))
+                module.FrontImage = ProcessImage(module.FrontImage!, imagesDir);
+            
+            if (!string.IsNullOrEmpty(module.BackImage))
+                module.BackImage = ProcessImage(module.BackImage!, imagesDir);
+        }
+
         return project;
     }
 

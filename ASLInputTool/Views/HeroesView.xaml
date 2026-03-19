@@ -31,6 +31,9 @@
             <Button Content="Add Hero" Command="{Binding AddCommand}" 
                     Visibility="{Binding IsAdding, Converter={StaticResource InverseBoolToVis}}"
                     Margin="20,0,0,0" Padding="15,5" Background="{StaticResource ControlBorderBrush}" Foreground="White" FontWeight="Bold"/>
+            <Button Content="Delete Selected" Command="{Binding DeleteSelectedCommand}"
+                    Visibility="{Binding HasSelectedItems, Converter={StaticResource BoolToVis}}"
+                    Margin="10,0,0,0" Padding="15,5" Background="{StaticResource ValidationErrorBrush}" Foreground="White" FontWeight="Bold"/>
             <Button Content="Back to List" Command="{Binding CancelCommand}" 
                     Visibility="{Binding IsAdding, Converter={StaticResource BoolToVis}}"
                     Margin="20,0,0,0" Padding="15,5"/>
@@ -38,16 +41,17 @@
 
         <!-- List View -->
         <Grid Grid.Row="1" Visibility="{Binding IsAdding, Converter={StaticResource InverseBoolToVis}}">
-            <DataGrid ItemsSource="{Binding Items}" AutoGenerateColumns="False" IsReadOnly="True" Background="{StaticResource WindowBackgroundBrush}">
+            <DataGrid ItemsSource="{Binding Items}" AutoGenerateColumns="False" IsReadOnly="False" Background="{StaticResource WindowBackgroundBrush}">
                 <DataGrid.InputBindings>
                     <MouseBinding MouseAction="LeftDoubleClick" 
                                   Command="{Binding EditCommand}" 
                                   CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
                 </DataGrid.InputBindings>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" />
-                    <DataGridTextColumn Header="Nationality" Binding="{Binding Nationality}" Width="120" />
-                    <DataGridTextColumn Header="Stats" Binding="{Binding ., Converter={StaticResource CounterStats}}" Width="100" />
+                    <DataGridCheckBoxColumn Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" Width="30" IsReadOnly="False" />
+                    <DataGridTextColumn Header="Name" Binding="{Binding Item.Name}" Width="*" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Nationality" Binding="{Binding Item.Nationality}" Width="120" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Stats" Binding="{Binding Item, Converter={StaticResource CounterStats}}" Width="100" IsReadOnly="True" />
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>

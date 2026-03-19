@@ -202,12 +202,16 @@ public class SquadsViewModel : CrudViewModelBase<MultiManCounter>
 
         if (EditingItem != null)
         {
-            int index = Items.IndexOf(EditingItem);
-            if (index >= 0) Items[index] = counter;
+            var wrapper = Items.FirstOrDefault(i => i.Item == EditingItem);
+            if (wrapper != null)
+            {
+                int index = Items.IndexOf(wrapper);
+                if (index >= 0) Items[index] = new SelectableItem<MultiManCounter>(counter, NotifySelectionChanged);
+            }
         }
         else
         {
-            Items.Add(counter);
+            Items.Add(new SelectableItem<MultiManCounter>(counter, NotifySelectionChanged));
         }
         
         IsAdding = false;

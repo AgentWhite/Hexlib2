@@ -1,5 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using System.Linq;
+using System.Windows;
 
 namespace ASLInputTool.ViewModels;
 
@@ -20,21 +22,29 @@ public abstract class CrudViewModelBase<T> : ViewModelBase
         CancelCommand = new RelayCommand(_ => { EditingItem = default; IsAdding = false; });
         SaveCommand = new RelayCommand(p => OnSave(p));
         EditCommand = new RelayCommand(p => ExecuteEdit(p));
+        DeleteSelectedCommand = new RelayCommand(_ => OnDeleteSelected());
+        
+        Items.CollectionChanged += (s, e) => OnPropertyChanged(nameof(HasSelectedItems));
     }
 
     /// <summary>
-    /// Gets the collection of items.
+    /// Gets the collection of items wrapped for selection.
     /// </summary>
-    public ObservableCollection<T> Items { get; } = new();
+    public ObservableCollection<SelectableItem<T>> Items { get; } = new();
 
     /// <summary>
     /// Gets or sets a value indicating whether the "Add" form is currently visible.
     /// </summary>
-    public bool IsAdding
+    public virtual bool IsAdding
     {
         get => _isAdding;
         set { SetProperty(ref _isAdding, value); if (!value) ClearErrors(); }
     }
+
+    /// <summary>
+    /// Gets a value indicating whether any items are currently selected.
+    /// </summary>
+    public bool HasSelectedItems => Items.Any(i => i.IsSelected);
 
     /// <summary>
     /// Gets or sets the message to display in the UI toast notification.
@@ -66,17 +76,46 @@ public abstract class CrudViewModelBase<T> : ViewModelBase
     /// </summary>
     public RelayCommand EditCommand { get; }
 
+    /// <summary>
+    /// Command to delete selected items.
+    /// </summary>
+    public RelayCommand DeleteSelectedCommand { get; }
+
     protected T? EditingItem { get; set; }
 
     private void ExecuteEdit(object? parameter)
     {
-        if (parameter is T item)
+        if (parameter is SelectableItem<T> wrapper)
         {
-            EditingItem = item;
-            PopulateForm(item);
+            EditingItem = wrapper.Item;
+            PopulateForm(wrapper.Item);
             IsAdding = true;
         }
     }
+
+    private void OnDeleteSelected()
+    {
+        var selected = Items.Where(i => i.IsSelected).ToList();
+        if (!selected.Any()) return;
+
+        string itemType = typeof(T).Name;
+        string message = $"Do you really want to delete {selected.Count} {itemType}{(selected.Count > 1 ? "s" : "")}?";
+        
+        var result = MessageBox.Show(message, "Confirm Deletion", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+        if (result == MessageBoxResult.Yes)
+        {
+            foreach (var wrapper in selected)
+            {
+                Items.Remove(wrapper);
+            }
+            OnPropertyChanged(nameof(HasSelectedItems));
+        }
+    }
+
+    /// <summary>
+    /// Utility to update selection state notification.
+    /// </summary>
+    public void NotifySelectionChanged() => OnPropertyChanged(nameof(HasSelectedItems));
 
     /// <summary>
     /// Resets the entry form to its default state.

@@ -127,12 +127,16 @@ public class HeroesViewModel : CrudViewModelBase<Hero>
 
         if (EditingItem != null)
         {
-            int index = Items.IndexOf(EditingItem);
-            if (index >= 0) Items[index] = hero;
+            var wrapper = Items.FirstOrDefault(i => i.Item == EditingItem);
+            if (wrapper != null)
+            {
+                int index = Items.IndexOf(wrapper);
+                if (index >= 0) Items[index] = new SelectableItem<Hero>(hero, NotifySelectionChanged);
+            }
         }
         else
         {
-            Items.Add(hero);
+            Items.Add(new SelectableItem<Hero>(hero, NotifySelectionChanged));
         }
         
         IsAdding = false;

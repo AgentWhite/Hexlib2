@@ -72,16 +72,16 @@ public class MainViewModel : ViewModelBase
         {
             try
             {
-                var allCounters = new List<BaseASLCounter>();
-                allCounters.AddRange(_locator.Get<LeadersViewModel>().Items);
-                allCounters.AddRange(_locator.Get<HeroesViewModel>().Items);
-                allCounters.AddRange(_locator.Get<SquadsViewModel>().Items);
-
                 var sourceProject = new ASLProject
                 {
-                    Counters = allCounters,
-                    Scenarios = _locator.Get<ScenariosViewModel>().Items.ToList()
+                    Counters = new List<BaseASLCounter>(),
+                    Scenarios = _locator.Get<ScenariosViewModel>().Items.Select(i => i.Item).ToList(),
+                    Modules = _locator.Get<ModulesViewModel>().Items.Select(i => i.Item).ToList()
                 };
+
+                sourceProject.Counters.AddRange(_locator.Get<LeadersViewModel>().Items.Select(i => (BaseASLCounter)i.Item));
+                sourceProject.Counters.AddRange(_locator.Get<HeroesViewModel>().Items.Select(i => (BaseASLCounter)i.Item));
+                sourceProject.Counters.AddRange(_locator.Get<SquadsViewModel>().Items.Select(i => (BaseASLCounter)i.Item));
 
                 // Process images and get a version of the project with relative GUID-based paths
                 var projectToSave = _saveManager.PrepareProjectForSaving(sourceProject, saveDialog.FileName);
@@ -136,6 +136,15 @@ public class MainViewModel : ViewModelBase
                             s.ImagePath = Path.GetFullPath(Path.Combine(projectDir, s.ImagePath!));
                     }
 
+                    foreach (var m in project.Modules)
+                    {
+                        if (!string.IsNullOrEmpty(m.FrontImage) && !Path.IsPathRooted(m.FrontImage))
+                            m.FrontImage = Path.GetFullPath(Path.Combine(projectDir, m.FrontImage!));
+                        
+                        if (!string.IsNullOrEmpty(m.BackImage) && !Path.IsPathRooted(m.BackImage))
+                            m.BackImage = Path.GetFullPath(Path.Combine(projectDir, m.BackImage!));
+                    }
+
                     // Clear and distribute counters
                     leadersVm.Items.Clear();
                     heroesVm.Items.Clear();
@@ -145,14 +154,18 @@ public class MainViewModel : ViewModelBase
                     {
                         switch (counter)
                         {
-                            case Leader l: leadersVm.Items.Add(l); break;
-                            case Hero h: heroesVm.Items.Add(h); break;
-                            case MultiManCounter m: squadsVm.Items.Add(m); break;
+                            case Leader l: leadersVm.Items.Add(new SelectableItem<Leader>(l, leadersVm.NotifySelectionChanged)); break;
+                            case Hero h: heroesVm.Items.Add(new SelectableItem<Hero>(h, heroesVm.NotifySelectionChanged)); break;
+                            case MultiManCounter m: squadsVm.Items.Add(new SelectableItem<MultiManCounter>(m, squadsVm.NotifySelectionChanged)); break;
                         }
                     }
 
                     scenariosVm.Items.Clear();
-                    foreach (var s in project.Scenarios) scenariosVm.Items.Add(s);
+                    foreach (var s in project.Scenarios) scenariosVm.Items.Add(new SelectableItem<Scenario>(s, scenariosVm.NotifySelectionChanged));
+
+                    var modulesVm = _locator.Get<ModulesViewModel>();
+                    modulesVm.Items.Clear();
+                    foreach (var m in project.Modules) modulesVm.Items.Add(new SelectableItem<AslModule>(m, modulesVm.NotifySelectionChanged));
                 }
             }
             catch (Exception ex)

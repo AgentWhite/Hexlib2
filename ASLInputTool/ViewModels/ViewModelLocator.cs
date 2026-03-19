@@ -20,6 +20,7 @@ public class ViewModelLocator
         Register<HeroesViewModel>(new HeroesViewModel());
         Register<SquadsViewModel>(new SquadsViewModel());
         Register<ScenariosViewModel>(new ScenariosViewModel());
+        Register<ModulesViewModel>(new ModulesViewModel());
     }
 
     /// <summary>
