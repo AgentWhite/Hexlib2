@@ -146,8 +146,11 @@ public class SquadsViewModel : CrudViewModelBase<Unit>
         { 
             if (SetProperty(ref _hasSmokeExponent, value))
             {
-                if (!value) SmokePlacementExponent = string.Empty;
-                ValidateSmoke();
+                if (!value) 
+                {
+                    SmokePlacementExponent = string.Empty;
+                    ValidateSmoke();
+                }
             }
         } 
     }
@@ -406,8 +409,9 @@ public class SquadsViewModel : CrudViewModelBase<Unit>
         HasSprayingFire = infantry?.HasSprayingFire ?? false;
         CanSelfRally = infantry?.CanSelfRally ?? false;
         HasELR = infantry?.HasELR ?? false;
-        HasSmokeExponent = infantry?.SmokePlacementExponent.HasValue ?? false;
-        SmokePlacementExponent = infantry?.SmokePlacementExponent?.ToString() ?? string.Empty;
+        var smoke = item.GetComponent<SmokeProviderComponent>();
+        HasSmokeExponent = smoke != null;
+        SmokePlacementExponent = smoke?.CapabilityNumber.ToString() ?? string.Empty;
     }
 
     /// <inheritdoc />
@@ -451,9 +455,13 @@ public class SquadsViewModel : CrudViewModelBase<Unit>
             HasAssaultFire = HasAssaultFire,
             HasSprayingFire = HasSprayingFire,
             CanSelfRally = CanSelfRally,
-            HasELR = HasELR,
-            SmokePlacementExponent = HasSmokeExponent ? (int.TryParse(SmokePlacementExponent, out int se) ? se : 0) : null
+            HasELR = HasELR
         });
+
+        if (HasSmokeExponent && int.TryParse(SmokePlacementExponent, out int se))
+        {
+            unit.AddComponent(new SmokeProviderComponent { CapabilityNumber = se, SmokeType = SmokeType.White });
+        }
 
         unit.AddComponent(new FirePowerComponent { Firepower = fpValue, Range = rValue });
         unit.AddComponent(new BPVComponent { BPV = bpvValue });

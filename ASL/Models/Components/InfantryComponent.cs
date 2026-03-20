@@ -28,10 +28,6 @@ public class InfantryComponent : IUnitComponent
     /// </summary>
     public bool HasELR { get; set; }
 
-    /// <summary>
-    /// Gets or sets the smoke placement exponent, or null if the unit cannot place smoke.
-    /// </summary>
-    public int? SmokePlacementExponent { get; set; }
 
     /// <summary>
     /// Gets or sets the scale of the infantry unit (Squad, Half-Squad, Crew, SMC).

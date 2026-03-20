@@ -37,7 +37,8 @@ public class CounterStatsConverter : IValueConverter
             {
                 var fp = unit.FirePower?.Firepower ?? 0;
                 var r = unit.FirePower?.Range ?? 0;
-                var smoke = unit.Infantry?.SmokePlacementExponent.HasValue == true ? "s" + (unit.Infantry.SmokePlacementExponent.Value > 0 ? unit.Infantry.SmokePlacementExponent.Value.ToString() : "") : "";
+                var smokeComp = unit.GetComponent<SmokeProviderComponent>();
+                var smoke = smokeComp != null ? "s" + (smokeComp.CapabilityNumber > 0 ? smokeComp.CapabilityNumber.ToString() : "") : "";
                 var morale = unit.Infantry?.Morale ?? 0;
                 return $"{fp}-{r}-{morale}{smoke}";
             }
