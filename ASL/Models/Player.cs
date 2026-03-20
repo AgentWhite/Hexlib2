@@ -1,4 +1,4 @@
-namespace ASL;
+namespace ASL.Models;
 
 /// <summary>
 /// Represents a participant in an ASL game.
@@ -18,4 +18,11 @@ public class Player
     {
         Name = name;
     }
+
+    /// <summary>
+    /// Gets or sets the scenario side for the player. Null means that
+    /// no side has been picked for this player. 
+    /// </summary>
+    public ScenarioSide? ScenarioSide { get; set; }  
+    
 }

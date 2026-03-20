@@ -14,4 +14,13 @@ public partial class ScenariosView : UserControl
     {
         InitializeComponent();
     }
+
+    private void OnTextBoxLostFocus(object sender, System.Windows.RoutedEventArgs e)
+    {
+        if (sender is TextBox tb)
+        {
+            var binding = tb.GetBindingExpression(TextBox.TextProperty);
+            binding?.UpdateSource();
+        }
+    }
 }

@@ -1,13 +1,15 @@
 using System.Collections.ObjectModel;
 using ASL;
+using ASL.Models;
 using System.Linq;
 using System;
+using System.Collections.Generic;
 
 namespace ASLInputTool.ViewModels;
 
 /// <summary>
 /// ViewModel for the Scenario entry and list view.
-/// Handles historical scenarios including place, date, and description.
+/// Handles historical scenarios including place, date, description, and sides.
 /// </summary>
 public class ScenariosViewModel : CrudViewModelBase<Scenario>
 {
@@ -18,6 +20,18 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>
     private string _descriptionText = string.Empty;
     private string _aftermath = string.Empty;
     private string? _imagePath;
+    private int _turns = 1;
+    private bool _hasHalfTurn;
+
+    // Scenario Side A
+    private string _sideAName = string.Empty;
+    private Side _sideASide = Side.Attacker;
+    private Nationality _sideANationality = Nationality.German;
+
+    // Scenario Side B
+    private string _sideBName = string.Empty;
+    private Side _sideBSide = Side.Defender;
+    private Nationality _sideBNationality = Nationality.Russian;
 
     /// <summary>
     /// Gets or sets the name of the scenario.
@@ -47,6 +61,76 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>
     /// Gets or sets the path to the image representing the scenario (e.g., from the scenario card).
     /// </summary>
     public string? ImagePath { get => _imagePath; set => SetProperty(ref _imagePath, value); }
+
+    /// <summary>
+    /// Gets or sets the number of turns for the scenario.
+    /// </summary>
+    public int Turns { get => _turns; set { SetProperty(ref _turns, value); ValidateTurns(); } }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the final turn is a half-turn.
+    /// </summary>
+    public bool HasHalfTurn { get => _hasHalfTurn; set => SetProperty(ref _hasHalfTurn, value); }
+
+    /// <summary>
+    /// Gets or sets the name for Side A.
+    /// </summary>
+    public string SideAName { get => _sideAName; set { SetProperty(ref _sideAName, value); ValidateSideAName(); } }
+    
+    /// <summary>
+    /// Gets or sets the tactical side for Side A.
+    /// </summary>
+    public Side SideASide
+    {
+        get => _sideASide;
+        set
+        {
+            if (SetProperty(ref _sideASide, value))
+            {
+                SideBSide = value == Side.Attacker ? Side.Defender : Side.Attacker;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the nationality for Side A.
+    /// </summary>
+    public Nationality SideANationality { get => _sideANationality; set => SetProperty(ref _sideANationality, value); }
+
+    /// <summary>
+    /// Gets or sets the name for Side B.
+    /// </summary>
+    public string SideBName { get => _sideBName; set { SetProperty(ref _sideBName, value); ValidateSideBName(); } }
+
+    /// <summary>
+    /// Gets or sets the tactical side for Side B.
+    /// </summary>
+    public Side SideBSide
+    {
+        get => _sideBSide;
+        set
+        {
+            if (SetProperty(ref _sideBSide, value))
+            {
+                SideASide = value == Side.Attacker ? Side.Defender : Side.Attacker;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the nationality for Side B.
+    /// </summary>
+    public Nationality SideBNationality { get => _sideBNationality; set => SetProperty(ref _sideBNationality, value); }
+
+    /// <summary>
+    /// Gets the available sides for selection.
+    /// </summary>
+    public IEnumerable<Side> AvailableSides => Enum.GetValues<Side>();
+
+    /// <summary>
+    /// Gets the available nationalities for selection.
+    /// </summary>
+    public IEnumerable<Nationality> AvailableNationalities => Enum.GetValues<Nationality>();
 
     /// <summary>
     /// Command to pick an image for the scenario.
@@ -92,6 +176,34 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>
         }
     }
 
+    private void ValidateTurns()
+    {
+        ClearErrors(nameof(Turns));
+        if (Turns < 1)
+        {
+            AddError(nameof(Turns), "Number of turns must be at least 1.");
+            ShowToast("Invalid number of turns!");
+        }
+    }
+
+    private void ValidateSideAName()
+    {
+        ClearErrors(nameof(SideAName));
+        if (string.IsNullOrWhiteSpace(SideAName)) AddError(nameof(SideAName), "Side A name is required.");
+    }
+
+    private void ValidateSideBName()
+    {
+        ClearErrors(nameof(SideBName));
+        if (string.IsNullOrWhiteSpace(SideBName)) AddError(nameof(SideBName), "Side B name is required.");
+    }
+
+    private void ValidateSides()
+    {
+        ValidateSideAName();
+        ValidateSideBName();
+    }
+
     private void ExecutePickImage()
     {
         var openDialog = new Microsoft.Win32.OpenFileDialog
@@ -115,12 +227,30 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>
         _date = string.Empty;
         _descriptionText = string.Empty;
         _aftermath = string.Empty;
+        _turns = 1;
+        _hasHalfTurn = false;
+        _sideAName = string.Empty;
+        _sideBName = string.Empty;
+        _sideASide = Side.Attacker;
+        _sideBSide = Side.Defender;
+        _sideANationality = Nationality.German;
+        _sideBNationality = Nationality.Russian;
+
         OnPropertyChanged(nameof(Name));
         OnPropertyChanged(nameof(Reference));
         OnPropertyChanged(nameof(Place));
         OnPropertyChanged(nameof(Date));
         OnPropertyChanged(nameof(DescriptionText));
         OnPropertyChanged(nameof(Aftermath));
+        OnPropertyChanged(nameof(Turns));
+        OnPropertyChanged(nameof(HasHalfTurn));
+        OnPropertyChanged(nameof(SideAName));
+        OnPropertyChanged(nameof(SideASide));
+        OnPropertyChanged(nameof(SideANationality));
+        OnPropertyChanged(nameof(SideBName));
+        OnPropertyChanged(nameof(SideBSide));
+        OnPropertyChanged(nameof(SideBNationality));
+
         ImagePath = null;
         ClearErrors();
     }
@@ -137,15 +267,45 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>
         Date = item.Description.Date;
         DescriptionText = item.Description.DescriptionText;
         Aftermath = item.Description.Aftermath;
+        Turns = item.Turns;
+        HasHalfTurn = item.HasHalfTurn;
+
+        if (item.ScenarioSides.Count >= 2)
+        {
+            _sideAName = item.ScenarioSides[0].Name;
+            _sideASide = item.ScenarioSides[0].Side;
+            _sideANationality = item.ScenarioSides[0].Nationality;
+            _sideBName = item.ScenarioSides[1].Name;
+            _sideBSide = item.ScenarioSides[1].Side;
+            _sideBNationality = item.ScenarioSides[1].Nationality;
+        }
+        else
+        {
+            _sideAName = string.Empty;
+            _sideBName = string.Empty;
+            _sideASide = Side.Attacker;
+            _sideBSide = Side.Defender;
+            _sideANationality = Nationality.German;
+            _sideBNationality = Nationality.Russian;
+        }
+
+        OnPropertyChanged(nameof(SideAName));
+        OnPropertyChanged(nameof(SideASide));
+        OnPropertyChanged(nameof(SideANationality));
+        OnPropertyChanged(nameof(SideBName));
+        OnPropertyChanged(nameof(SideBSide));
+        OnPropertyChanged(nameof(SideBNationality));
+
         ClearErrors();
     }
 
-    /// <inheritdoc />
     /// <inheritdoc />
     protected override void OnSave(object? parameter)
     {
         ValidateName();
         ValidateReference();
+        ValidateSides();
+        ValidateTurns();
 
         if (HasErrors)
         {
@@ -158,7 +318,14 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>
             Name = Name,
             Reference = Reference,
             ImagePath = ImagePath,
-            Description = new ScenarioDescription(Place, Date, DescriptionText, Aftermath)
+            Turns = Turns,
+            HasHalfTurn = HasHalfTurn,
+            Description = new ScenarioDescription(Place, Date, DescriptionText, Aftermath),
+            ScenarioSides = new List<ScenarioSide>
+            {
+                new ScenarioSide { Name = SideAName, Side = SideASide, Nationality = SideANationality },
+                new ScenarioSide { Name = SideBName, Side = SideBSide, Nationality = SideBNationality }
+            }
         };
 
         if (EditingItem != null)

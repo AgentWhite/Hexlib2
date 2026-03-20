@@ -1,3 +1,7 @@
+using ASL.Models;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace ASL;
 
 /// <summary>
@@ -29,4 +33,30 @@ public class Scenario
     /// Gets or sets the physical module this scenario belongs to.
     /// </summary>
     public Module? Module { get; set; }
+
+    /// <summary>
+    /// Gets or sets the scenario sides for the scenario. Must at least contain
+    /// an attacker and a defender.
+    /// </summary>
+    public List<ScenarioSide> ScenarioSides { get; set; } = new();
+
+    /// <summary>
+    /// Gets the side designated as the Attacker.
+    /// </summary>
+    public ScenarioSide? AttackerSide => ScenarioSides.FirstOrDefault(s => s.Side == Side.Attacker);
+
+    /// <summary>
+    /// Gets the side designated as the Defender.
+    /// </summary>
+    public ScenarioSide? DefenderSide => ScenarioSides.FirstOrDefault(s => s.Side == Side.Defender);
+
+    /// <summary>
+    /// Gets or sets the number of turns for the scenario.
+    /// </summary>
+    public int Turns { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the final turn is a half-turn (only the first player acts).
+    /// </summary>
+    public bool HasHalfTurn { get; set; }
 }

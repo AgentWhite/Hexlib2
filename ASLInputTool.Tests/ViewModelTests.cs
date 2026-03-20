@@ -123,6 +123,8 @@ public class ViewModelTests
         vm.Name = "Test Scenario";
         vm.Reference = "REF-1";
         vm.Place = "Test Place";
+        vm.SideAName = "Finns";
+        vm.SideBName = "Soviets";
 
         vm.SaveCommand.Execute(null);
 
@@ -132,6 +134,8 @@ public class ViewModelTests
         Assert.Equal("Test Scenario", scenario.Name);
         Assert.Equal("REF-1", scenario.Reference);
         Assert.Equal("Test Place", scenario.Description.Place);
+        Assert.Equal(2, scenario.ScenarioSides.Count);
+        Assert.Equal("Finns", scenario.ScenarioSides[0].Name);
     }
 
     [Fact]

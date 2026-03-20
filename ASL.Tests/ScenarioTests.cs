@@ -1,4 +1,5 @@
 using ASL;
+using ASL.Models;
 using Xunit;
 
 namespace ASL.Tests;
@@ -49,5 +50,22 @@ public class ScenarioTests
         desc.PreciseDate = ASLDateParser.Parse("September 2nd, 1941");
 
         Assert.Equal(new DateTime(1941, 9, 2), desc.PreciseDate!.Value);
+    }
+    [Fact]
+    public void ScenarioWithNationalitiesAndTurns_CanBeCreated()
+    {
+        var scenario = new Scenario
+        {
+            Name = "TEST",
+            Turns = 6,
+            HasHalfTurn = true
+        };
+        scenario.ScenarioSides.Add(new ScenarioSide { Name = "Attacker", Side = Side.Attacker, Nationality = Nationality.German });
+        scenario.ScenarioSides.Add(new ScenarioSide { Name = "Defender", Side = Side.Defender, Nationality = Nationality.Russian });
+
+        Assert.Equal(6, scenario.Turns);
+        Assert.True(scenario.HasHalfTurn);
+        Assert.Equal(Nationality.German, scenario.AttackerSide!.Nationality);
+        Assert.Equal(Nationality.Russian, scenario.DefenderSide!.Nationality);
     }
 }
