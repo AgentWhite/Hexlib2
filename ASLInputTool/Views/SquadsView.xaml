@@ -147,6 +147,7 @@
                         <CheckBox Content="Assault Fire" IsChecked="{Binding HasAssaultFire}" IsEnabled="{Binding CanHaveFullSquadTraits}" VerticalAlignment="Center" Margin="0,0,20,0"/>
                         <CheckBox Content="Spraying Fire" IsChecked="{Binding HasSprayingFire}" IsEnabled="{Binding CanHaveFullSquadTraits}" VerticalAlignment="Center" Margin="0,0,20,0"/>
                         <CheckBox Content="Self Rally" IsChecked="{Binding CanSelfRally}" IsEnabled="{Binding CanHaveFullSquadTraits}" VerticalAlignment="Center" Margin="0,0,20,0"/>
+                        <CheckBox Content="ELR" IsChecked="{Binding HasELR}" IsEnabled="{Binding CanHaveFullSquadTraits}" VerticalAlignment="Center" Margin="0,0,20,0"/>
                         <CheckBox Content="Smoke Exponent" IsChecked="{Binding HasSmokeExponent}" IsEnabled="{Binding CanHaveFullSquadTraits}" VerticalAlignment="Center" Margin="0,0,5,0"/>
                         <TextBox Width="50" IsEnabled="{Binding HasSmokeExponent}" 
                                  Text="{Binding SmokePlacementExponent, UpdateSourceTrigger=PropertyChanged}" 
@@ -162,6 +163,23 @@
                             </TextBox.Style>
                         </TextBox>
                     </StackPanel>
+
+                    <Separator Margin="0,15,0,10" Background="{StaticResource ControlBorderBrush}"/>
+                    <Label Content="Back Side Data" FontWeight="Bold" FontSize="14" Margin="0,0,0,5"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0,0,20,0">
+                            <Label Content="Broken Morale" FontWeight="SemiBold"/>
+                            <TextBox Width="50" HorizontalAlignment="Left" Tag="10" Text="{Binding BrokenMorale, ValidatesOnNotifyDataErrors=True}" LostFocus="OnTextBoxLostFocus"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <Label Content="BPV" FontWeight="SemiBold"/>
+                            <TextBox Width="50" HorizontalAlignment="Left" Tag="30" Text="{Binding BPV, ValidatesOnNotifyDataErrors=True}" LostFocus="OnTextBoxLostFocus"/>
+                        </StackPanel>
+                    </Grid>
 
                     <Button Content="Save Squad" Command="{Binding SaveCommand}" Margin="0,20,0,0" Padding="20,10" HorizontalAlignment="Right" Background="{StaticResource AccentBrush}" Foreground="White" FontWeight="Bold"/>
                 </StackPanel>

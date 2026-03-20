@@ -141,6 +141,7 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>
     }
 
     /// <inheritdoc />
+    /// <inheritdoc />
     protected override void OnSave(object? parameter)
     {
         ValidateName();

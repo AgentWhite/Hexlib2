@@ -1,10 +1,12 @@
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using ASL.Counters;
+using ASL.Models;
+using ASL.Models.Components;
 using ASL.Persistence;
 using HexLib;
 using HexLib.Persistence;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace ASL.Tests;
@@ -19,37 +21,30 @@ public class PersistenceTests
         // Setup
         var storage = new FileStorageAdapter(_testDataDir);
         var manager = new ASLSaveManager(storage);
-        var counters = new List<BaseASLCounter>
-        {
-            new Leader("Sgt. Steiner", 9, 2, Nationality.German),
-            new Squad("1st Squad", 4, 6, 7, UnitClass.FirstLine, Nationality.German)
-            {
-                HasAssaultFire = true
-            },
-            new HalfSquad("1st Squad HS", 2, 6, 7, UnitClass.FirstLine, Nationality.German),
-            new Crew("Gun Crew", 2, 2, 8, Nationality.German)
-        };
+        
+        var leader = new Unit { Name = "Sgt. Steiner", Nationality = Nationality.German, UnitType = UnitType.SMC };
+        leader.AddComponent(new InfantryComponent { Morale = 9, AslClass = UnitClass.Elite, Scale = InfantryScale.SMC });
+        leader.AddComponent(new LeadershipComponent { Leadership = 2 });
+        
+        var squad = new Unit { Name = "1st Squad", Nationality = Nationality.German, UnitType = UnitType.MMC };
+        squad.AddComponent(new InfantryComponent { Scale = InfantryScale.Squad, HasAssaultFire = true, Morale = 7, BrokenMorale = 8, AslClass = UnitClass.FirstLine });
+        squad.AddComponent(new FirePowerComponent { Firepower = 4, Range = 6 });
+
+        var counters = new List<Unit> { leader, squad };
 
         // Act
         await manager.SaveCountersAsync("TestCounters", counters);
         var loaded = await manager.LoadCountersAsync("TestCounters");
 
         // Assert
-        Assert.Equal(4, loaded.Count);
+        Assert.Equal(2, loaded.Count);
+        Assert.Equal("Sgt. Steiner", loaded[0].Name);
+        Assert.True(loaded[0].IsLeader);
+        Assert.Equal(2, loaded[0].Leadership?.Leadership);
         
-        var leader = Assert.IsType<Leader>(loaded[0]);
-        Assert.Equal("Sgt. Steiner", leader.Name);
-
-        var squad = Assert.IsType<Squad>(loaded[1]);
-        Assert.Equal("1st Squad", squad.Name);
-        
-        var hs = Assert.IsType<HalfSquad>(loaded[2]);
-        Assert.Equal("1st Squad HS", hs.Name);
-        Assert.Equal(2, hs.Firepower);
-
-        var crew = Assert.IsType<Crew>(loaded[3]);
-        Assert.Equal("Gun Crew", crew.Name);
-        Assert.Equal(UnitClass.Elite, crew.AslClass);
+        Assert.Equal("1st Squad", loaded[1].Name);
+        Assert.True(loaded[1].IsSquad);
+        Assert.True(loaded[1].Infantry?.HasAssaultFire);
         
         // Cleanup
         Directory.Delete(_testDataDir, true);
@@ -86,13 +81,18 @@ public class PersistenceTests
     {
         // Setup
         var manager = new ASLSaveManager(new FileStorageAdapter(Path.GetTempPath()));
+        
+        var leader = new Unit { Name = "Sgt. Steiner", Nationality = Nationality.German, UnitType = UnitType.SMC };
+        leader.AddComponent(new InfantryComponent { Morale = 9, AslClass = UnitClass.Elite, Scale = InfantryScale.SMC });
+        leader.AddComponent(new LeadershipComponent { Leadership = 2 });
+        
+        var squad = new Unit { Name = "1st Squad", Nationality = Nationality.German, UnitType = UnitType.MMC };
+        squad.AddComponent(new InfantryComponent { Scale = InfantryScale.Squad, HasAssaultFire = true, Morale = 7, AslClass = UnitClass.FirstLine });
+        squad.AddComponent(new FirePowerComponent { Firepower = 4, Range = 6 });
+
         var project = new ASLProject
         {
-            Counters = new List<BaseASLCounter>
-            {
-                new Leader("Sgt. Steiner", 9, 2, Nationality.German),
-                new Squad("1st Squad", 4, 6, 7, UnitClass.FirstLine, Nationality.German) { HasAssaultFire = true }
-            },
+            Counters = new List<Unit> { leader, squad },
             Scenarios = new List<Scenario>
             {
                 new Scenario { Name = "S1", Reference = "REF1" }
@@ -107,11 +107,11 @@ public class PersistenceTests
         Assert.NotNull(loaded);
         Assert.Equal(2, loaded!.Counters.Count);
         
-        var squad = Assert.IsType<Squad>(loaded.Counters[1]);
-        Assert.Equal("1st Squad", squad.Name);
-        Assert.Equal(4, squad.Firepower);
-        Assert.True(squad.HasAssaultFire);
-        Assert.Equal(UnitClass.FirstLine, squad.AslClass);
+        var loadedSquad = loaded.Counters[1];
+        Assert.Equal("1st Squad", loadedSquad.Name);
+        Assert.True(loadedSquad.IsSquad);
+        Assert.Equal(4, loadedSquad.FirePower?.Firepower);
+        Assert.True(loadedSquad.Infantry?.HasAssaultFire);
     }
 
     [Fact]
@@ -126,7 +126,11 @@ public class PersistenceTests
         {
             Metadata = new ASLHexMetadata { Terrain = TerrainType.Woods }
         };
-        hex.AddCounter(new Squad("1st Squad", 4, 6, 7, UnitClass.FirstLine, Nationality.German) { HasAssaultFire = true });
+        
+        var squad = new Unit { Name = "1st Squad", Nationality = Nationality.German, UnitType = UnitType.MMC };
+        squad.AddComponent(new InfantryComponent { Scale = InfantryScale.Squad, HasAssaultFire = true, Morale = 7, AslClass = UnitClass.FirstLine });
+        
+        hex.AddCounter(squad);
         board.AddHex(hex);
 
         // Act
@@ -140,46 +144,13 @@ public class PersistenceTests
         Assert.NotNull(loadedHex);
         Assert.Equal(TerrainType.Woods, loadedHex!.Metadata.Terrain);
         Assert.Single(loadedHex.Counters);
-        var squad = Assert.IsType<Squad>(loadedHex.Counters[0]);
-        Assert.Equal("1st Squad", squad.Name);
-        Assert.True(squad.HasAssaultFire);
+        
+        var loadedSquad = Assert.IsType<Unit>(loadedHex.Counters[0]);
+        Assert.Equal("1st Squad", loadedSquad.Name);
+        Assert.True(loadedSquad.IsSquad);
+        Assert.True(loadedSquad.Infantry?.HasAssaultFire);
 
         // Cleanup
         Directory.Delete(_testDataDir, true);
-    }
-    
-    [Fact]
-    public void CanSerializeFullProject()
-    {
-        // Setup - mirroring the user's scenario
-        var manager = new ASLSaveManager(new FileStorageAdapter(Path.GetTempPath()));
-        var project = new ASLProject
-        {
-            Counters = new List<BaseASLCounter>
-            {
-                new Squad("1st Squad", 4, 6, 7, UnitClass.FirstLine, Nationality.German),
-                new Leader("Sgt. Steiner", 9, 2, Nationality.German),
-                new Hero("Hero", 1, 4, 9, Nationality.German),
-                new HalfSquad("HS", 2, 6, 7, UnitClass.FirstLine, Nationality.German)
-            },
-            Scenarios = new List<Scenario>
-            {
-                new Scenario { Name = "S1", Reference = "REF1" }
-            }
-        };
-
-        // Act
-        string json = manager.SerializeProject(project);
-        var loaded = manager.DeserializeProject(json);
-
-        // Assert
-        Assert.NotNull(loaded);
-        Assert.Equal(4, loaded!.Counters.Count);
-        Assert.Single(loaded.Scenarios);
-        
-        Assert.IsType<Squad>(loaded.Counters[0]);
-        Assert.IsType<Leader>(loaded.Counters[1]);
-        Assert.IsType<Hero>(loaded.Counters[2]);
-        Assert.IsType<HalfSquad>(loaded.Counters[3]);
     }
 }

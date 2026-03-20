@@ -130,6 +130,19 @@
                         </StackPanel>
                     </Grid>
 
+                    <Separator Margin="0,15,0,10" Background="{StaticResource ControlBorderBrush}"/>
+                    <Label Content="Back Side Data" FontWeight="Bold" FontSize="14" Margin="0,0,0,5"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" Margin="0,0,20,0">
+                            <Label Content="Broken Morale" FontWeight="SemiBold"/>
+                            <TextBox Width="50" HorizontalAlignment="Left" Tag="10" Text="{Binding BrokenMorale, ValidatesOnNotifyDataErrors=True}" LostFocus="OnTextBoxLostFocus" IsEnabled="{Binding CanHaveBrokenMorale}"/>
+                        </StackPanel>
+                    </Grid>
+
                     <Button Content="Save Hero" Command="{Binding SaveCommand}" Margin="0,20,0,0" Padding="20,10" HorizontalAlignment="Right" Background="{StaticResource AccentBrush}" Foreground="White" FontWeight="Bold"/>
                 </StackPanel>
             </Grid>

@@ -12,7 +12,7 @@ public class ConverterTests
     public void InverseBooleanToVisibilityConverter_Convert_ReturnsExpected(bool input, Visibility expected)
     {
         var converter = new InverseBooleanToVisibilityConverter();
-        var result = converter.Convert(input, typeof(Visibility), null, System.Globalization.CultureInfo.InvariantCulture);
+        var result = converter.Convert(input, typeof(Visibility), null!, System.Globalization.CultureInfo.InvariantCulture);
         Assert.Equal(expected, result);
     }
 
@@ -23,7 +23,7 @@ public class ConverterTests
     public void InverseBooleanToVisibilityConverter_ConvertBack_ReturnsExpected(Visibility input, bool expected)
     {
         var converter = new InverseBooleanToVisibilityConverter();
-        var result = converter.ConvertBack(input, typeof(bool), null, System.Globalization.CultureInfo.InvariantCulture);
+        var result = converter.ConvertBack(input, typeof(bool), null!, System.Globalization.CultureInfo.InvariantCulture);
         Assert.Equal(expected, result);
     }
 }

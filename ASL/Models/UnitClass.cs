@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace ASL;
+namespace ASL.Models;
 
 /// <summary>
 /// Specifies the quality or experience class of an ASL MMC or SMC.

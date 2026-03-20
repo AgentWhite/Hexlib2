@@ -18,18 +18,54 @@ public class ModulesViewModel : CrudViewModelBase<AslModule>
     private string? _backImage;
     private bool _isFinished;
 
+    /// <summary>
+    /// Gets or sets the full name of the module.
+    /// </summary>
     public string FullName { get => _fullName; set { SetProperty(ref _fullName, value); ClearErrors(nameof(FullName)); } }
+
+    /// <summary>
+    /// Gets or sets the description of the module.
+    /// </summary>
     public string Description { get => _description; set => SetProperty(ref _description, value); }
+
+    /// <summary>
+    /// Gets or sets the specific module type/ID.
+    /// </summary>
     public Module ModuleType { get => _moduleType; set => SetProperty(ref _moduleType, value); }
+
+    /// <summary>
+    /// Gets or sets the path to the front box image.
+    /// </summary>
     public string? FrontImage { get => _frontImage; set => SetProperty(ref _frontImage, value); }
+
+    /// <summary>
+    /// Gets or sets the path to the back box image.
+    /// </summary>
     public string? BackImage { get => _backImage; set => SetProperty(ref _backImage, value); }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the module is finished (all content entered).
+    /// </summary>
     public bool IsFinished { get => _isFinished; set => SetProperty(ref _isFinished, value); }
 
+    /// <summary>
+    /// Gets the collection of module types that are still available (not yet assigned to a project module).
+    /// </summary>
     public ObservableCollection<Module> AvailableModuleTypes { get; } = new();
 
+    /// <summary>
+    /// Command to pick the front box image.
+    /// </summary>
     public RelayCommand PickFrontImageCommand { get; }
+
+    /// <summary>
+    /// Command to pick the back box image.
+    /// </summary>
     public RelayCommand PickBackImageCommand { get; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ModulesViewModel"/> class.
+    /// </summary>
     public ModulesViewModel()
     {
         DisplayName = "Modules";
@@ -70,6 +106,10 @@ public class ModulesViewModel : CrudViewModelBase<AslModule>
         }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the "Add" form is currently visible.
+    /// Also updates the list of available module types.
+    /// </summary>
     public new bool IsAdding
     {
         get => base.IsAdding;
@@ -95,6 +135,7 @@ public class ModulesViewModel : CrudViewModelBase<AslModule>
         }
     }
 
+    /// <inheritdoc />
     protected override void ResetForm()
     {
         EditingItem = null;
@@ -108,6 +149,7 @@ public class ModulesViewModel : CrudViewModelBase<AslModule>
         ClearErrors();
     }
 
+    /// <inheritdoc />
     protected override void PopulateForm(AslModule item)
     {
         EditingItem = item;
@@ -120,6 +162,7 @@ public class ModulesViewModel : CrudViewModelBase<AslModule>
         IsFinished = item.IsFinished;
     }
 
+    /// <inheritdoc />
     protected override void OnSave(object? parameter)
     {
         ClearErrors();

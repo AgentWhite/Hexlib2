@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace ASL;
+namespace ASL.Models;
 
 /// <summary>
 /// Specifies the nationality of an ASL unit or scenario side.
@@ -17,5 +17,7 @@ public enum Nationality
     /// <summary>Partisan / Resistance forces.</summary>
     Partisan,
     /// <summary>American nationality.</summary>
-    American
+    American,
+    /// <summary>Japanese nationality.</summary>
+    Japanese
 }

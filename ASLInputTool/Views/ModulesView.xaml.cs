@@ -7,6 +7,9 @@ namespace ASLInputTool.Views;
 /// </summary>
 public partial class ModulesView : UserControl
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ModulesView"/> class.
+    /// </summary>
     public ModulesView()
     {
         InitializeComponent();

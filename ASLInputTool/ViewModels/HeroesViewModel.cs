@@ -1,5 +1,5 @@
-using ASL;
-using ASL.Counters;
+using ASL.Models;
+using ASL.Models.Components;
 using System.Collections.Generic;
 using System;
 using System.Linq;
@@ -9,12 +9,13 @@ namespace ASLInputTool.ViewModels;
 /// <summary>
 /// ViewModel for managing Hero counters.
 /// </summary>
-public class HeroesViewModel : CrudViewModelBase<Hero>
+public class HeroesViewModel : CrudViewModelBase<Unit>
 {
     private string _name = string.Empty;
     private string _firepower = string.Empty;
     private string _range = string.Empty;
     private string _morale = string.Empty;
+    private string _brokenMorale = string.Empty;
     private Nationality _selectedNationality = Nationality.German;
     private string? _imagePathFront;
     private string? _imagePathBack;
@@ -23,20 +24,34 @@ public class HeroesViewModel : CrudViewModelBase<Hero>
     /// Gets or sets the name of the hero.
     /// </summary>
     public string Name { get => _name; set { SetProperty(ref _name, value); ValidateName(); } }
+
     /// <summary>
-    /// Gets or sets the firepower rating of the hero.
+    /// Gets or sets the firepower value as a string for UI binding.
     /// </summary>
     public string Firepower { get => _firepower; set { SetProperty(ref _firepower, value); ValidateFirepower(); } }
+
     /// <summary>
-    /// Gets or sets the range rating of the hero.
+    /// Gets or sets the range value as a string for UI binding.
     /// </summary>
     public string Range { get => _range; set { SetProperty(ref _range, value); ValidateRange(); } }
+
     /// <summary>
-    /// Gets or sets the morale rating of the hero.
+    /// Gets or sets the morale value as a string for UI binding.
     /// </summary>
     public string Morale { get => _morale; set { SetProperty(ref _morale, value); ValidateMorale(); } }
+
     /// <summary>
-    /// Gets or sets the selected nationality of the hero.
+    /// Gets or sets the broken morale value as a string for UI binding.
+    /// </summary>
+    public string BrokenMorale { get => _brokenMorale; set { SetProperty(ref _brokenMorale, value); ValidateBrokenMorale(); } }
+
+    /// <summary>
+    /// Gets a value indicating whether this hero can have a broken morale value (false for Japanese).
+    /// </summary>
+    public bool CanHaveBrokenMorale => SelectedNationality != Nationality.Japanese;
+
+    /// <summary>
+    /// Gets or sets the selected nationality for the hero.
     /// </summary>
     public Nationality SelectedNationality 
     { 
@@ -46,15 +61,19 @@ public class HeroesViewModel : CrudViewModelBase<Hero>
             if (SetProperty(ref _selectedNationality, value))
             {
                 ValidateName();
+                OnPropertyChanged(nameof(CanHaveBrokenMorale));
+                ValidateBrokenMorale();
             }
         } 
     }
+
     /// <summary>
-    /// Gets or sets the path to the front image of the hero.
+    /// Gets or sets the file path for the front image.
     /// </summary>
     public string? ImagePathFront { get => _imagePathFront; set => SetProperty(ref _imagePathFront, value); }
+
     /// <summary>
-    /// Gets or sets the path to the back image of the hero.
+    /// Gets or sets the file path for the back image.
     /// </summary>
     public string? ImagePathBack { get => _imagePathBack; set => SetProperty(ref _imagePathBack, value); }
 
@@ -64,12 +83,12 @@ public class HeroesViewModel : CrudViewModelBase<Hero>
     public IEnumerable<Nationality> Nationalities => Enum.GetValues(typeof(Nationality)).Cast<Nationality>();
 
     /// <summary>
-    /// Command to pick the front image for the hero.
+    /// Command to pick the front image.
     /// </summary>
     public RelayCommand PickFrontImageCommand { get; }
-    
+
     /// <summary>
-    /// Command to pick the back image for the hero.
+    /// Command to pick the back image.
     /// </summary>
     public RelayCommand PickBackImageCommand { get; }
 
@@ -145,6 +164,23 @@ public class HeroesViewModel : CrudViewModelBase<Hero>
         }
     }
 
+    private void ValidateBrokenMorale()
+    {
+        ClearErrors(nameof(BrokenMorale));
+        if (!CanHaveBrokenMorale) return;
+
+        if (string.IsNullOrWhiteSpace(BrokenMorale))
+        {
+            AddError(nameof(BrokenMorale), "Broken morale is required.");
+            ShowToast("Broken morale is required.");
+        }
+        else if (!int.TryParse(BrokenMorale, out int m) || m <= 0)
+        {
+            AddError(nameof(BrokenMorale), "Broken morale must be a positive number.");
+            ShowToast("Broken morale must be a positive number.");
+        }
+    }
+
     private void ExecutePickImage(bool front)
     {
         var openDialog = new Microsoft.Win32.OpenFileDialog
@@ -168,27 +204,33 @@ public class HeroesViewModel : CrudViewModelBase<Hero>
         _firepower = string.Empty;
         _range = string.Empty;
         _morale = string.Empty;
+        _brokenMorale = string.Empty;
         OnPropertyChanged(nameof(Name));
         OnPropertyChanged(nameof(Firepower));
         OnPropertyChanged(nameof(Range));
         OnPropertyChanged(nameof(Morale));
+        OnPropertyChanged(nameof(BrokenMorale));
+        OnPropertyChanged(nameof(CanHaveBrokenMorale));
         SelectedNationality = Nationality.German;
         ImagePathFront = null;
         ImagePathBack = null;
     }
 
     /// <inheritdoc />
-    protected override void PopulateForm(Hero item)
+    protected override void PopulateForm(Unit item)
     {
         ClearErrors();
         _name = item.Name;
-        _firepower = item.Firepower.ToString();
-        _range = item.Range.ToString();
-        _morale = item.Morale.ToString();
+        _firepower = (item.FirePower?.Firepower ?? 0).ToString();
+        _range = (item.FirePower?.Range ?? 0).ToString();
+        _morale = (item.Infantry?.Morale ?? 0).ToString();
+        _brokenMorale = (item.Infantry?.BrokenMorale ?? 0).ToString();
         OnPropertyChanged(nameof(Name));
         OnPropertyChanged(nameof(Firepower));
         OnPropertyChanged(nameof(Range));
         OnPropertyChanged(nameof(Morale));
+        OnPropertyChanged(nameof(BrokenMorale));
+        OnPropertyChanged(nameof(CanHaveBrokenMorale));
         SelectedNationality = item.Nationality;
         ImagePathFront = item.ImagePathFront;
         ImagePathBack = item.ImagePathBack;
@@ -201,6 +243,7 @@ public class HeroesViewModel : CrudViewModelBase<Hero>
         ValidateFirepower();
         ValidateRange();
         ValidateMorale();
+        ValidateBrokenMorale();
 
         if (HasErrors)
         {
@@ -208,15 +251,29 @@ public class HeroesViewModel : CrudViewModelBase<Hero>
             return;
         }
 
-        int fp = int.Parse(Firepower);
-        int range = int.Parse(Range);
-        int morale = int.Parse(Morale);
-
-        var hero = new Hero(Name, fp, range, morale, SelectedNationality)
+        int fpValue = int.Parse(Firepower);
+        int rValue = int.Parse(Range);
+        int mValue = int.Parse(Morale);
+        int bmValue = CanHaveBrokenMorale ? int.Parse(BrokenMorale) : 0;
+        
+        var unit = new Unit
         {
+            Name = Name,
+            Nationality = SelectedNationality,
+            UnitType = UnitType.SMC,
             ImagePathFront = ImagePathFront,
             ImagePathBack = ImagePathBack
         };
+
+        unit.AddComponent(new InfantryComponent 
+        { 
+            Morale = mValue, 
+            BrokenMorale = bmValue, 
+            AslClass = UnitClass.Elite,
+            Scale = InfantryScale.SMC
+        });
+        unit.AddComponent(new HeroComponent());
+        unit.AddComponent(new FirePowerComponent { Firepower = fpValue, Range = rValue });
 
         if (EditingItem != null)
         {
@@ -224,12 +281,12 @@ public class HeroesViewModel : CrudViewModelBase<Hero>
             if (wrapper != null)
             {
                 int index = Items.IndexOf(wrapper);
-                if (index >= 0) Items[index] = new SelectableItem<Hero>(hero, NotifySelectionChanged);
+                if (index >= 0) Items[index] = new SelectableItem<Unit>(unit, NotifySelectionChanged);
             }
         }
         else
         {
-            Items.Add(new SelectableItem<Hero>(hero, NotifySelectionChanged));
+            Items.Add(new SelectableItem<Unit>(unit, NotifySelectionChanged));
         }
         
         IsAdding = false;

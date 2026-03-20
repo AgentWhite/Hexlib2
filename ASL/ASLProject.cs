@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using ASL.Counters;
+using ASL.Models;
 
 namespace ASL;
 
@@ -11,7 +10,7 @@ public class ASLProject
     /// <summary>
     /// Gets or sets the list of counters in the project.
     /// </summary>
-    public List<BaseASLCounter> Counters { get; set; } = new();
+    public List<Unit> Counters { get; set; } = new();
 
     /// <summary>
     /// Gets or sets the list of scenarios in the project.

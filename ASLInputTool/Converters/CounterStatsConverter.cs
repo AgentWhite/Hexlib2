@@ -1,7 +1,8 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
-using ASL.Counters;
+using ASL.Models;
+using ASL.Models.Components;
 
 namespace ASLInputTool.Converters;
 
@@ -14,13 +15,34 @@ public class CounterStatsConverter : IValueConverter
     /// <inheritdoc />
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        return value switch
+        if (value is Unit unit)
         {
-            Leader leader => $"{leader.Morale}{(leader.Leadership >= 0 ? "+" : "")}{leader.Leadership}",
-            Hero hero => $"{hero.Firepower}-{hero.Range}-{hero.Morale}",
-            MultiManCounter mmc => $"{mmc.Firepower}-{mmc.Range}-{mmc.Morale}{(mmc.HasSmokeExponent ? "s" + (mmc.SmokePlacementExponent > 0 ? mmc.SmokePlacementExponent.ToString() : "") : "")}",
-            _ => string.Empty
-        };
+            if (unit.IsLeader)
+            {
+                var morale = unit.Infantry?.Morale ?? 0;
+                var brokenMorale = unit.Infantry?.BrokenMorale;
+                var leadership = unit.Leadership?.Leadership ?? 0;
+                var leadershipSign = leadership >= 0 ? "+" : "";
+                var bmPart = brokenMorale.HasValue ? $"-{brokenMorale.Value}" : "";
+                return $"{morale}{bmPart}{leadershipSign}{leadership}";
+            }
+            if (unit.IsHero)
+            {
+                var fp = unit.FirePower?.Firepower ?? 0;
+                var r = unit.FirePower?.Range ?? 0;
+                var morale = unit.Infantry?.Morale ?? 0;
+                return $"{fp}-{r}-{morale}";
+            }
+            if (unit.IsSquad || unit.IsHalfSquad || unit.IsCrew)
+            {
+                var fp = unit.FirePower?.Firepower ?? 0;
+                var r = unit.FirePower?.Range ?? 0;
+                var smoke = unit.Infantry?.SmokePlacementExponent.HasValue == true ? "s" + (unit.Infantry.SmokePlacementExponent.Value > 0 ? unit.Infantry.SmokePlacementExponent.Value.ToString() : "") : "";
+                var morale = unit.Infantry?.Morale ?? 0;
+                return $"{fp}-{r}-{morale}{smoke}";
+            }
+        }
+        return string.Empty;
     }
 
     /// <inheritdoc />

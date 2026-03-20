@@ -1,3 +1,6 @@
+using ASL;
+using ASL.Models;
+using ASL.Models.Components;
 using ASLInputTool.ViewModels;
 using Xunit;
 using System.Linq;
@@ -43,15 +46,18 @@ public class ViewModelTests
         vm.IsAdding = true;
         vm.Name = "Test Leader";
         vm.Morale = "9";
+        vm.BrokenMorale = "10";
+        vm.BPV = "20";
         vm.Leadership = "-1";
 
         vm.SaveCommand.Execute(null);
 
         Assert.Single(vm.Items);
         Assert.False(vm.IsAdding);
-        var leader = vm.Items[0];
-        Assert.Equal("Test Leader", leader.Name);
-        Assert.Equal(-1, leader.Leadership);
+        var unit = vm.Items[0].Item;
+        Assert.Equal("Test Leader", unit.Name);
+        Assert.True(unit.IsLeader);
+        Assert.Equal(-1, unit.Leadership?.Leadership);
     }
 
     [Fact]
@@ -62,12 +68,51 @@ public class ViewModelTests
         vm.Firepower = "4";
         vm.Range = "6";
         vm.Morale = "7";
+        vm.BrokenMorale = "8";
+        vm.BPV = "15";
         vm.IsHalfSquad = false;
 
         vm.SaveCommand.Execute(null);
 
         Assert.Single(vm.Items);
-        Assert.IsType<ASL.Counters.Squad>(vm.Items[0]);
+        var unit = vm.Items[0].Item;
+        Assert.True(unit.IsSquad);
+    }
+
+    [Fact]
+    public void HeroesViewModel_Save_AddsToCollection()
+    {
+        var vm = new HeroesViewModel();
+        vm.Name = "Test Hero";
+        vm.Firepower = "1";
+        vm.Range = "4";
+        vm.Morale = "9";
+        vm.BrokenMorale = "10";
+        vm.SelectedNationality = Nationality.German;
+
+        vm.SaveCommand.Execute(null);
+
+        Assert.Single(vm.Items);
+        var hero = vm.Items[0].Item;
+        Assert.Equal(10, hero.Infantry?.BrokenMorale);
+        Assert.True(hero.IsHero);
+    }
+
+    [Fact]
+    public void HeroesViewModel_JapaneseHero_BrokenMoraleIsZero()
+    {
+        var vm = new HeroesViewModel();
+        vm.Name = "Japanese Hero";
+        vm.Firepower = "1";
+        vm.Range = "4";
+        vm.Morale = "10";
+        vm.SelectedNationality = Nationality.Japanese;
+
+        vm.SaveCommand.Execute(null);
+
+        Assert.Single(vm.Items);
+        var hero = vm.Items[0].Item;
+        Assert.Equal(0, hero.Infantry?.BrokenMorale);
     }
 
     [Fact]
@@ -83,7 +128,7 @@ public class ViewModelTests
 
         Assert.Single(vm.Items);
         Assert.False(vm.IsAdding);
-        var scenario = vm.Items[0];
+        var scenario = vm.Items[0].Item;
         Assert.Equal("Test Scenario", scenario.Name);
         Assert.Equal("REF-1", scenario.Reference);
         Assert.Equal("Test Place", scenario.Description.Place);

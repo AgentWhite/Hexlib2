@@ -1,5 +1,5 @@
-using ASL;
-using ASL.Counters;
+using ASL.Models;
+using ASL.Models.Components;
 using System.Collections.Generic;
 using System;
 using System.Linq;
@@ -9,12 +9,14 @@ namespace ASLInputTool.ViewModels;
 /// <summary>
 /// ViewModel for managing Squad and Half-Squad MMC counters.
 /// </summary>
-public class SquadsViewModel : CrudViewModelBase<MultiManCounter>
+public class SquadsViewModel : CrudViewModelBase<Unit>
 {
     private string _name = string.Empty;
     private string _firepower = string.Empty;
     private string _range = string.Empty;
     private string _morale = string.Empty;
+    private string _brokenMorale = string.Empty;
+    private string _bpv = string.Empty;
     private Nationality _selectedNationality = Nationality.German;
     private UnitClass _selectedClass = UnitClass.FirstLine;
     private string? _imagePathFront;
@@ -23,27 +25,42 @@ public class SquadsViewModel : CrudViewModelBase<MultiManCounter>
     private bool _hasAssaultFire;
     private bool _hasSprayingFire;
     private bool _canSelfRally;
+    private bool _hasELR;
     private bool _hasSmokeExponent;
     private string _smokePlacementExponent = string.Empty;
 
     /// <summary>
-    /// Gets or sets the name of the unit.
+    /// Gets or sets the name/identity of the squad.
     /// </summary>
     public string Name { get => _name; set { SetProperty(ref _name, value); ValidateName(); } }
+
     /// <summary>
-    /// Gets or sets the firepower rating of the unit.
+    /// Gets or sets the firepower value as a string for UI binding.
     /// </summary>
     public string Firepower { get => _firepower; set { SetProperty(ref _firepower, value); ValidateFirepower(); } }
+
     /// <summary>
-    /// Gets or sets the range rating of the unit.
+    /// Gets or sets the range value as a string for UI binding.
     /// </summary>
     public string Range { get => _range; set { SetProperty(ref _range, value); ValidateRange(); } }
+
     /// <summary>
-    /// Gets or sets the morale rating of the unit.
+    /// Gets or sets the morale value as a string for UI binding.
     /// </summary>
     public string Morale { get => _morale; set { SetProperty(ref _morale, value); ValidateMorale(); } }
+
     /// <summary>
-    /// Gets or sets the selected nationality of the unit.
+    /// Gets or sets the broken morale value as a string for UI binding.
+    /// </summary>
+    public string BrokenMorale { get => _brokenMorale; set { SetProperty(ref _brokenMorale, value); ValidateBrokenMorale(); } }
+
+    /// <summary>
+    /// Gets or sets the BPV value as a string for UI binding.
+    /// </summary>
+    public string BPV { get => _bpv; set { SetProperty(ref _bpv, value); ValidateBPV(); } }
+
+    /// <summary>
+    /// Gets or sets the selected nationality for the squad.
     /// </summary>
     public Nationality SelectedNationality 
     { 
@@ -56,20 +73,24 @@ public class SquadsViewModel : CrudViewModelBase<MultiManCounter>
             }
         } 
     }
+
     /// <summary>
-    /// Gets or sets the unit class (e.g., Elite, First Line).
+    /// Gets or sets the selected unit class (Elite, 1st Line, etc.).
     /// </summary>
     public UnitClass SelectedClass { get => _selectedClass; set => SetProperty(ref _selectedClass, value); }
+
     /// <summary>
-    /// Gets or sets the path to the front image of the counter.
+    /// Gets or sets the file path for the front image.
     /// </summary>
     public string? ImagePathFront { get => _imagePathFront; set => SetProperty(ref _imagePathFront, value); }
+
     /// <summary>
-    /// Gets or sets the path to the back image of the counter.
+    /// Gets or sets the file path for the back image.
     /// </summary>
     public string? ImagePathBack { get => _imagePathBack; set => SetProperty(ref _imagePathBack, value); }
+
     /// <summary>
-    /// Gets or sets a value indicating whether the unit is a half-squad.
+    /// Gets or sets a value indicating whether this is a half-squad.
     /// </summary>
     public bool IsHalfSquad 
     { 
@@ -91,23 +112,32 @@ public class SquadsViewModel : CrudViewModelBase<MultiManCounter>
     }
 
     /// <summary>
-    /// Gets a value indicating whether full squad traits can be edited.
+    /// Gets a value indicating whether full squad traits (Assault Fire, Spraying Fire, etc.) can be applied.
     /// </summary>
     public bool CanHaveFullSquadTraits => !IsHalfSquad;
+
     /// <summary>
-    /// Gets or sets a value indicating whether the unit has Assault Fire capability.
+    /// Gets or sets a value indicating whether the unit has Assault Fire.
     /// </summary>
     public bool HasAssaultFire { get => _hasAssaultFire; set => SetProperty(ref _hasAssaultFire, value); }
+
     /// <summary>
-    /// Gets or sets a value indicating whether the unit has Spraying Fire capability.
+    /// Gets or sets a value indicating whether the unit has Spraying Fire.
     /// </summary>
     public bool HasSprayingFire { get => _hasSprayingFire; set => SetProperty(ref _hasSprayingFire, value); }
+
     /// <summary>
-    /// Gets or sets a value indicating whether the unit can Self-Rally.
+    /// Gets or sets a value indicating whether the unit can Self Rally.
     /// </summary>
     public bool CanSelfRally { get => _canSelfRally; set => SetProperty(ref _canSelfRally, value); }
+
     /// <summary>
-    /// Gets or sets a value indicating whether the unit has a smoke exponent.
+    /// Gets or sets a value indicating whether the unit has ELR.
+    /// </summary>
+    public bool HasELR { get => _hasELR; set => SetProperty(ref _hasELR, value); }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the unit has a smoke placement exponent.
     /// </summary>
     public bool HasSmokeExponent 
     { 
@@ -117,30 +147,43 @@ public class SquadsViewModel : CrudViewModelBase<MultiManCounter>
             if (SetProperty(ref _hasSmokeExponent, value))
             {
                 if (!value) SmokePlacementExponent = string.Empty;
+                ValidateSmoke();
             }
         } 
     }
 
     /// <summary>
-    /// Gets or sets the smoke placement exponent for the unit.
+    /// Gets or sets the smoke placement exponent as a string.
     /// </summary>
-    public string SmokePlacementExponent { get => _smokePlacementExponent; set => SetProperty(ref _smokePlacementExponent, value); }
+    public string SmokePlacementExponent 
+    { 
+        get => _smokePlacementExponent; 
+        set 
+        { 
+            if (SetProperty(ref _smokePlacementExponent, value))
+            {
+                ValidateSmoke();
+            }
+        } 
+    }
 
     /// <summary>
     /// Gets the list of available nationalities.
     /// </summary>
     public IEnumerable<Nationality> Nationalities => Enum.GetValues(typeof(Nationality)).Cast<Nationality>();
+
     /// <summary>
     /// Gets the list of available unit classes.
     /// </summary>
     public IEnumerable<UnitClass> UnitClasses => Enum.GetValues(typeof(UnitClass)).Cast<UnitClass>();
 
     /// <summary>
-    /// Command to pick the front image for the unit.
+    /// Command to pick the front image.
     /// </summary>
     public RelayCommand PickFrontImageCommand { get; }
+
     /// <summary>
-    /// Command to pick the back image for the unit.
+    /// Command to pick the back image.
     /// </summary>
     public RelayCommand PickBackImageCommand { get; }
 
@@ -225,6 +268,52 @@ public class SquadsViewModel : CrudViewModelBase<MultiManCounter>
         }
     }
 
+    private void ValidateBrokenMorale()
+    {
+        ClearErrors(nameof(BrokenMorale));
+        if (string.IsNullOrWhiteSpace(BrokenMorale))
+        {
+            AddError(nameof(BrokenMorale), "Broken morale is required.");
+            ShowToast("Broken morale is required.");
+        }
+        else if (!int.TryParse(BrokenMorale, out int m) || m <= 0)
+        {
+            AddError(nameof(BrokenMorale), "Broken morale must be a positive number.");
+            ShowToast("Broken morale must be a positive number.");
+        }
+    }
+
+    private void ValidateBPV()
+    {
+        ClearErrors(nameof(BPV));
+        if (string.IsNullOrWhiteSpace(BPV))
+        {
+            AddError(nameof(BPV), "BPV is required.");
+            ShowToast("BPV is required.");
+        }
+        else if (!int.TryParse(BPV, out int b) || b <= 0)
+        {
+            AddError(nameof(BPV), "BPV must be a positive number.");
+            ShowToast("BPV must be a positive number.");
+        }
+    }
+
+    private void ValidateSmoke()
+    {
+        ClearErrors(nameof(SmokePlacementExponent));
+        if (HasSmokeExponent)
+        {
+            if (string.IsNullOrWhiteSpace(SmokePlacementExponent))
+            {
+                AddError(nameof(SmokePlacementExponent), "Smoke exponent is required when enabled.");
+            }
+            else if (!int.TryParse(SmokePlacementExponent, out int se) || se < 0)
+            {
+                AddError(nameof(SmokePlacementExponent), "Smoke exponent must be a non-negative number.");
+            }
+        }
+    }
+
     private void ValidateUniqueness()
     {
         if (string.IsNullOrWhiteSpace(Name) || 
@@ -238,9 +327,9 @@ public class SquadsViewModel : CrudViewModelBase<MultiManCounter>
         if (Items.Any(i => i.Item != EditingItem && 
                           i.Item.Name.Equals(Name, StringComparison.OrdinalIgnoreCase) && 
                           i.Item.Nationality == SelectedNationality &&
-                          i.Item.Firepower == fp &&
-                          i.Item.Range == r &&
-                          i.Item.Morale == m))
+                          (i.Item.FirePower?.Firepower ?? 0) == fp &&
+                          (i.Item.FirePower?.Range ?? 0) == r &&
+                          (i.Item.Infantry?.Morale ?? 0) == m))
         {
             AddError(nameof(Name), "An identical unit already exists for this nationality.");
             ShowToast("Duplicate unit detected!");
@@ -270,10 +359,14 @@ public class SquadsViewModel : CrudViewModelBase<MultiManCounter>
         _firepower = string.Empty;
         _range = string.Empty;
         _morale = string.Empty;
+        _brokenMorale = string.Empty;
+        _bpv = string.Empty;
         OnPropertyChanged(nameof(Name));
         OnPropertyChanged(nameof(Firepower));
         OnPropertyChanged(nameof(Range));
         OnPropertyChanged(nameof(Morale));
+        OnPropertyChanged(nameof(BrokenMorale));
+        OnPropertyChanged(nameof(BPV));
         SelectedNationality = Nationality.German;
         SelectedClass = UnitClass.FirstLine;
         ImagePathFront = null;
@@ -282,32 +375,39 @@ public class SquadsViewModel : CrudViewModelBase<MultiManCounter>
         HasAssaultFire = false;
         HasSprayingFire = false;
         CanSelfRally = false;
+        HasELR = false;
         HasSmokeExponent = false;
         SmokePlacementExponent = string.Empty;
     }
 
     /// <inheritdoc />
-    protected override void PopulateForm(MultiManCounter item)
+    protected override void PopulateForm(Unit item)
     {
         ClearErrors();
         _name = item.Name;
-        _firepower = item.Firepower.ToString();
-        _range = item.Range.ToString();
-        _morale = item.Morale.ToString();
+        _firepower = (item.FirePower?.Firepower ?? 0).ToString();
+        _range = (item.FirePower?.Range ?? 0).ToString();
+        _morale = (item.Infantry?.Morale ?? 0).ToString();
+        _brokenMorale = (item.Infantry?.BrokenMorale ?? 0).ToString();
+        _bpv = (item.Bpv?.BPV ?? 0).ToString();
         OnPropertyChanged(nameof(Name));
         OnPropertyChanged(nameof(Firepower));
         OnPropertyChanged(nameof(Range));
         OnPropertyChanged(nameof(Morale));
+        OnPropertyChanged(nameof(BrokenMorale));
+        OnPropertyChanged(nameof(BPV));
         SelectedNationality = item.Nationality;
-        SelectedClass = item.AslClass;
+        SelectedClass = item.Infantry?.AslClass ?? UnitClass.SecondLine;
         ImagePathFront = item.ImagePathFront;
         ImagePathBack = item.ImagePathBack;
-        IsHalfSquad = item is HalfSquad;
-        HasAssaultFire = item.HasAssaultFire;
-        HasSprayingFire = item.HasSprayingFire;
-        CanSelfRally = item.CanSelfRally;
-        HasSmokeExponent = item.HasSmokeExponent;
-        SmokePlacementExponent = item.SmokePlacementExponent > 0 ? item.SmokePlacementExponent.ToString() : string.Empty;
+        var infantry = item.Infantry;
+        IsHalfSquad = infantry?.Scale == InfantryScale.HalfSquad;
+        HasAssaultFire = infantry?.HasAssaultFire ?? false;
+        HasSprayingFire = infantry?.HasSprayingFire ?? false;
+        CanSelfRally = infantry?.CanSelfRally ?? false;
+        HasELR = infantry?.HasELR ?? false;
+        HasSmokeExponent = infantry?.SmokePlacementExponent.HasValue ?? false;
+        SmokePlacementExponent = infantry?.SmokePlacementExponent?.ToString() ?? string.Empty;
     }
 
     /// <inheritdoc />
@@ -317,6 +417,9 @@ public class SquadsViewModel : CrudViewModelBase<MultiManCounter>
         ValidateFirepower();
         ValidateRange();
         ValidateMorale();
+        ValidateBrokenMorale();
+        ValidateBPV();
+        ValidateSmoke();
 
         if (HasErrors)
         {
@@ -324,27 +427,36 @@ public class SquadsViewModel : CrudViewModelBase<MultiManCounter>
             return;
         }
 
-        int fp = int.Parse(Firepower);
-        int range = int.Parse(Range);
-        int morale = int.Parse(Morale);
+        int fpValue = int.Parse(Firepower);
+        int rValue = int.Parse(Range);
+        int mValue = int.Parse(Morale);
+        int bmValue = int.Parse(BrokenMorale);
+        int bpvValue = int.Parse(BPV);
 
-        MultiManCounter counter;
-        if (IsHalfSquad)
+        var unit = new Unit
         {
-            counter = new HalfSquad(Name, fp, range, morale, SelectedClass, SelectedNationality);
-        }
-        else
+            Name = Name,
+            Nationality = SelectedNationality,
+            UnitType = UnitType.MMC,
+            ImagePathFront = ImagePathFront,
+            ImagePathBack = ImagePathBack
+        };
+
+        unit.AddComponent(new InfantryComponent
         {
-            counter = new Squad(Name, fp, range, morale, SelectedClass, SelectedNationality);
-        }
-        
-        counter.ImagePathFront = ImagePathFront;
-        counter.ImagePathBack = ImagePathBack;
-        counter.HasAssaultFire = HasAssaultFire;
-        counter.HasSprayingFire = HasSprayingFire;
-        counter.CanSelfRally = CanSelfRally;
-        counter.HasSmokeExponent = HasSmokeExponent;
-        counter.SmokePlacementExponent = int.TryParse(SmokePlacementExponent, out int se) ? se : 0;
+            Morale = mValue,
+            BrokenMorale = bmValue,
+            AslClass = SelectedClass,
+            Scale = IsHalfSquad ? InfantryScale.HalfSquad : InfantryScale.Squad,
+            HasAssaultFire = HasAssaultFire,
+            HasSprayingFire = HasSprayingFire,
+            CanSelfRally = CanSelfRally,
+            HasELR = HasELR,
+            SmokePlacementExponent = HasSmokeExponent ? (int.TryParse(SmokePlacementExponent, out int se) ? se : 0) : null
+        });
+
+        unit.AddComponent(new FirePowerComponent { Firepower = fpValue, Range = rValue });
+        unit.AddComponent(new BPVComponent { BPV = bpvValue });
 
         if (EditingItem != null)
         {
@@ -352,12 +464,12 @@ public class SquadsViewModel : CrudViewModelBase<MultiManCounter>
             if (wrapper != null)
             {
                 int index = Items.IndexOf(wrapper);
-                if (index >= 0) Items[index] = new SelectableItem<MultiManCounter>(counter, NotifySelectionChanged);
+                if (index >= 0) Items[index] = new SelectableItem<Unit>(unit, NotifySelectionChanged);
             }
         }
         else
         {
-            Items.Add(new SelectableItem<MultiManCounter>(counter, NotifySelectionChanged));
+            Items.Add(new SelectableItem<Unit>(unit, NotifySelectionChanged));
         }
         
         IsAdding = false;

@@ -1,11 +1,13 @@
 using ASL;
-using ASL.Counters;
+using ASL.Models;
+using ASL.Models.Components;
 using ASL.Persistence;
 using HexLib.Persistence;
 using Microsoft.Win32;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace ASLInputTool.ViewModels;
 
@@ -20,7 +22,7 @@ public class MainViewModel : ViewModelBase
     private readonly ViewModelLocator _locator;
 
     /// <summary>
-    /// Gets or sets the currently active view model being displayed in the main content area.
+    /// Gets or sets the currently active view model.
     /// </summary>
     public ViewModelBase? CurrentView
     {
@@ -29,24 +31,23 @@ public class MainViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// Gets the list of available view models for navigation.
-    /// Used by the TabControl for item generation.
+    /// Gets the list of available navigation items (Views).
     /// </summary>
     public List<ViewModelBase> NavigationItems => _locator.GetAll().ToList();
 
     /// <summary>
-    /// Command to save the current ASL project to a file.
+    /// Command to save the current project to a file.
     /// </summary>
     public RelayCommand SaveCommand { get; }
 
     /// <summary>
-    /// Command to load an ASL project from a file.
+    /// Command to load a project from a file.
     /// </summary>
     public RelayCommand LoadCommand { get; }
     
     /// <summary>
     /// Initializes a new instance of the <see cref="MainViewModel"/> class.
-    /// Sets up the initial navigation state.
+    /// Sets up the view locator and save manager, and selects the first view.
     /// </summary>
     public MainViewModel()
     {
@@ -74,16 +75,15 @@ public class MainViewModel : ViewModelBase
             {
                 var sourceProject = new ASLProject
                 {
-                    Counters = new List<BaseASLCounter>(),
+                    Counters = new List<Unit>(),
                     Scenarios = _locator.Get<ScenariosViewModel>().Items.Select(i => i.Item).ToList(),
                     Modules = _locator.Get<ModulesViewModel>().Items.Select(i => i.Item).ToList()
                 };
 
-                sourceProject.Counters.AddRange(_locator.Get<LeadersViewModel>().Items.Select(i => (BaseASLCounter)i.Item));
-                sourceProject.Counters.AddRange(_locator.Get<HeroesViewModel>().Items.Select(i => (BaseASLCounter)i.Item));
-                sourceProject.Counters.AddRange(_locator.Get<SquadsViewModel>().Items.Select(i => (BaseASLCounter)i.Item));
+                sourceProject.Counters.AddRange(_locator.Get<LeadersViewModel>().Items.Select(i => i.Item));
+                sourceProject.Counters.AddRange(_locator.Get<HeroesViewModel>().Items.Select(i => i.Item));
+                sourceProject.Counters.AddRange(_locator.Get<SquadsViewModel>().Items.Select(i => i.Item));
 
-                // Process images and get a version of the project with relative GUID-based paths
                 var projectToSave = _saveManager.PrepareProjectForSaving(sourceProject, saveDialog.FileName);
 
                 string json = _saveManager.SerializeProject(projectToSave);
@@ -119,8 +119,8 @@ public class MainViewModel : ViewModelBase
                     var heroesVm = _locator.Get<HeroesViewModel>();
                     var squadsVm = _locator.Get<SquadsViewModel>();
                     var scenariosVm = _locator.Get<ScenariosViewModel>();
+                    var modulesVm = _locator.Get<ModulesViewModel>();
 
-                    // Resolve relative paths to absolute for the UI to display
                     foreach (var c in project.Counters)
                     {
                         if (!string.IsNullOrEmpty(c.ImagePathFront) && !Path.IsPathRooted(c.ImagePathFront))
@@ -136,7 +136,7 @@ public class MainViewModel : ViewModelBase
                             s.ImagePath = Path.GetFullPath(Path.Combine(projectDir, s.ImagePath!));
                     }
 
-                    foreach (var m in project.Modules)
+                    foreach (var m in project.Modules.Where(m => m != null))
                     {
                         if (!string.IsNullOrEmpty(m.FrontImage) && !Path.IsPathRooted(m.FrontImage))
                             m.FrontImage = Path.GetFullPath(Path.Combine(projectDir, m.FrontImage!));
@@ -145,27 +145,32 @@ public class MainViewModel : ViewModelBase
                             m.BackImage = Path.GetFullPath(Path.Combine(projectDir, m.BackImage!));
                     }
 
-                    // Clear and distribute counters
                     leadersVm.Items.Clear();
                     heroesVm.Items.Clear();
                     squadsVm.Items.Clear();
 
-                    foreach (var counter in project.Counters)
+                    foreach (var unit in project.Counters)
                     {
-                        switch (counter)
+                        if (unit.IsLeader)
                         {
-                            case Leader l: leadersVm.Items.Add(new SelectableItem<Leader>(l, leadersVm.NotifySelectionChanged)); break;
-                            case Hero h: heroesVm.Items.Add(new SelectableItem<Hero>(h, heroesVm.NotifySelectionChanged)); break;
-                            case MultiManCounter m: squadsVm.Items.Add(new SelectableItem<MultiManCounter>(m, squadsVm.NotifySelectionChanged)); break;
+                            leadersVm.Items.Add(new SelectableItem<Unit>(unit, leadersVm.NotifySelectionChanged));
+                        }
+                        else if (unit.IsHero)
+                        {
+                            heroesVm.Items.Add(new SelectableItem<Unit>(unit, heroesVm.NotifySelectionChanged));
+                        }
+                        else if (unit.IsSquad || unit.IsHalfSquad || unit.IsCrew)
+                        {
+                            squadsVm.Items.Add(new SelectableItem<Unit>(unit, squadsVm.NotifySelectionChanged));
                         }
                     }
+                    
 
                     scenariosVm.Items.Clear();
                     foreach (var s in project.Scenarios) scenariosVm.Items.Add(new SelectableItem<Scenario>(s, scenariosVm.NotifySelectionChanged));
 
-                    var modulesVm = _locator.Get<ModulesViewModel>();
                     modulesVm.Items.Clear();
-                    foreach (var m in project.Modules) modulesVm.Items.Add(new SelectableItem<AslModule>(m, modulesVm.NotifySelectionChanged));
+                    foreach (var m in project.Modules.Where(m => m != null)) modulesVm.Items.Add(new SelectableItem<AslModule>(m, modulesVm.NotifySelectionChanged));
                 }
             }
             catch (Exception ex)

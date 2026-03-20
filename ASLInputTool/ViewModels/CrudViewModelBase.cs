@@ -81,8 +81,15 @@ public abstract class CrudViewModelBase<T> : ViewModelBase
     /// </summary>
     public RelayCommand DeleteSelectedCommand { get; }
 
+    /// <summary>
+    /// Gets or sets the item currently being edited.
+    /// </summary>
     protected T? EditingItem { get; set; }
 
+    /// <summary>
+    /// Executes the edit command for a specific item.
+    /// </summary>
+    /// <param name="parameter">The SelectableItem wrapper of the item to edit.</param>
     private void ExecuteEdit(object? parameter)
     {
         if (parameter is SelectableItem<T> wrapper)
@@ -93,6 +100,9 @@ public abstract class CrudViewModelBase<T> : ViewModelBase
         }
     }
 
+    /// <summary>
+    /// Handles the deletion of all currently selected items.
+    /// </summary>
     private void OnDeleteSelected()
     {
         var selected = Items.Where(i => i.IsSelected).ToList();
@@ -125,13 +135,19 @@ public abstract class CrudViewModelBase<T> : ViewModelBase
     /// <summary>
     /// Populates the entry form with data from an existing item.
     /// </summary>
+    /// <param name="item">The item to populate the form from.</param>
     protected abstract void PopulateForm(T item);
 
     /// <summary>
     /// Logic to handle the save operation.
     /// </summary>
+    /// <param name="parameter">The command parameter.</param>
     protected abstract void OnSave(object? parameter);
 
+    /// <summary>
+    /// Displays a temporary toast notification in the UI.
+    /// </summary>
+    /// <param name="message">The message to display.</param>
     protected async void ShowToast(string message)
     {
         ToastMessage = message;
