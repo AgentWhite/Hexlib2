@@ -7,10 +7,6 @@ namespace ASL.Models.Components;
 /// </summary>
 public class InfantryComponent : IUnitComponent
 {
-    /// <summary>
-    /// Gets or sets the unique identifier for this component.
-    /// </summary>
-    public string Id { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets a value indicating whether the unit has Assault Fire capability.
