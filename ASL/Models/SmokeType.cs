@@ -1,0 +1,24 @@
+namespace ASL.Models;
+
+/// <summary>
+/// Represents the type of smoke.
+/// </summary>
+public enum SmokeType
+{
+    /// <summary>
+    /// White smoke.
+    /// </summary>
+    White,
+    /// <summary>
+    /// White Phosphorus smoke.
+    /// </summary>
+    WP,
+    /// <summary>
+    /// Candle smoke.
+    /// </summary>
+    Candles, 
+    /// <summary>
+    /// Smoke Discharger smoke.
+    /// </summary>
+    SmokeDischarger
+}
