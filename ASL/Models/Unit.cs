@@ -132,6 +132,12 @@ public class Unit : ICounter
     /// </summary>
     [JsonIgnore]
     public bool IsSquad => UnitType == UnitType.MMC && HasComponent<InfantryComponent>() && Infantry?.Scale == InfantryScale.Squad;
+
+    /// <summary>
+    /// Gets a value indicating whether this unit represents a Support Weapon.
+    /// </summary>
+    [JsonIgnore]
+    public bool IsSupportWeapon => HasComponent<SupportWeaponComponent>();
     
     // Commonly used components for convenience
 
@@ -164,4 +170,10 @@ public class Unit : ICounter
     /// </summary>
     [JsonIgnore]
     public BPVComponent? Bpv => GetComponent<BPVComponent>();
+
+    /// <summary>
+    /// Gets the SupportWeaponComponent of the unit, if present.
+    /// </summary>
+    [JsonIgnore]
+    public SupportWeaponComponent? SupportWeapon => GetComponent<SupportWeaponComponent>();
 }

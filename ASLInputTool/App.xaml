@@ -60,6 +60,9 @@
             <DataTemplate DataType="{x:Type vm:SquadsViewModel}">
                 <v:SquadsView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:SupportWeaponViewModel}">
+                <v:SupportWeaponsView />
+            </DataTemplate>
             <DataTemplate DataType="{x:Type vm:ScenariosViewModel}">
                 <v:ScenariosView />
             </DataTemplate>

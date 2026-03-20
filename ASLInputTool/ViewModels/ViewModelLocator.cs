@@ -19,6 +19,7 @@ public class ViewModelLocator
         Register<LeadersViewModel>(new LeadersViewModel());
         Register<HeroesViewModel>(new HeroesViewModel());
         Register<SquadsViewModel>(new SquadsViewModel());
+        Register<SupportWeaponViewModel>(new SupportWeaponViewModel());
         Register<ScenariosViewModel>(new ScenariosViewModel());
         Register<ModulesViewModel>(new ModulesViewModel());
     }
