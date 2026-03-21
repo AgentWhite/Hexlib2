@@ -7,6 +7,9 @@ namespace ASLInputTool.Views;
 /// </summary>
 public partial class SupportWeaponsView : UserControl
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SupportWeaponsView"/> class.
+    /// </summary>
     public SupportWeaponsView()
     {
         InitializeComponent();

@@ -1,13 +1,24 @@
 namespace ASL.Models.Components;
 
+/// <summary>
+/// Component that provides smoke placement capabilities.
+/// </summary>
 public class SmokeProviderComponent : IUnitComponent
 {
+    /// <inheritdoc/>
     public string ComponentName => GetType().Name;
+    /// <inheritdoc/>
     public Unit Owner { get; set; } = null!;
+    /// <inheritdoc/>
     public void Initialize(Unit owner) => Owner = owner;
     
-    // The "Exponent" (for Infantry/SW) or "Depletion Number" (for Ordnance/Vehicles)
+    /// <summary>
+    /// Gets or sets the "Exponent" (for Infantry/SW) or "Depletion Number" (for Ordnance/Vehicles).
+    /// </summary>
     public int CapabilityNumber { get; set; }
 
+    /// <summary>
+    /// Gets or sets the type of smoke provided.
+    /// </summary>
     public SmokeType SmokeType { get; set; }
 }

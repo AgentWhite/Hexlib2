@@ -1,8 +1,11 @@
+using System.Text.Json.Serialization;
+
 namespace ASL;
 
 /// <summary>
 /// Specifies the type of terrain in a hex.
 /// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum TerrainType
 {
     /// <summary>Clear terrain with no modifiers.</summary>

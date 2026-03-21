@@ -1,8 +1,11 @@
+using System.Text.Json.Serialization;
+
 namespace ASL.Models;
 
 /// <summary>
 /// Specifies the general type of unit.
 /// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum UnitType
 {
     /// <summary>Single-Man Counter (Leaders, Heroes).</summary>

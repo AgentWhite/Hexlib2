@@ -11,7 +11,10 @@ namespace ASL.Models.Components;
 [JsonDerivedType(typeof(FirePowerComponent), typeDiscriminator: "FirePower")]
 [JsonDerivedType(typeof(BPVComponent), typeDiscriminator: "BPV")]
 [JsonDerivedType(typeof(SmokeProviderComponent), typeDiscriminator: "Smoke")]
-[JsonDerivedType(typeof(SupportWeaponComponent), typeDiscriminator: "SupportWeapon")]
+[JsonDerivedType(typeof(PortageComponent), typeDiscriminator: "Portage")]
+[JsonDerivedType(typeof(BreakdownComponent), typeDiscriminator: "Breakdown")]
+[JsonDerivedType(typeof(MachineGunComponent), typeDiscriminator: "MachineGun")]
+[JsonDerivedType(typeof(RadioComponent), typeDiscriminator: "Radio")]
 public interface IUnitComponent
 {
     /// <summary>

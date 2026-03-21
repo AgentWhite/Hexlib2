@@ -1,9 +1,12 @@
+using System.Text.Json.Serialization;
+
 namespace ASL.Models;
 
 
 /// <summary>
 /// Represents the method by which smoke is delivered.
 /// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum SmokeDeliveryMethod
 {
     /// <summary>

@@ -70,7 +70,7 @@ public class ViewModelTests
         vm.Morale = "7";
         vm.BrokenMorale = "8";
         vm.BPV = "15";
-        vm.IsHalfSquad = false;
+        vm.SelectedScale = InfantryScale.Squad;
 
         vm.SaveCommand.Execute(null);
 

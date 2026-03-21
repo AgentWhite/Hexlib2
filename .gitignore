@@ -52,6 +52,8 @@ asl_errors.txt
 asl_tests_errors.txt
 build_errors.txt
 build_log.txt
+full_build_output.txt
+build_output.txt
 
 # OS files
 Thumbs.db

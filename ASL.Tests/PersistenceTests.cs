@@ -40,11 +40,11 @@ public class PersistenceTests
         Assert.Equal(2, loaded.Count);
         Assert.Equal("Sgt. Steiner", loaded[0].Name);
         Assert.True(loaded[0].IsLeader);
-        Assert.Equal(2, loaded[0].Leadership?.Leadership);
+        Assert.Equal(2, loaded[0].Leadership!.Leadership);
         
         Assert.Equal("1st Squad", loaded[1].Name);
         Assert.True(loaded[1].IsSquad);
-        Assert.True(loaded[1].Infantry?.HasAssaultFire);
+        Assert.True(loaded[1].Infantry!.HasAssaultFire);
         
         // Cleanup
         Directory.Delete(_testDataDir, true);
@@ -110,8 +110,8 @@ public class PersistenceTests
         var loadedSquad = loaded.Counters[1];
         Assert.Equal("1st Squad", loadedSquad.Name);
         Assert.True(loadedSquad.IsSquad);
-        Assert.Equal(4, loadedSquad.FirePower?.Firepower);
-        Assert.True(loadedSquad.Infantry?.HasAssaultFire);
+        Assert.Equal(4, loadedSquad.FirePower!.Firepower);
+        Assert.True(loadedSquad.Infantry!.HasAssaultFire);
     }
 
     [Fact]
@@ -142,13 +142,13 @@ public class PersistenceTests
         Assert.Equal("Board 1", loaded!.Name);
         var loadedHex = loaded.GetHexAt(new CubeCoordinate(0, 0, 0));
         Assert.NotNull(loadedHex);
-        Assert.Equal(TerrainType.Woods, loadedHex!.Metadata.Terrain);
+        Assert.Equal(TerrainType.Woods, loadedHex!.Metadata!.Terrain);
         Assert.Single(loadedHex.Counters);
         
         var loadedSquad = Assert.IsType<Unit>(loadedHex.Counters[0]);
         Assert.Equal("1st Squad", loadedSquad.Name);
         Assert.True(loadedSquad.IsSquad);
-        Assert.True(loadedSquad.Infantry?.HasAssaultFire);
+        Assert.True(loadedSquad.Infantry!.HasAssaultFire);
 
         // Cleanup
         Directory.Delete(_testDataDir, true);

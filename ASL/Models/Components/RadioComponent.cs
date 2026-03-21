@@ -3,9 +3,9 @@ using System.Text.Json.Serialization;
 namespace ASL.Models.Components;
 
 /// <summary>
-/// Component that defines the firepower and range of a unit.
+/// Component that represents a Radio with a specific contact number.
 /// </summary>
-public class FirePowerComponent : IUnitComponent
+public class RadioComponent : IUnitComponent
 {
     /// <summary>
     /// Gets the unit that owns this component.
@@ -25,17 +25,7 @@ public class FirePowerComponent : IUnitComponent
     public void Initialize(Unit owner) => Owner = owner;
 
     /// <summary>
-    /// Gets or sets the base firepower value.
+    /// Gets or sets the contact number required for the radio.
     /// </summary>
-    public int Firepower { get; set; }
-
-    /// <summary>
-    /// Gets or sets the base range value (in hexes).
-    /// </summary>
-    public int Range { get; set; }
-
-    /// <summary>
-    /// Gets or sets the rate of fire (ROF).
-    /// </summary>
-    public int? RateOfFire { get; set; }
+    public int ContactNumber { get; set; }
 }

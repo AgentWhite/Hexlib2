@@ -1,11 +1,12 @@
 using System.Text.Json.Serialization;
+using ASL.Models;
 
 namespace ASL.Models.Components;
 
 /// <summary>
-/// Component that defines the firepower and range of a unit.
+/// Component that defines the specific type of machine gun.
 /// </summary>
-public class FirePowerComponent : IUnitComponent
+public class MachineGunComponent : IUnitComponent
 {
     /// <summary>
     /// Gets the unit that owns this component.
@@ -25,17 +26,12 @@ public class FirePowerComponent : IUnitComponent
     public void Initialize(Unit owner) => Owner = owner;
 
     /// <summary>
-    /// Gets or sets the base firepower value.
+    /// Gets or sets the type of the machine gun.
     /// </summary>
-    public int Firepower { get; set; }
+    public MachineGunType Type { get; set; }
 
     /// <summary>
-    /// Gets or sets the base range value (in hexes).
+    /// Gets or sets a value indicating whether the machine gun has spraying fire capability.
     /// </summary>
-    public int Range { get; set; }
-
-    /// <summary>
-    /// Gets or sets the rate of fire (ROF).
-    /// </summary>
-    public int? RateOfFire { get; set; }
+    public bool HasSprayingFire { get; set; }
 }

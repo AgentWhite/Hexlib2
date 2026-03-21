@@ -1,8 +1,11 @@
+using System.Text.Json.Serialization;
+
 namespace ASL.Models;
 
 /// <summary>
 /// Specifies the scale of an infantry unit.
 /// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum InfantryScale
 {
     /// <summary>Full squad.</summary>

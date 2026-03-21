@@ -101,27 +101,70 @@ public class ASLSaveManager
         string tempJson = SerializeProject(sourceProject);
         var project = DeserializeProject(tempJson) ?? new ASLProject();
 
+        HashSet<string> usedImages = new(StringComparer.OrdinalIgnoreCase);
+
         foreach (var counter in project.Counters)
         {
             if (!string.IsNullOrEmpty(counter.ImagePathFront))
+            {
                 counter.ImagePathFront = ProcessImage(counter.ImagePathFront!, imagesDir);
+                usedImages.Add(Path.GetFileName(counter.ImagePathFront));
+            }
             
             if (!string.IsNullOrEmpty(counter.ImagePathBack))
+            {
                 counter.ImagePathBack = ProcessImage(counter.ImagePathBack!, imagesDir);
+                usedImages.Add(Path.GetFileName(counter.ImagePathBack));
+            }
+
+            var portage = counter.GetComponent<PortageComponent>();
+            if (portage != null && !string.IsNullOrEmpty(portage.DismantledImage))
+            {
+                portage.DismantledImage = ProcessImage(portage.DismantledImage, imagesDir);
+                usedImages.Add(Path.GetFileName(portage.DismantledImage));
+            }
         }
 
         foreach (var scenario in project.Scenarios.Where(s => !string.IsNullOrEmpty(s.ImagePath)))
         {
             scenario.ImagePath = ProcessImage(scenario.ImagePath!, imagesDir);
+            usedImages.Add(Path.GetFileName(scenario.ImagePath));
         }
 
         foreach (var module in project.Modules.Where(m => m != null))
         {
             if (!string.IsNullOrEmpty(module.FrontImage))
+            {
                 module.FrontImage = ProcessImage(module.FrontImage!, imagesDir);
+                usedImages.Add(Path.GetFileName(module.FrontImage));
+            }
             
             if (!string.IsNullOrEmpty(module.BackImage))
+            {
                 module.BackImage = ProcessImage(module.BackImage!, imagesDir);
+                usedImages.Add(Path.GetFileName(module.BackImage));
+            }
+        }
+
+        // Cleanup unused images in the local images directory
+        if (Directory.Exists(imagesDir))
+        {
+            var files = Directory.GetFiles(imagesDir);
+            foreach (var file in files)
+            {
+                string fileName = Path.GetFileName(file);
+                if (!usedImages.Contains(fileName))
+                {
+                    try
+                    {
+                        File.Delete(file);
+                    }
+                    catch
+                    {
+                        // Ignore deletion errors (e.g., file in use)
+                    }
+                }
+            }
         }
 
         return project;

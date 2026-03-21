@@ -3,25 +3,23 @@ using System.Text.Json.Serialization;
 namespace ASL.Models;
 
 /// <summary>
-/// Represents the type of smoke.
+/// Specifies the type of machine gun.
 /// </summary>
 [JsonConverter(typeof(JsonStringEnumConverter))]
-public enum SmokeType
+public enum MachineGunType
 {
     /// <summary>
-    /// White smoke.
+    /// Light machine gun.
     /// </summary>
-    White,
+    LMG,
+
     /// <summary>
-    /// White Phosphorus smoke.
+    /// Medium machine gun.
     /// </summary>
-    WP,
+    MMG,
+
     /// <summary>
-    /// Candle smoke.
+    /// Heavy machine gun.
     /// </summary>
-    Candles, 
-    /// <summary>
-    /// Smoke Discharger smoke.
-    /// </summary>
-    SmokeDischarger
+    HMG
 }

@@ -3,9 +3,9 @@ using System.Text.Json.Serialization;
 namespace ASL.Models.Components;
 
 /// <summary>
-/// Component that defines the firepower and range of a unit.
+/// Component that defines the breakdown and removal numbers of a support weapon.
 /// </summary>
-public class FirePowerComponent : IUnitComponent
+public class BreakdownComponent : IUnitComponent
 {
     /// <summary>
     /// Gets the unit that owns this component.
@@ -25,17 +25,17 @@ public class FirePowerComponent : IUnitComponent
     public void Initialize(Unit owner) => Owner = owner;
 
     /// <summary>
-    /// Gets or sets the base firepower value.
+    /// Gets or sets the number at which the weapon breaks down.
     /// </summary>
-    public int Firepower { get; set; }
+    public int BreakdownNumber { get; set; }
 
     /// <summary>
-    /// Gets or sets the base range value (in hexes).
+    /// Gets or sets the number at which the weapon is removed from play (permanent breakdown).
     /// </summary>
-    public int Range { get; set; }
+    public int RemovalNumber { get; set; }
 
     /// <summary>
-    /// Gets or sets the rate of fire (ROF).
+    /// Gets or sets the number required to repair the weapon.
     /// </summary>
-    public int? RateOfFire { get; set; }
+    public int RepairNumber { get; set; }
 }

@@ -21,7 +21,7 @@ public class SquadsViewModel : CrudViewModelBase<Unit>
     private UnitClass _selectedClass = UnitClass.FirstLine;
     private string? _imagePathFront;
     private string? _imagePathBack;
-    private bool _isHalfSquad;
+    private InfantryScale _selectedScale = InfantryScale.Squad;
     private bool _hasAssaultFire;
     private bool _hasSprayingFire;
     private bool _canSelfRally;
@@ -90,31 +90,55 @@ public class SquadsViewModel : CrudViewModelBase<Unit>
     public string? ImagePathBack { get => _imagePathBack; set => SetProperty(ref _imagePathBack, value); }
 
     /// <summary>
-    /// Gets or sets a value indicating whether this is a half-squad.
+    /// Gets or sets the scale of the infantry unit.
     /// </summary>
-    public bool IsHalfSquad 
+    public InfantryScale SelectedScale 
     { 
-        get => _isHalfSquad; 
+        get => _selectedScale; 
         set 
         { 
-            if (SetProperty(ref _isHalfSquad, value))
+            if (SetProperty(ref _selectedScale, value))
             {
-                if (value)
-                {
-                    HasAssaultFire = false;
-                    HasSprayingFire = false;
-                    CanSelfRally = false;
-                    HasSmokeExponent = false;
-                }
-                OnPropertyChanged(nameof(CanHaveFullSquadTraits));
+                // Reset traits not allowed for the new scale
+                if (!CanHaveAssaultFire) HasAssaultFire = false;
+                if (!CanHaveSprayingFire) HasSprayingFire = false;
+                if (!CanHaveSelfRally) CanSelfRally = false;
+                if (!CanHaveSmoke) HasSmokeExponent = false;
+                if (!CanHaveELR) HasELR = false;
+
+                OnPropertyChanged(nameof(CanHaveAssaultFire));
+                OnPropertyChanged(nameof(CanHaveSprayingFire));
+                OnPropertyChanged(nameof(CanHaveSelfRally));
+                OnPropertyChanged(nameof(CanHaveELR));
+                OnPropertyChanged(nameof(CanHaveSmoke));
             }
         } 
     }
 
     /// <summary>
-    /// Gets a value indicating whether full squad traits (Assault Fire, Spraying Fire, etc.) can be applied.
+    /// Gets a value indicating whether Assault Fire can be applied.
     /// </summary>
-    public bool CanHaveFullSquadTraits => !IsHalfSquad;
+    public bool CanHaveAssaultFire => SelectedScale == InfantryScale.Squad;
+
+    /// <summary>
+    /// Gets a value indicating whether Spraying Fire can be applied.
+    /// </summary>
+    public bool CanHaveSprayingFire => SelectedScale == InfantryScale.Squad;
+
+    /// <summary>
+    /// Gets a value indicating whether Self Rally can be applied.
+    /// </summary>
+    public bool CanHaveSelfRally => SelectedScale == InfantryScale.Squad || SelectedScale == InfantryScale.Crew;
+
+    /// <summary>
+    /// Gets a value indicating whether ELR can be applied.
+    /// </summary>
+    public bool CanHaveELR => SelectedScale == InfantryScale.Squad || SelectedScale == InfantryScale.HalfSquad;
+
+    /// <summary>
+    /// Gets a value indicating whether Smoke capability can be applied.
+    /// </summary>
+    public bool CanHaveSmoke => SelectedScale == InfantryScale.Squad;
 
     /// <summary>
     /// Gets or sets a value indicating whether the unit has Assault Fire.
@@ -179,6 +203,13 @@ public class SquadsViewModel : CrudViewModelBase<Unit>
     /// Gets the list of available unit classes.
     /// </summary>
     public IEnumerable<UnitClass> UnitClasses => Enum.GetValues(typeof(UnitClass)).Cast<UnitClass>();
+
+    /// <summary>
+    /// Gets the list of available infantry scales (excluding SMC).
+    /// </summary>
+    public IEnumerable<InfantryScale> Scales => Enum.GetValues(typeof(InfantryScale))
+        .Cast<InfantryScale>()
+        .Where(s => s != InfantryScale.SMC);
 
     /// <summary>
     /// Command to pick the front image.
@@ -372,9 +403,9 @@ public class SquadsViewModel : CrudViewModelBase<Unit>
         OnPropertyChanged(nameof(BPV));
         SelectedNationality = Nationality.German;
         SelectedClass = UnitClass.FirstLine;
+        SelectedScale = InfantryScale.Squad;
         ImagePathFront = null;
         ImagePathBack = null;
-        IsHalfSquad = false;
         HasAssaultFire = false;
         HasSprayingFire = false;
         CanSelfRally = false;
@@ -404,7 +435,7 @@ public class SquadsViewModel : CrudViewModelBase<Unit>
         ImagePathFront = item.ImagePathFront;
         ImagePathBack = item.ImagePathBack;
         var infantry = item.Infantry;
-        IsHalfSquad = infantry?.Scale == InfantryScale.HalfSquad;
+        SelectedScale = infantry?.Scale ?? InfantryScale.Squad;
         HasAssaultFire = infantry?.HasAssaultFire ?? false;
         HasSprayingFire = infantry?.HasSprayingFire ?? false;
         CanSelfRally = infantry?.CanSelfRally ?? false;
@@ -451,7 +482,7 @@ public class SquadsViewModel : CrudViewModelBase<Unit>
             Morale = mValue,
             BrokenMorale = bmValue,
             AslClass = SelectedClass,
-            Scale = IsHalfSquad ? InfantryScale.HalfSquad : InfantryScale.Squad,
+            Scale = SelectedScale,
             HasAssaultFire = HasAssaultFire,
             HasSprayingFire = HasSprayingFire,
             CanSelfRally = CanSelfRally,

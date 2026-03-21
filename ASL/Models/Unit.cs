@@ -45,6 +45,12 @@ public class Unit : ICounter
     public Nationality Nationality { get; set; }  
     
     /// <summary>
+    /// Gets or sets the parent unit (e.g., if this is a support weapon carried by a squad).
+    /// </summary>
+    [JsonIgnore]
+    public Unit? Parent { get; set; }
+
+    /// <summary>
     /// Gets or sets the list of components that define the unit's capabilities.
     /// </summary>
     public List<IUnitComponent> Components { get; set; } = new();
@@ -137,7 +143,8 @@ public class Unit : ICounter
     /// Gets a value indicating whether this unit represents a Support Weapon.
     /// </summary>
     [JsonIgnore]
-    public bool IsSupportWeapon => HasComponent<SupportWeaponComponent>();
+    // TODO: This logic is currently incorrect as other unit types may also have a BreakdownComponent.
+    public bool IsSupportWeapon => HasComponent<BreakdownComponent>();
     
     // Commonly used components for convenience
 
@@ -172,8 +179,26 @@ public class Unit : ICounter
     public BPVComponent? Bpv => GetComponent<BPVComponent>();
 
     /// <summary>
-    /// Gets the SupportWeaponComponent of the unit, if present.
+    /// Gets the PortageComponent of the unit, if present.
     /// </summary>
     [JsonIgnore]
-    public SupportWeaponComponent? SupportWeapon => GetComponent<SupportWeaponComponent>();
+    public PortageComponent? Portage => GetComponent<PortageComponent>();
+
+    /// <summary>
+    /// Gets the BreakdownComponent of the unit, if present.
+    /// </summary>
+    [JsonIgnore]
+    public BreakdownComponent? Breakdown => GetComponent<BreakdownComponent>();
+
+    /// <summary>
+    /// Gets the MachineGunComponent of the unit, if present.
+    /// </summary>
+    [JsonIgnore]
+    public MachineGunComponent? MachineGun => GetComponent<MachineGunComponent>();
+
+    /// <summary>
+    /// Gets the Rate of Fire of the unit, if present.
+    /// </summary>
+    [JsonIgnore]
+    public int? RateOfFire => FirePower?.RateOfFire;
 }

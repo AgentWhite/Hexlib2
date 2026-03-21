@@ -14,5 +14,7 @@
     <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}"/>
     <SolidColorBrush x:Key="ValidationBackgroundBrush" Color="{StaticResource ValidationBackground}"/>
     <SolidColorBrush x:Key="ValidationErrorBrush" Color="{StaticResource ValidationError}"/>
+    <SolidColorBrush x:Key="DisabledBackgroundBrush" Color="#DCDCDC"/>
+    <SolidColorBrush x:Key="DisabledTextBrush" Color="Gray"/>
     
 </ResourceDictionary>

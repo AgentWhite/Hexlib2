@@ -130,6 +130,10 @@ public class MainViewModel : ViewModelBase
 
                         if (!string.IsNullOrEmpty(c.ImagePathBack) && !Path.IsPathRooted(c.ImagePathBack))
                             c.ImagePathBack = Path.GetFullPath(Path.Combine(projectDir, c.ImagePathBack!));
+
+                        var portage = c.GetComponent<PortageComponent>();
+                        if (portage != null && !string.IsNullOrEmpty(portage.DismantledImage) && !Path.IsPathRooted(portage.DismantledImage))
+                            portage.DismantledImage = Path.GetFullPath(Path.Combine(projectDir, portage.DismantledImage!));
                     }
 
                     foreach (var s in project.Scenarios.Where(s => !string.IsNullOrEmpty(s.ImagePath)))

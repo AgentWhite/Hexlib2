@@ -49,9 +49,16 @@
                 </DataGrid.InputBindings>
                 <DataGrid.Columns>
                     <DataGridCheckBoxColumn Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" Width="30" IsReadOnly="False" />
+                    <DataGridTemplateColumn Header="Image" Width="60">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image Source="{Binding Item.ImagePathFront, Converter={StaticResource ImageSource}}" Height="45" Stretch="Uniform"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTextColumn Header="Name" Binding="{Binding Item.Name}" Width="*" IsReadOnly="True" />
                     <DataGridTextColumn Header="Nationality" Binding="{Binding Item.Nationality}" Width="120" IsReadOnly="True" />
-                    <DataGridTextColumn Header="Stats" Binding="{Binding Item, Converter={StaticResource CounterStats}}" Width="100" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Type" Binding="{Binding Item.MachineGun.Type}" Width="120" IsReadOnly="True" />
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
@@ -99,57 +106,118 @@
                             </ControlTemplate>
                         </Button.Template>
                     </Button>
+ 
+                    <Label Content="Dismantled" FontWeight="SemiBold" HorizontalAlignment="Center" 
+                           Visibility="{Binding ShowDismantledImage, Converter={StaticResource BoolToVis}}"/>
+                    <Button Command="{Binding PickDismantledImageCommand}" 
+                            Width="120" Height="120"
+                            Visibility="{Binding ShowDismantledImage, Converter={StaticResource BoolToVis}}">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="2" Background="White">
+                                    <Grid>
+                                        <Image Source="{Binding DismantledImage, Converter={StaticResource ImageSource}}" Stretch="UniformToFill"/>
+                                        <TextBlock Text="Click for Dismantled" Visibility="{Binding DismantledImage, Converter={StaticResource NullToVis}}" 
+                                                   VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" 
+                                                   Foreground="Gray" TextWrapping="Wrap" Padding="10"/>
+                                    </Grid>
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
                 </StackPanel>
 
                 <StackPanel Grid.Column="1">
-                    <Label Content="Weapon Name" FontWeight="SemiBold"/>
+                    <Label Content="Id" FontWeight="SemiBold"/>
                     <TextBox Margin="0,0,0,10" Tag="e.g., MG34" Text="{Binding Name}" LostFocus="OnTextBoxLostFocus"/>
 
                     <Label Content="Nationality" FontWeight="SemiBold"/>
                     <ComboBox Margin="0,0,0,10" Padding="5" ItemsSource="{Binding Nationalities}" SelectedItem="{Binding SelectedNationality}"/>
 
-                    <Grid Margin="0,10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Grid.Column="0" Margin="0,0,20,0">
-                            <Label Content="Firepower" FontWeight="SemiBold"/>
-                            <TextBox Width="50" HorizontalAlignment="Left" Text="{Binding Firepower}" LostFocus="OnTextBoxLostFocus"/>
+                    <GroupBox Header="Machine Gun" Margin="0,10">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <StackPanel Margin="0,0,20,0">
+                                <Label Content="Type" FontWeight="SemiBold"/>
+                                <ComboBox Width="80" Padding="5" 
+                                          ItemsSource="{Binding MachineGunTypes}" 
+                                          SelectedItem="{Binding SelectedMachineGunType}"/>
+                            </StackPanel>
+                            <StackPanel VerticalAlignment="Bottom" Margin="0,0,0,5">
+                                <CheckBox Content="Spraying Fire" IsChecked="{Binding HasSprayingFire}" VerticalContentAlignment="Center"/>
+                            </StackPanel>
                         </StackPanel>
-                        <StackPanel Grid.Column="1" Margin="0,0,20,0">
-                            <Label Content="Range" FontWeight="SemiBold"/>
-                            <TextBox Width="50" HorizontalAlignment="Left" Text="{Binding Range}" LostFocus="OnTextBoxLostFocus"/>
-                        </StackPanel>
-                        <StackPanel Grid.Column="2">
-                            <Label Content="Rate of Fire" FontWeight="SemiBold"/>
-                            <TextBox Width="50" HorizontalAlignment="Left" Text="{Binding RateOfFire}" LostFocus="OnTextBoxLostFocus"/>
-                        </StackPanel>
-                    </Grid>
 
-                    <Grid Margin="0,0,0,10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Grid.Column="0" Margin="0,0,20,0">
-                            <Label Content="Breakdown" FontWeight="SemiBold"/>
-                            <TextBox Width="50" HorizontalAlignment="Left" Text="{Binding BreakdownNumber}" LostFocus="OnTextBoxLostFocus"/>
-                        </StackPanel>
-                        <StackPanel Grid.Column="1">
-                            <Label Content="Portage Cost" FontWeight="SemiBold"/>
-                            <TextBox Width="50" HorizontalAlignment="Left" Text="{Binding PortageCost}" LostFocus="OnTextBoxLostFocus"/>
-                        </StackPanel>
-                    </Grid>
+                        <!-- Basic Stats Grid -->
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,20,0" HorizontalAlignment="Center">
+                                <Label Content="Firepower" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                <TextBox Width="50" HorizontalAlignment="Center" Tag="4" Text="{Binding Firepower}" LostFocus="OnTextBoxLostFocus"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="0,0,20,0" HorizontalAlignment="Center">
+                                <Label Content="Range" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                <TextBox Width="50" HorizontalAlignment="Center" Tag="10" Text="{Binding Range}" LostFocus="OnTextBoxLostFocus"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2" HorizontalAlignment="Center">
+                                <Label Content="ROF" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                <TextBox Width="50" HorizontalAlignment="Center" Tag="2" Text="{Binding RateOfFire}" LostFocus="OnTextBoxLostFocus"/>
+                            </StackPanel>
+                        </Grid>
 
-                    <StackPanel Orientation="Horizontal" Margin="0,10">
-                        <CheckBox Content="Smoke Capability" IsChecked="{Binding HasSmokeExponent}" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                        <TextBox Width="50" VerticalAlignment="Center"
-                                 IsEnabled="{Binding HasSmokeExponent}" 
-                                 Text="{Binding SmokePlacementExponent}" 
-                                 LostFocus="OnTextBoxLostFocus"/>
+                        <!-- Reliability Grid -->
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,20,0" HorizontalAlignment="Center">
+                                <Label Content="Breakdown" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <TextBox Width="50" HorizontalAlignment="Center" Tag="12" 
+                                             Text="{Binding BreakdownNumber}" LostFocus="OnTextBoxLostFocus"
+                                             ToolTip="If left empty a default value of 12 will be applied."/>
+                                    <Border Width="22" Height="22" Margin="4,0,0,0" 
+                                            Background="{StaticResource ControlBorderBrush}" 
+                                            CornerRadius="11" VerticalAlignment="Center"
+                                            ToolTip="If left empty a default value of 12 will be applied.">
+                                        <TextBlock Text="?" Foreground="White" FontSize="12" FontWeight="Bold" 
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-1,0,0"/>
+                                    </Border>
+                                </StackPanel>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="0,0,20,0" HorizontalAlignment="Center">
+                                <Label Content="Removal" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                <TextBox Width="50" HorizontalAlignment="Center" Tag="0" Text="{Binding RemovalNumber}" LostFocus="OnTextBoxLostFocus"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2" Margin="0,0,20,0" HorizontalAlignment="Center">
+                                <Label Content="Repair" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                <TextBox Width="50" HorizontalAlignment="Center" Tag="0" Text="{Binding RepairNumber}" LostFocus="OnTextBoxLostFocus"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="3" Margin="0,0,20,0" HorizontalAlignment="Center">
+                                <Label Content="Assembled Cost" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                <TextBox Width="50" HorizontalAlignment="Center" Tag="3" Text="{Binding PortageCost}" LostFocus="OnTextBoxLostFocus"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="4" HorizontalAlignment="Center">
+                                <Label Content="Dismantled Cost" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                <TextBox Width="50" HorizontalAlignment="Center" Tag="2" Text="{Binding DismantledCost}" LostFocus="OnTextBoxLostFocus"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Smoke section -->
+                        <StackPanel Orientation="Horizontal" Margin="0,10">
+                            <CheckBox Content="Smoke Placement Exponent" IsChecked="{Binding HasSmokeExponent}" VerticalContentAlignment="Center"/>
+                            <TextBox Width="40" Margin="10,0,0,0" Text="{Binding SmokePlacementExponent}" IsEnabled="{Binding HasSmokeExponent}" LostFocus="OnTextBoxLostFocus"/>
+                        </StackPanel>
                     </StackPanel>
+                </GroupBox>
 
                     <Button Content="Save Support Weapon" Command="{Binding SaveCommand}" Margin="0,20,0,0" Padding="20,10" HorizontalAlignment="Right" Background="{StaticResource AccentBrush}" Foreground="White" FontWeight="Bold"/>
                 </StackPanel>

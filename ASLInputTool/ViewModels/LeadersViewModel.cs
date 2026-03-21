@@ -288,7 +288,8 @@ public class LeadersViewModel : CrudViewModelBase<Unit>
             Morale = m, 
             BrokenMorale = bm, 
             AslClass = UnitClass.Elite,
-            Scale = InfantryScale.SMC
+            Scale = InfantryScale.SMC,
+            CanSelfRally = true
         });
         unit.AddComponent(new LeadershipComponent { Leadership = l });
         unit.AddComponent(new BPVComponent { BPV = bpvValue });

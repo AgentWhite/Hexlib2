@@ -23,8 +23,7 @@ public class CounterStatsConverter : IValueConverter
                 var brokenMorale = unit.Infantry?.BrokenMorale;
                 var leadership = unit.Leadership?.Leadership ?? 0;
                 var leadershipSign = leadership >= 0 ? "+" : "";
-                var bmPart = brokenMorale.HasValue ? $"-{brokenMorale.Value}" : "";
-                return $"{morale}{bmPart}{leadershipSign}{leadership}";
+                return $"{morale}{leadershipSign}{leadership}";
             }
             if (unit.IsHero)
             {
@@ -33,14 +32,19 @@ public class CounterStatsConverter : IValueConverter
                 var morale = unit.Infantry?.Morale ?? 0;
                 return $"{fp}-{r}-{morale}";
             }
+            if (unit.IsSupportWeapon)
+            {
+                var fp = unit.FirePower?.Firepower ?? 0;
+                var r = unit.FirePower?.Range ?? 0;
+                var rof = unit.RateOfFire ?? 0;
+                return $"{fp}-{r}-{rof}";
+            }
             if (unit.IsSquad || unit.IsHalfSquad || unit.IsCrew)
             {
                 var fp = unit.FirePower?.Firepower ?? 0;
                 var r = unit.FirePower?.Range ?? 0;
-                var smokeComp = unit.GetComponent<SmokeProviderComponent>();
-                var smoke = smokeComp != null ? "s" + (smokeComp.CapabilityNumber > 0 ? smokeComp.CapabilityNumber.ToString() : "") : "";
                 var morale = unit.Infantry?.Morale ?? 0;
-                return $"{fp}-{r}-{morale}{smoke}";
+                return $"{fp}-{r}-{morale}";
             }
         }
         return string.Empty;

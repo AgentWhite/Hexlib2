@@ -1,9 +1,12 @@
+using System.Text.Json.Serialization;
+
 namespace ASL.Models;
 
 /// <summary>
 /// Represents the side of a unit in a scenario and it determines
 /// who sets up first and who moves first.
 /// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum Side
 {
     /// <summary>
