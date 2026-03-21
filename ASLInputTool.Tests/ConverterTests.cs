@@ -41,17 +41,17 @@ public class ConverterTests
         var statsNoSmoke = converter.Convert(unit, typeof(string), null!, System.Globalization.CultureInfo.InvariantCulture) as string;
         Assert.Equal("4-6-7", statsNoSmoke);
 
-        // With smoke exponent 0 (s)
+        // With smoke exponent 0 (should still show 4-6-7 in the stats column as requested)
         var smoke0 = new SmokeProviderComponent { CapabilityNumber = 0, SmokeType = SmokeType.White };
         unit.AddComponent(smoke0);
         var statsSmoke0 = converter.Convert(unit, typeof(string), null!, System.Globalization.CultureInfo.InvariantCulture) as string;
-        Assert.Equal("4-6-7s", statsSmoke0);
+        Assert.Equal("4-6-7", statsSmoke0);
 
-        // With smoke exponent 2 (s2)
+        // With smoke exponent 2 (should still show 4-6-7 in the stats column as requested)
         unit.RemoveComponent(smoke0);
         var smoke2 = new SmokeProviderComponent { CapabilityNumber = 2, SmokeType = SmokeType.White };
         unit.AddComponent(smoke2);
         var statsSmoke2 = converter.Convert(unit, typeof(string), null!, System.Globalization.CultureInfo.InvariantCulture) as string;
-        Assert.Equal("4-6-7s2", statsSmoke2);
+        Assert.Equal("4-6-7", statsSmoke2);
     }
 }

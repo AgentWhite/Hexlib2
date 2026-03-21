@@ -20,7 +20,6 @@ public class CounterStatsConverter : IValueConverter
             if (unit.IsLeader)
             {
                 var morale = unit.Infantry?.Morale ?? 0;
-                var brokenMorale = unit.Infantry?.BrokenMorale;
                 var leadership = unit.Leadership?.Leadership ?? 0;
                 var leadershipSign = leadership >= 0 ? "+" : "";
                 return $"{morale}{leadershipSign}{leadership}";
