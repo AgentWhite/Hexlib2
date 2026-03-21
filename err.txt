@@ -1,0 +1,9 @@
+﻿d:\Git\HexLib\ASLInputTool\ViewModels\SquadsViewModel.cs(87,17): error CS0103: The name 'ValidateUniqueness' does not exist in the current context [d:\Git\HexLib\ASLInputTool\ASLInputTool_oncow5vv_wpftmp.csproj]
+d:\Git\HexLib\ASLInputTool\ViewModels\EquipmentViewModel.cs(172,17): error CS0103: The name 'ValidateUniqueness' does not exist in the current context [d:\Git\HexLib\ASLInputTool\ASLInputTool_oncow5vv_wpftmp.csproj]
+d:\Git\HexLib\ASLInputTool\ViewModels\EquipmentViewModel.cs(193,17): error CS0103: The name 'ValidateUniqueness' does not exist in the current context [d:\Git\HexLib\ASLInputTool\ASLInputTool_oncow5vv_wpftmp.csproj]
+
+Build FAILED.
+    0 Warning(s)
+    3 Error(s)
+
+Time Elapsed 00:00:00.83

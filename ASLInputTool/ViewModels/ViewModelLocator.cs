@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ASLInputTool.Infrastructure;
 
 namespace ASLInputTool.ViewModels;
 
@@ -9,20 +10,43 @@ namespace ASLInputTool.ViewModels;
 public class ViewModelLocator
 {
     private readonly Dictionary<Type, ViewModelBase> _viewModels = new();
+    private readonly IUnitRepository _unitRepository;
+    private readonly IScenarioRepository _scenarioRepository;
+    private readonly IModuleRepository _moduleRepository;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ViewModelLocator"/> class and registers default ViewModels.
     /// </summary>
     public ViewModelLocator()
     {
-        // Register default instances
-        Register<LeadersViewModel>(new LeadersViewModel());
-        Register<HeroesViewModel>(new HeroesViewModel());
-        Register<SquadsViewModel>(new SquadsViewModel());
-        Register<EquipmentViewModel>(new EquipmentViewModel());
-        Register<ScenariosViewModel>(new ScenariosViewModel());
-        Register<ModulesViewModel>(new ModulesViewModel());
+        // Initialize infrastructure
+        _unitRepository = new UnitRepository();
+        _scenarioRepository = new ScenarioRepository();
+        _moduleRepository = new ModuleRepository();
+
+        // Register default instances with injected dependencies
+        Register<LeadersViewModel>(new LeadersViewModel(_unitRepository));
+        Register<HeroesViewModel>(new HeroesViewModel(_unitRepository));
+        Register<SquadsViewModel>(new SquadsViewModel(_unitRepository));
+        Register<EquipmentViewModel>(new EquipmentViewModel(_unitRepository));
+        Register<ScenariosViewModel>(new ScenariosViewModel(_scenarioRepository));
+        Register<ModulesViewModel>(new ModulesViewModel(_moduleRepository));
     }
+
+    /// <summary>
+    /// Gets the registered unit repository.
+    /// </summary>
+    public IUnitRepository UnitRepository => _unitRepository;
+
+    /// <summary>
+    /// Gets the registered scenario repository.
+    /// </summary>
+    public IScenarioRepository ScenarioRepository => _scenarioRepository;
+
+    /// <summary>
+    /// Gets the registered module repository.
+    /// </summary>
+    public IModuleRepository ModuleRepository => _moduleRepository;
 
     /// <summary>
     /// Registers a ViewModel instance.

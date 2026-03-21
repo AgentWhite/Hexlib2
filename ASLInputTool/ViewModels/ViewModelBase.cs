@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.ComponentModel.DataAnnotations;
 
 namespace ASLInputTool.ViewModels;
 
@@ -45,9 +46,57 @@ public abstract class ViewModelBase : INotifyPropertyChanged, INotifyDataErrorIn
     /// <returns>True if the value was changed, false otherwise.</returns>
     protected bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string? propertyName = null)
     {
-        if (Equals(storage, value)) return false;
-        storage = value;
-        OnPropertyChanged(propertyName);
+        bool changed = !Equals(storage, value);
+        if (changed)
+        {
+            storage = value;
+            OnPropertyChanged(propertyName);
+        }
+        
+        // Always validate on setter invocation to support LostFocus triggers
+        // even when the user didn't modify the text.
+        ValidateProperty(value, propertyName);
+        
+        return changed;
+    }
+
+    /// <summary>
+    /// Validates a single property using DataAnnotations.
+    /// </summary>
+    protected virtual void ValidateProperty(object? value, string? propertyName)
+    {
+        if (string.IsNullOrEmpty(propertyName)) return;
+        ClearErrors(propertyName);
+        var context = new ValidationContext(this) { MemberName = propertyName };
+        var results = new List<ValidationResult>();
+        if (!Validator.TryValidateProperty(value, context, results))
+        {
+            foreach (var result in results)
+            {
+                AddError(propertyName, result.ErrorMessage ?? "Invalid value");
+            }
+        }
+    }
+
+    /// <summary>
+    /// Validates all properties on the ViewModel using DataAnnotations.
+    /// </summary>
+    protected virtual bool ValidateAllProperties()
+    {
+        ClearErrors();
+        var context = new ValidationContext(this);
+        var results = new List<ValidationResult>();
+        if (!Validator.TryValidateObject(this, context, results, true))
+        {
+            foreach (var result in results)
+            {
+                foreach (var memberName in result.MemberNames)
+                {
+                    AddError(memberName, result.ErrorMessage ?? "Invalid value");
+                }
+            }
+            return false;
+        }
         return true;
     }
 

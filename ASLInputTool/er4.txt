@@ -1,0 +1,12 @@
+﻿d:\Git\HexLib\ASLInputTool\ViewModels\ViewModelLocator.cs(57,9): error CS0103: The name '_viewModels' does not exist in the current context [d:\Git\HexLib\ASLInputTool\ASLInputTool_1drdiet0_wpftmp.csproj]
+d:\Git\HexLib\ASLInputTool\ViewModels\ViewModelLocator.cs(67,19): error CS0103: The name '_viewModels' does not exist in the current context [d:\Git\HexLib\ASLInputTool\ASLInputTool_1drdiet0_wpftmp.csproj]
+d:\Git\HexLib\ASLInputTool\ViewModels\ViewModelLocator.cs(74,51): error CS0103: The name '_viewModels' does not exist in the current context [d:\Git\HexLib\ASLInputTool\ASLInputTool_1drdiet0_wpftmp.csproj]
+d:\Git\HexLib\ASLInputTool\ViewModels\ScenariosViewModel.cs(157,9): error CS0103: The name 'PickImageCommand' does not exist in the current context [d:\Git\HexLib\ASLInputTool\ASLInputTool_1drdiet0_wpftmp.csproj]
+d:\Git\HexLib\ASLInputTool\ViewModels\ModulesViewModel.cs(215,21): error CS0103: The name 'index' does not exist in the current context [d:\Git\HexLib\ASLInputTool\ASLInputTool_1drdiet0_wpftmp.csproj]
+d:\Git\HexLib\ASLInputTool\ViewModels\ModulesViewModel.cs(218,27): error CS0103: The name 'index' does not exist in the current context [d:\Git\HexLib\ASLInputTool\ASLInputTool_1drdiet0_wpftmp.csproj]
+
+Build FAILED.
+    0 Warning(s)
+    6 Error(s)
+
+Time Elapsed 00:00:00.84

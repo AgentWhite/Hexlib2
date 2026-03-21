@@ -1,0 +1,18 @@
+﻿d:\Git\HexLib\ASLInputTool\ViewModels\ScenariosViewModel.cs(351,9): error CS1519: Invalid token 'else' in a member declaration [d:\Git\HexLib\ASLInputTool\ASLInputTool_c2bz1hex_wpftmp.csproj]
+d:\Git\HexLib\ASLInputTool\ViewModels\ScenariosViewModel.cs(353,22): error CS1519: Invalid token '(' in a member declaration [d:\Git\HexLib\ASLInputTool\ASLInputTool_c2bz1hex_wpftmp.csproj]
+d:\Git\HexLib\ASLInputTool\ViewModels\ScenariosViewModel.cs(353,23): error CS1031: Type expected [d:\Git\HexLib\ASLInputTool\ASLInputTool_c2bz1hex_wpftmp.csproj]
+d:\Git\HexLib\ASLInputTool\ViewModels\ScenariosViewModel.cs(353,23): error CS8124: Tuple must contain at least two elements. [d:\Git\HexLib\ASLInputTool\ASLInputTool_c2bz1hex_wpftmp.csproj]
+d:\Git\HexLib\ASLInputTool\ViewModels\ScenariosViewModel.cs(353,23): error CS1026: ) expected [d:\Git\HexLib\ASLInputTool\ASLInputTool_c2bz1hex_wpftmp.csproj]
+d:\Git\HexLib\ASLInputTool\ViewModels\ScenariosViewModel.cs(353,51): error CS1519: Invalid token '(' in a member declaration [d:\Git\HexLib\ASLInputTool\ASLInputTool_c2bz1hex_wpftmp.csproj]
+d:\Git\HexLib\ASLInputTool\ViewModels\ScenariosViewModel.cs(353,85): error CS1519: Invalid token ')' in a member declaration [d:\Git\HexLib\ASLInputTool\ASLInputTool_c2bz1hex_wpftmp.csproj]
+d:\Git\HexLib\ASLInputTool\ViewModels\ScenariosViewModel.cs(354,33): error CS1001: Identifier expected [d:\Git\HexLib\ASLInputTool\ASLInputTool_c2bz1hex_wpftmp.csproj]
+d:\Git\HexLib\ASLInputTool\ViewModels\ScenariosViewModel.cs(357,9): error CS0116: A namespace cannot directly contain members such as fields, methods or statements [d:\Git\HexLib\ASLInputTool\ASLInputTool_c2bz1hex_wpftmp.csproj]
+d:\Git\HexLib\ASLInputTool\ViewModels\ScenariosViewModel.cs(357,18): error CS1022: Type or namespace definition, or end-of-file expected [d:\Git\HexLib\ASLInputTool\ASLInputTool_c2bz1hex_wpftmp.csproj]
+d:\Git\HexLib\ASLInputTool\ViewModels\ScenariosViewModel.cs(358,5): error CS1022: Type or namespace definition, or end-of-file expected [d:\Git\HexLib\ASLInputTool\ASLInputTool_c2bz1hex_wpftmp.csproj]
+d:\Git\HexLib\ASLInputTool\ViewModels\ScenariosViewModel.cs(365,1): error CS1022: Type or namespace definition, or end-of-file expected [d:\Git\HexLib\ASLInputTool\ASLInputTool_c2bz1hex_wpftmp.csproj]
+
+Build FAILED.
+    1 Warning(s)
+    12 Error(s)
+
+Time Elapsed 00:00:00.87

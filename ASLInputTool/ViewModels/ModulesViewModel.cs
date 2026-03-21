@@ -1,7 +1,9 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.ComponentModel.DataAnnotations;
 using ASL;
+using ASLInputTool.Infrastructure;
 
 namespace ASLInputTool.ViewModels;
 
@@ -9,11 +11,11 @@ namespace ASLInputTool.ViewModels;
 /// ViewModel for administering ASL game modules.
 /// Handles module details like name, description, and box images.
 /// </summary>
-public class ModulesViewModel : CrudViewModelBase<AslModule>
+public class ModulesViewModel : CrudViewModelBase<AslModule>, IInitializeableFromRepository
 {
     private string _fullName = string.Empty;
     private string _description = string.Empty;
-    private Module _moduleType;
+    private Module? _moduleType;
     private string? _frontImage;
     private string? _backImage;
     private bool _isFinished;
@@ -31,7 +33,8 @@ public class ModulesViewModel : CrudViewModelBase<AslModule>
     /// <summary>
     /// Gets or sets the specific module type/ID.
     /// </summary>
-    public Module ModuleType { get => _moduleType; set => SetProperty(ref _moduleType, value); }
+    [Required(ErrorMessage = "Module type is required.")]
+    public Module? ModuleType { get => _moduleType; set => SetProperty(ref _moduleType, value); }
 
     /// <summary>
     /// Gets or sets the path to the front box image.
@@ -64,10 +67,26 @@ public class ModulesViewModel : CrudViewModelBase<AslModule>
     public RelayCommand PickBackImageCommand { get; }
 
     /// <summary>
+    /// Initializes the ViewModel's items from the central repository.
+    /// </summary>
+    public void InitializeFromRepository()
+    {
+        Items.Clear();
+        foreach (var module in _repository.AllModules)
+        {
+            Items.Add(new SelectableItem<AslModule>(module, NotifySelectionChanged));
+        }
+        UpdateAvailableModuleTypes();
+    }
+
+    private readonly IModuleRepository _repository;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="ModulesViewModel"/> class.
     /// </summary>
-    public ModulesViewModel()
+    public ModulesViewModel(IModuleRepository repository)
     {
+        _repository = repository;
         DisplayName = "Modules";
         PickFrontImageCommand = new RelayCommand(_ => ExecutePickImage(true));
         PickBackImageCommand = new RelayCommand(_ => ExecutePickImage(false));
@@ -94,16 +113,14 @@ public class ModulesViewModel : CrudViewModelBase<AslModule>
             }
         }
 
-        // If current selection is still available, keep it. 
-        // Otherwise, pick the first available one if any.
-        if (AvailableModuleTypes.Contains(currentSelection))
+        // Try to restore previous selection
+        if (currentSelection.HasValue && AvailableModuleTypes.Contains(currentSelection.Value))
         {
-            ModuleType = currentSelection;
+            _moduleType = currentSelection;
         }
-        else if (AvailableModuleTypes.Any())
-        {
-            ModuleType = AvailableModuleTypes.First();
-        }
+
+        // Force a UI refresh because clearing the collection broke the ComboBox binding
+        OnPropertyChanged(nameof(ModuleType));
     }
 
     /// <summary>
@@ -141,8 +158,8 @@ public class ModulesViewModel : CrudViewModelBase<AslModule>
         EditingItem = null;
         FullName = string.Empty;
         Description = string.Empty;
+        ModuleType = null;
         UpdateAvailableModuleTypes();
-        if (AvailableModuleTypes.Any()) ModuleType = AvailableModuleTypes.First();
         FrontImage = null;
         BackImage = null;
         IsFinished = false;
@@ -166,10 +183,9 @@ public class ModulesViewModel : CrudViewModelBase<AslModule>
     protected override void OnSave(object? parameter)
     {
         ClearErrors();
-        if (string.IsNullOrWhiteSpace(FullName))
+        if (!ValidateAllProperties())
         {
-            AddError(nameof(FullName), "Full Name is required.");
-            ShowToast("Please enter a module name.");
+            ShowToast("Please fix the validation errors.");
             return;
         }
 
@@ -184,7 +200,7 @@ public class ModulesViewModel : CrudViewModelBase<AslModule>
         {
             FullName = FullName,
             Description = Description,
-            Module = ModuleType,
+            Module = ModuleType!.Value,
             FrontImage = FrontImage,
             BackImage = BackImage,
             IsFinished = IsFinished
@@ -196,14 +212,26 @@ public class ModulesViewModel : CrudViewModelBase<AslModule>
             if (wrapper != null)
             {
                 int index = Items.IndexOf(wrapper);
-                if (index >= 0) Items[index] = new SelectableItem<AslModule>(module, NotifySelectionChanged);
+                if (index >= 0)
+                {
+                    OnItemRemoved(EditingItem);
+                    Items[index] = new SelectableItem<AslModule>(module, NotifySelectionChanged);
+                    OnItemAdded(module);
+                }
             }
         }
         else
         {
             Items.Add(new SelectableItem<AslModule>(module, NotifySelectionChanged));
+            OnItemAdded(module);
         }
 
         IsAdding = false;
     }
+
+    /// <inheritdoc />
+    protected override void OnItemAdded(AslModule item) => _repository.Add(item);
+
+    /// <inheritdoc />
+    protected override void OnItemRemoved(AslModule item) => _repository.Remove(item);
 }

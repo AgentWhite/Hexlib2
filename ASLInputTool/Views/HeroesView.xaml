@@ -4,21 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:vm="clr-namespace:ASLInputTool.ViewModels"
+             xmlns:controls="clr-namespace:ASLInputTool.Controls"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance vm:HeroesViewModel}"
              d:DesignHeight="600" d:DesignWidth="800">
-    <UserControl.Resources>
-        <Style TargetType="Button">
-            <Setter Property="BorderBrush" Value="{StaticResource ControlBorderBrush}"/>
-            <Setter Property="BorderThickness" Value="2"/>
-        </Style>
-        <Style TargetType="DataGrid">
-            <Setter Property="BorderBrush" Value="{StaticResource ControlBorderBrush}"/>
-            <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="HorizontalGridLinesBrush" Value="{StaticResource ControlBorderBrush}"/>
-            <Setter Property="VerticalGridLinesBrush" Value="{StaticResource ControlBorderBrush}"/>
-        </Style>
-    </UserControl.Resources>
     
     <Grid Margin="20" Background="{StaticResource WindowBackgroundBrush}">
         <Grid.RowDefinitions>
@@ -26,18 +15,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="0,0,0,20">
-            <TextBlock Text="Heroes" FontSize="24" FontWeight="Bold" VerticalAlignment="Center"/>
-            <Button Content="Add Hero" Command="{Binding AddCommand}" 
-                    Visibility="{Binding IsAdding, Converter={StaticResource InverseBoolToVis}}"
-                    Margin="20,0,0,0" Padding="15,5" Background="{StaticResource ControlBorderBrush}" Foreground="White" FontWeight="Bold"/>
-            <Button Content="Delete Selected" Command="{Binding DeleteSelectedCommand}"
-                    Visibility="{Binding HasSelectedItems, Converter={StaticResource BoolToVis}}"
-                    Margin="10,0,0,0" Padding="15,5" Background="{StaticResource ValidationErrorBrush}" Foreground="White" FontWeight="Bold"/>
-            <Button Content="Back to List" Command="{Binding CancelCommand}" 
-                    Visibility="{Binding IsAdding, Converter={StaticResource BoolToVis}}"
-                    Margin="20,0,0,0" Padding="15,5"/>
-        </StackPanel>
+        <controls:UnitHeaderControl Grid.Row="0" Title="Heroes" AddButtonText="Add Hero" />
 
         <!-- List View -->
         <Grid Grid.Row="1" Visibility="{Binding IsAdding, Converter={StaticResource InverseBoolToVis}}">
@@ -47,18 +25,9 @@
             </Grid.RowDefinitions>
 
             <!-- Filter UI -->
-            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
-                <Label Content="Filter by Nationality:" VerticalAlignment="Center" Foreground="Gray"/>
-                <ComboBox ItemsSource="{Binding Nationalities}" 
-                          SelectedItem="{Binding SelectedNationalityFilter}"
-                          Width="120" Margin="5,0,0,0"
-                          VerticalAlignment="Center"/>
-                <Button Content="Clear" Command="{Binding ClearFilterCommand}" 
-                        Margin="5,0,0,0" Padding="10,2"
-                        Visibility="{Binding SelectedNationalityFilter, Converter={StaticResource NullToVis}, ConverterParameter=Inverse}"/>
-            </StackPanel>
+            <controls:UnitFilterControl Grid.Row="0" Margin="0,0,0,10"/>
 
-            <DataGrid Grid.Row="1" ItemsSource="{Binding FilteredItems}" AutoGenerateColumns="False" IsReadOnly="False" Background="{StaticResource WindowBackgroundBrush}">
+            <DataGrid Grid.Row="1" ItemsSource="{Binding FilteredItems}" Style="{StaticResource UnitDataGridStyle}" IsReadOnly="False">
                 <DataGrid.InputBindings>
                     <MouseBinding MouseAction="LeftDoubleClick" 
                                   Command="{Binding EditCommand}" 
@@ -89,41 +58,7 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- Image Frames -->
-                <StackPanel Grid.Column="0" Margin="0,0,20,0">
-                    <Label Content="Front" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                    <Button Command="{Binding PickFrontImageCommand}" 
-                            Width="120" Height="120" Margin="0,0,0,20">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="2" Background="White">
-                                    <Grid>
-                                        <Image Source="{Binding ImagePathFront, Converter={StaticResource ImageSource}}" Stretch="UniformToFill"/>
-                                        <TextBlock Text="Click for Front" Visibility="{Binding ImagePathFront, Converter={StaticResource NullToVis}}" 
-                                                   VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" 
-                                                   Foreground="Gray" TextWrapping="Wrap" Padding="10"/>
-                                    </Grid>
-                                </Border>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-
-                    <Label Content="Back" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                    <Button Command="{Binding PickBackImageCommand}" 
-                            Width="120" Height="120">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="2" Background="White">
-                                    <Grid>
-                                        <Image Source="{Binding ImagePathBack, Converter={StaticResource ImageSource}}" Stretch="UniformToFill"/>
-                                        <TextBlock Text="Click for Back" Visibility="{Binding ImagePathBack, Converter={StaticResource NullToVis}}" 
-                                                   VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" 
-                                                   Foreground="Gray" TextWrapping="Wrap" Padding="10"/>
-                                    </Grid>
-                                </Border>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-                </StackPanel>
+                <controls:UnitImagePickerControl Grid.Column="0" />
 
                 <StackPanel Grid.Column="1">
                     <Label Content="Hero Name" FontWeight="SemiBold"/>

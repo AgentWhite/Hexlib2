@@ -21,7 +21,8 @@ public class ViewModelTests
     [Fact]
     public void LeadersViewModel_InitialState_IsCorrect()
     {
-        var vm = new LeadersViewModel();
+        var repository = new ASLInputTool.Infrastructure.UnitRepository();
+        var vm = new LeadersViewModel(repository);
         Assert.Equal("Leaders", vm.DisplayName);
         Assert.False(vm.IsAdding);
         Assert.Empty(vm.Items);
@@ -30,7 +31,8 @@ public class ViewModelTests
     [Fact]
     public void LeadersViewModel_AddAndCancelCommands_ToggleIsAdding()
     {
-        var vm = new LeadersViewModel();
+        var repository = new ASLInputTool.Infrastructure.UnitRepository();
+        var vm = new LeadersViewModel(repository);
         
         vm.AddCommand.Execute(null);
         Assert.True(vm.IsAdding);
@@ -42,7 +44,8 @@ public class ViewModelTests
     [Fact]
     public void LeadersViewModel_Save_AddsToCollectionAndResetsView()
     {
-        var vm = new LeadersViewModel();
+        var repository = new ASLInputTool.Infrastructure.UnitRepository();
+        var vm = new LeadersViewModel(repository);
         vm.IsAdding = true;
         vm.Name = "Test Leader";
         vm.Morale = "9";
@@ -63,7 +66,8 @@ public class ViewModelTests
     [Fact]
     public void SquadsViewModel_Save_AddsToCollection()
     {
-        var vm = new SquadsViewModel();
+        var repository = new ASLInputTool.Infrastructure.UnitRepository();
+        var vm = new SquadsViewModel(repository);
         vm.Name = "Test Squad";
         vm.Firepower = "4";
         vm.Range = "6";
@@ -82,7 +86,8 @@ public class ViewModelTests
     [Fact]
     public void HeroesViewModel_Save_AddsToCollection()
     {
-        var vm = new HeroesViewModel();
+        var repository = new ASLInputTool.Infrastructure.UnitRepository();
+        var vm = new HeroesViewModel(repository);
         vm.Name = "Test Hero";
         vm.Firepower = "1";
         vm.Range = "4";
@@ -101,7 +106,8 @@ public class ViewModelTests
     [Fact]
     public void HeroesViewModel_JapaneseHero_BrokenMoraleIsZero()
     {
-        var vm = new HeroesViewModel();
+        var repository = new ASLInputTool.Infrastructure.UnitRepository();
+        var vm = new HeroesViewModel(repository);
         vm.Name = "Japanese Hero";
         vm.Firepower = "1";
         vm.Range = "4";
@@ -118,7 +124,8 @@ public class ViewModelTests
     [Fact]
     public void ScenariosViewModel_SaveScenario_AddsToCollectionAndResetsView()
     {
-        var vm = new ScenariosViewModel();
+        var repository = new ASLInputTool.Infrastructure.ScenarioRepository();
+        var vm = new ScenariosViewModel(repository);
         vm.IsAdding = true;
         vm.Name = "Test Scenario";
         vm.Reference = "REF-1";
@@ -141,7 +148,8 @@ public class ViewModelTests
     [Fact]
     public void ViewModelBase_OnPropertyChanged_IsRaised()
     {
-        var vm = new LeadersViewModel();
+        var repository = new ASLInputTool.Infrastructure.UnitRepository();
+        var vm = new LeadersViewModel(repository);
         string? changedPropertyName = null;
         vm.PropertyChanged += (s, e) => changedPropertyName = e.PropertyName;
 

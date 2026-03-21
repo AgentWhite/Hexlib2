@@ -8,6 +8,8 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using ASLInputTool.Helpers;
+using ASLInputTool.Infrastructure;
 
 namespace ASLInputTool.ViewModels;
 
@@ -75,15 +77,10 @@ public class MainViewModel : ViewModelBase
             {
                 var sourceProject = new ASLProject
                 {
-                    Counters = new List<Unit>(),
-                    Scenarios = _locator.Get<ScenariosViewModel>().Items.Select(i => i.Item).ToList(),
-                    Modules = _locator.Get<ModulesViewModel>().Items.Select(i => i.Item).ToList()
+                    Counters = _locator.UnitRepository.AllUnits.ToList(),
+                    Scenarios = _locator.ScenarioRepository.AllScenarios.ToList(),
+                    Modules = _locator.ModuleRepository.AllModules.ToList()
                 };
-
-                sourceProject.Counters.AddRange(_locator.Get<LeadersViewModel>().Items.Select(i => i.Item));
-                sourceProject.Counters.AddRange(_locator.Get<HeroesViewModel>().Items.Select(i => i.Item));
-                sourceProject.Counters.AddRange(_locator.Get<SquadsViewModel>().Items.Select(i => i.Item));
-                sourceProject.Counters.AddRange(_locator.Get<EquipmentViewModel>().Items.Select(i => i.Item));
 
                 var projectToSave = _saveManager.PrepareProjectForSaving(sourceProject, saveDialog.FileName);
 
@@ -92,7 +89,7 @@ public class MainViewModel : ViewModelBase
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show($"Failed to save project: {ex.Message}\n\n{ex.StackTrace}", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                System.Windows.MessageBox.Show($"Failed to save project: {ex.Message}", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
             }
         }
     }
@@ -110,87 +107,32 @@ public class MainViewModel : ViewModelBase
         {
             try
             {
-                string projectDir = Path.GetDirectoryName(openDialog.FileName) ?? string.Empty;
                 string json = File.ReadAllText(openDialog.FileName);
                 var project = _saveManager.DeserializeProject(json);
 
                 if (project != null)
                 {
-                    var leadersVm = _locator.Get<LeadersViewModel>();
-                    var heroesVm = _locator.Get<HeroesViewModel>();
-                    var squadsVm = _locator.Get<SquadsViewModel>();
-                    var equipmentVm = _locator.Get<EquipmentViewModel>();
-                    var scenariosVm = _locator.Get<ScenariosViewModel>();
-                    var modulesVm = _locator.Get<ModulesViewModel>();
+                    // Initialize repositories
+                    _locator.UnitRepository.Initialize(project.Counters);
+                    _locator.ScenarioRepository.Initialize(project.Scenarios);
+                    _locator.ModuleRepository.Initialize(project.Modules ?? new List<AslModule>());
 
-                    foreach (var c in project.Counters)
+                    // Process data (fix image paths etc)
+                    _locator.UnitRepository.ProcessData(openDialog.FileName);
+                    _locator.ScenarioRepository.ProcessData(openDialog.FileName);
+                    _locator.ModuleRepository.ProcessData(openDialog.FileName);
+
+                    // Initialize child ViewModels from repositories
+                    foreach (var vm in _locator.GetAll().OfType<IInitializeableFromRepository>())
                     {
-                        if (!string.IsNullOrEmpty(c.ImagePathFront) && !Path.IsPathRooted(c.ImagePathFront))
-                            c.ImagePathFront = Path.GetFullPath(Path.Combine(projectDir, c.ImagePathFront!));
-
-                        if (!string.IsNullOrEmpty(c.ImagePathBack) && !Path.IsPathRooted(c.ImagePathBack))
-                            c.ImagePathBack = Path.GetFullPath(Path.Combine(projectDir, c.ImagePathBack!));
-
-                        var portage = c.GetComponent<PortageComponent>();
-                        if (portage != null && !string.IsNullOrEmpty(portage.DismantledImage) && !Path.IsPathRooted(portage.DismantledImage))
-                            portage.DismantledImage = Path.GetFullPath(Path.Combine(projectDir, portage.DismantledImage!));
+                        vm.InitializeFromRepository();
                     }
-
-                    foreach (var s in project.Scenarios.Where(s => !string.IsNullOrEmpty(s.ImagePath)))
-                    {
-                        if (!Path.IsPathRooted(s.ImagePath))
-                            s.ImagePath = Path.GetFullPath(Path.Combine(projectDir, s.ImagePath!));
-                    }
-
-                    foreach (var m in project.Modules.Where(m => m != null))
-                    {
-                        if (!string.IsNullOrEmpty(m.FrontImage) && !Path.IsPathRooted(m.FrontImage))
-                            m.FrontImage = Path.GetFullPath(Path.Combine(projectDir, m.FrontImage!));
-                        
-                        if (!string.IsNullOrEmpty(m.BackImage) && !Path.IsPathRooted(m.BackImage))
-                            m.BackImage = Path.GetFullPath(Path.Combine(projectDir, m.BackImage!));
-                    }
-
-                    leadersVm.Items.Clear();
-                    squadsVm.Items.Clear();
-                    equipmentVm.Items.Clear();
-                    heroesVm.Items.Clear();
-
-                    foreach (var unit in project.Counters)
-                    {
-                        if (unit.IsLeader)
-                        {
-                            leadersVm.Items.Add(new SelectableItem<Unit>(unit, leadersVm.NotifySelectionChanged));
-                        }
-                        else if (unit.IsHero)
-                        {
-                            heroesVm.Items.Add(new SelectableItem<Unit>(unit, heroesVm.NotifySelectionChanged));
-                        }
-                        else if (unit.IsSquad || unit.IsHalfSquad || unit.IsCrew)
-                        {
-                            squadsVm.Items.Add(new SelectableItem<Unit>(unit, squadsVm.NotifySelectionChanged));
-                        }
-                        else if (unit.IsSupportWeapon)
-                        {
-                            equipmentVm.Items.Add(new SelectableItem<Unit>(unit, equipmentVm.NotifySelectionChanged));
-                        }
-                    }
-                    
-
-                    scenariosVm.Items.Clear();
-                    foreach (var s in project.Scenarios) scenariosVm.Items.Add(new SelectableItem<Scenario>(s, scenariosVm.NotifySelectionChanged));
-
-                    modulesVm.Items.Clear();
-                    foreach (var m in project.Modules.Where(m => m != null)) modulesVm.Items.Add(new SelectableItem<AslModule>(m, modulesVm.NotifySelectionChanged));
                 }
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show($"Failed to load project: {ex.Message}\n\n{ex.StackTrace}", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                System.Windows.MessageBox.Show($"Failed to load project: {ex.Message}", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
             }
         }
     }
 }
-
-// ViewModels are now in their own files
-

@@ -1,0 +1,18 @@
+﻿d:\Git\HexLib\ASLInputTool\Infrastructure\IScenarioRepository.cs(15,26): error CS0246: The type or namespace name 'Scenario' could not be found (are you missing a using directive or an assembly reference?) [d:\Git\HexLib\ASLInputTool\ASLInputTool_1nktgabk_wpftmp.csproj]
+d:\Git\HexLib\ASLInputTool\Infrastructure\ScenarioRepository.cs(14,33): error CS0246: The type or namespace name 'Scenario' could not be found (are you missing a using directive or an assembly reference?) [d:\Git\HexLib\ASLInputTool\ASLInputTool_1nktgabk_wpftmp.csproj]
+d:\Git\HexLib\ASLInputTool\Infrastructure\IScenarioRepository.cs(20,33): error CS0246: The type or namespace name 'Scenario' could not be found (are you missing a using directive or an assembly reference?) [d:\Git\HexLib\ASLInputTool\ASLInputTool_1nktgabk_wpftmp.csproj]
+d:\Git\HexLib\ASLInputTool\Infrastructure\ScenarioRepository.cs(17,40): error CS0246: The type or namespace name 'Scenario' could not be found (are you missing a using directive or an assembly reference?) [d:\Git\HexLib\ASLInputTool\ASLInputTool_1nktgabk_wpftmp.csproj]
+d:\Git\HexLib\ASLInputTool\Infrastructure\IScenarioRepository.cs(30,14): error CS0246: The type or namespace name 'Scenario' could not be found (are you missing a using directive or an assembly reference?) [d:\Git\HexLib\ASLInputTool\ASLInputTool_1nktgabk_wpftmp.csproj]
+d:\Git\HexLib\ASLInputTool\Infrastructure\IScenarioRepository.cs(35,17): error CS0246: The type or namespace name 'Scenario' could not be found (are you missing a using directive or an assembly reference?) [d:\Git\HexLib\ASLInputTool\ASLInputTool_1nktgabk_wpftmp.csproj]
+d:\Git\HexLib\ASLInputTool\Infrastructure\ScenarioRepository.cs(42,21): error CS0246: The type or namespace name 'Scenario' could not be found (are you missing a using directive or an assembly reference?) [d:\Git\HexLib\ASLInputTool\ASLInputTool_1nktgabk_wpftmp.csproj]
+d:\Git\HexLib\ASLInputTool\Infrastructure\ScenarioRepository.cs(48,24): error CS0246: The type or namespace name 'Scenario' could not be found (are you missing a using directive or an assembly reference?) [d:\Git\HexLib\ASLInputTool\ASLInputTool_1nktgabk_wpftmp.csproj]
+d:\Git\HexLib\ASLInputTool\ViewModels\ModulesViewModel.cs(79,22): error CS0246: The type or namespace name 'IModuleRepository' could not be found (are you missing a using directive or an assembly reference?) [d:\Git\HexLib\ASLInputTool\ASLInputTool_1nktgabk_wpftmp.csproj]
+d:\Git\HexLib\ASLInputTool\ViewModels\ModulesViewModel.cs(84,29): error CS0246: The type or namespace name 'IModuleRepository' could not be found (are you missing a using directive or an assembly reference?) [d:\Git\HexLib\ASLInputTool\ASLInputTool_1nktgabk_wpftmp.csproj]
+d:\Git\HexLib\ASLInputTool\ViewModels\ScenariosViewModel.cs(135,22): error CS0246: The type or namespace name 'IScenarioRepository' could not be found (are you missing a using directive or an assembly reference?) [d:\Git\HexLib\ASLInputTool\ASLInputTool_1nktgabk_wpftmp.csproj]
+d:\Git\HexLib\ASLInputTool\ViewModels\ScenariosViewModel.cs(152,31): error CS0246: The type or namespace name 'IScenarioRepository' could not be found (are you missing a using directive or an assembly reference?) [d:\Git\HexLib\ASLInputTool\ASLInputTool_1nktgabk_wpftmp.csproj]
+
+Build FAILED.
+    1 Warning(s)
+    12 Error(s)
+
+Time Elapsed 00:00:00.95

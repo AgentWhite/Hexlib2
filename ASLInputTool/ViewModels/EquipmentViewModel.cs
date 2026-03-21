@@ -2,16 +2,20 @@ using ASL.Models;
 using ASL.Models.Components;
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Windows.Data;
+using ASLInputTool.Infrastructure;
 
 namespace ASLInputTool.ViewModels;
 
 /// <summary>
 /// ViewModel for managing Equipment (LMG, MMG, HMG, etc.) counters.
 /// </summary>
-public class EquipmentViewModel : CrudViewModelBase<Unit>
+public class EquipmentViewModel : UnitViewModelBase
 {
+    protected override string UnitCategoryFilter => "Equipment";
     private string _name = string.Empty;
     private string _firepower = string.Empty;
     private string _range = string.Empty;
@@ -26,36 +30,16 @@ public class EquipmentViewModel : CrudViewModelBase<Unit>
     private Nationality _selectedNationality = Nationality.German;
     private MachineGunType _selectedMachineGunType = MachineGunType.LMG;
     private bool _hasSprayingFire;
-    private string? _imagePathFront;
-    private string? _imagePathBack;
     private string? _dismantledImage;
     private bool _showDismantledImage;
-    private Nationality? _selectedNationalityFilter;
+    private System.Windows.Input.ICommand? _pickDismantledImageCommand;
 
-    /// <summary>
-    /// Gets the filtered view of items.
-    /// </summary>
-    public ICollectionView FilteredItems => CollectionViewSource.GetDefaultView(Items);
-
-    /// <summary>
-    /// Gets or sets the nationality to filter the list by.
-    /// </summary>
-    public Nationality? SelectedNationalityFilter
-    {
-        get => _selectedNationalityFilter;
-        set
-        {
-            if (SetProperty(ref _selectedNationalityFilter, value))
-            {
-                FilteredItems.Refresh();
-            }
-        }
-    }
 
     /// <summary>
     /// Gets or sets the name/type of the support weapon.
     /// </summary>
-    public string Name { get => _name; set { SetProperty(ref _name, value); ValidateName(); } }
+    [Required(ErrorMessage = "Id is required.")]
+    public string Name { get => _name; set => SetProperty(ref _name, value); }
 
     /// <summary>
     /// Gets or sets the file path to the image representing the unit when dismantled.
@@ -70,42 +54,77 @@ public class EquipmentViewModel : CrudViewModelBase<Unit>
     /// <summary>
     /// Gets or sets the firepower value as a string for UI binding.
     /// </summary>
-    public string Firepower { get => _firepower; set { SetProperty(ref _firepower, value); ValidateFirepower(); } }
+    [Required(ErrorMessage = "Firepower is required.")]
+    [Range(typeof(int), "1", "30", ErrorMessage = "Firepower must be between 1 and 30.")]
+    public string Firepower { get => _firepower; set => SetProperty(ref _firepower, value); }
 
     /// <summary>
     /// Gets or sets the range value as a string for UI binding.
     /// </summary>
-    public string Range { get => _range; set { SetProperty(ref _range, value); ValidateRange(); } }
+    [Required(ErrorMessage = "Range is required.")]
+    [Range(typeof(int), "0", "50", ErrorMessage = "Range must be between 0 and 50.")]
+    public string Range { get => _range; set => SetProperty(ref _range, value); }
 
     /// <summary>
     /// Gets or sets the rate of fire (ROF) value as a string for UI binding.
     /// </summary>
-    public string RateOfFire { get => _rateOfFire; set { SetProperty(ref _rateOfFire, value); ValidateROF(); } }
+    [Range(typeof(int), "1", "5", ErrorMessage = "ROF must be between 1 and 5.")]
+    public string RateOfFire { get => _rateOfFire; set => SetProperty(ref _rateOfFire, value); }
 
     /// <summary>
     /// Gets or sets the breakdown number as a string for UI binding.
     /// </summary>
-    public string BreakdownNumber { get => _breakdownNumber; set { SetProperty(ref _breakdownNumber, value); ValidateBreakdown(); } }
+    [Range(typeof(int), "0", "12", ErrorMessage = "Breakdown number must be between 0 and 12.")]
+    public string BreakdownNumber { get => _breakdownNumber; set => SetProperty(ref _breakdownNumber, value); }
 
     /// <summary>
     /// Gets or sets the removal number as a string for UI binding.
     /// </summary>
-    public string RemovalNumber { get => _removalNumber; set { SetProperty(ref _removalNumber, value); ValidateRemovalNumber(); } }
+    [Range(typeof(int), "0", "12", ErrorMessage = "Removal number must be between 0 and 12.")]
+    public string RemovalNumber { get => _removalNumber; set => SetProperty(ref _removalNumber, value); }
 
     /// <summary>
     /// Gets or sets the repair number as a string for UI binding.
     /// </summary>
-    public string RepairNumber { get => _repairNumber; set { SetProperty(ref _repairNumber, value); ValidateRepairNumber(); } }
+    [Range(typeof(int), "0", "12", ErrorMessage = "Repair number must be between 0 and 12.")]
+    public string RepairNumber { get => _repairNumber; set => SetProperty(ref _repairNumber, value); }
 
     /// <summary>
     /// Gets or sets the portage cost as a string for UI binding.
     /// </summary>
-    public string PortageCost { get => _portageCost; set { SetProperty(ref _portageCost, value); ValidatePortage(); } }
+    [Required(ErrorMessage = "Portage cost is required.")]
+    [Range(typeof(int), "0", "10", ErrorMessage = "Portage cost must be between 0 and 10.")]
+    public string PortageCost 
+    { 
+        get => _portageCost; 
+        set 
+        { 
+            if (SetProperty(ref _portageCost, value)) 
+                UpdateDismantledImageVisibility(); 
+        } 
+    }
 
     /// <summary>
     /// Gets or sets the portage cost when dismantled as a string for UI binding.
     /// </summary>
-    public string DismantledCost { get => _dismantledCost; set { SetProperty(ref _dismantledCost, value); ValidateDismantledPortage(); } }
+    [Range(typeof(int), "1", "10", ErrorMessage = "Dismantled cost must be between 1 and 10.")]
+    public string DismantledCost 
+    { 
+        get => _dismantledCost; 
+        set 
+        {
+            var previouslyHadDismantledCost = !string.IsNullOrWhiteSpace(_dismantledCost);
+            if (SetProperty(ref _dismantledCost, value))
+            {
+                var currentlyHasDismantledCost = !string.IsNullOrWhiteSpace(_dismantledCost);
+                if (currentlyHasDismantledCost && !previouslyHadDismantledCost)
+                {
+                    DismantledImage = string.Empty;
+                }
+                UpdateDismantledImageVisibility();
+            }
+        } 
+    }
 
     /// <summary>
     /// Gets or sets a value indicating whether the weapon has a smoke placement exponent.
@@ -120,7 +139,7 @@ public class EquipmentViewModel : CrudViewModelBase<Unit>
                 if (!value) 
                 {
                     SmokePlacementExponent = string.Empty;
-                    ValidateSmoke();
+                    ClearErrors(nameof(SmokePlacementExponent));
                 }
             }
         } 
@@ -129,16 +148,11 @@ public class EquipmentViewModel : CrudViewModelBase<Unit>
     /// <summary>
     /// Gets or sets the smoke placement exponent as a string.
     /// </summary>
-    public string SmokePlacementExponent 
+    [Range(typeof(int), "1", "9", ErrorMessage = "Smoke exponent must be between 1 and 9.")]
+    public string SmokePlacementExponent  
     { 
         get => _smokePlacementExponent; 
-        set 
-        { 
-            if (SetProperty(ref _smokePlacementExponent, value))
-            {
-                ValidateSmoke();
-            }
-        } 
+        set => SetProperty(ref _smokePlacementExponent, value);
     }
 
     /// <summary>
@@ -147,24 +161,9 @@ public class EquipmentViewModel : CrudViewModelBase<Unit>
     public Nationality SelectedNationality 
     { 
         get => _selectedNationality; 
-        set 
-        { 
-            if (SetProperty(ref _selectedNationality, value))
-            {
-                ValidateUniqueness();
-            }
-        } 
+        set => SetProperty(ref _selectedNationality, value);
     }
 
-    /// <summary>
-    /// Gets or sets the file path for the front image.
-    /// </summary>
-    public string? ImagePathFront { get => _imagePathFront; set => SetProperty(ref _imagePathFront, value); }
-
-    /// <summary>
-    /// Gets or sets the file path for the back image.
-    /// </summary>
-    public string? ImagePathBack { get => _imagePathBack; set => SetProperty(ref _imagePathBack, value); }
 
     /// <summary>
     /// Gets the list of available machine gun types.
@@ -177,13 +176,7 @@ public class EquipmentViewModel : CrudViewModelBase<Unit>
     public MachineGunType SelectedMachineGunType 
     { 
         get => _selectedMachineGunType; 
-        set 
-        { 
-            if (SetProperty(ref _selectedMachineGunType, value))
-            {
-                ValidateUniqueness();
-            }
-        } 
+        set => SetProperty(ref _selectedMachineGunType, value);
     }
 
     /// <summary>
@@ -192,74 +185,24 @@ public class EquipmentViewModel : CrudViewModelBase<Unit>
     public bool HasSprayingFire { get => _hasSprayingFire; set => SetProperty(ref _hasSprayingFire, value); }
 
     /// <summary>
-    /// Gets the list of available nationalities.
+    /// Gets the command for picking the dismantled unit image file.
     /// </summary>
-    public IEnumerable<Nationality> Nationalities => Enum.GetValues(typeof(Nationality)).Cast<Nationality>();
-
-    /// <summary>
-    /// Command to pick the front image.
-    /// </summary>
-    public RelayCommand PickFrontImageCommand { get; }
-
-    /// <summary>
-    /// Command to pick the back image.
-    /// </summary>
-    public RelayCommand PickBackImageCommand { get; }
-
-    /// <summary>
-    /// Command to pick the dismantled image.
-    /// </summary>
-    public RelayCommand PickDismantledImageCommand { get; }
-
-    /// <summary>
-    /// Command to clear the nationality filter.
-    /// </summary>
-    public RelayCommand ClearFilterCommand { get; }
+    public System.Windows.Input.ICommand PickDismantledImageCommand { get => _pickDismantledImageCommand ??= new RelayCommand(_ => ExecutePickImage(2)); }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="EquipmentViewModel"/> class.
     /// </summary>
-    public EquipmentViewModel()
+    public EquipmentViewModel(IUnitRepository repository) : base(repository)
     {
         DisplayName = "Equipment";
-        PickFrontImageCommand = new RelayCommand(_ => ExecutePickImage(0));
-        PickBackImageCommand = new RelayCommand(_ => ExecutePickImage(1));
-        PickDismantledImageCommand = new RelayCommand(_ => ExecutePickImage(2));
-        ClearFilterCommand = new RelayCommand(_ => SelectedNationalityFilter = null);
-        
-        FilteredItems.Filter = obj =>
-        {
-            if (obj is SelectableItem<Unit> wrapper)
-            {
-                if (SelectedNationalityFilter == null) return true;
-                return wrapper.Item.Nationality == SelectedNationalityFilter;
-            }
-            return true;
-        };
     }
 
-    private void ExecutePickImage(int imageType) // 0: Front, 1: Back, 2: Dismantled
+    /// <inheritdoc />
+    protected override void OnImagePicked(int imageType, string filePath)
     {
-        string dialogTitle = imageType switch
-        {
-            0 => "Select Equipment Front Image",
-            1 => "Select Equipment Back Image",
-            2 => "Select Dismantled Image",
-            _ => "Select Image"
-        };
-
-        var openDialog = new Microsoft.Win32.OpenFileDialog
-        {
-            Filter = "Image files (*.jpg, *.png)|*.jpg;*.png",
-            Title = dialogTitle
-        };
-
-        if (openDialog.ShowDialog() == true)
-        {
-            if (imageType == 0) ImagePathFront = openDialog.FileName;
-            else if (imageType == 1) ImagePathBack = openDialog.FileName;
-            else if (imageType == 2) DismantledImage = openDialog.FileName;
-        }
+        if (imageType == 0) ImagePathFront = filePath;
+        else if (imageType == 1) ImagePathBack = filePath;
+        else if (imageType == 2) DismantledImage = filePath;
     }
 
     /// <inheritdoc />
@@ -293,7 +236,6 @@ public class EquipmentViewModel : CrudViewModelBase<Unit>
         SelectedNationality = item.Nationality;
         ImagePathFront = item.ImagePathFront ?? string.Empty;
         ImagePathBack = item.ImagePathBack ?? string.Empty;
-        DismantledImage = item.Portage?.DismantledImage ?? string.Empty;
 
         var mg = item.GetComponent<MachineGunComponent>();
         if (mg != null)
@@ -325,6 +267,7 @@ public class EquipmentViewModel : CrudViewModelBase<Unit>
             DismantledCost = portage.DismantledCost?.ToString() ?? string.Empty;
         }
 
+        DismantledImage = item.Portage?.DismantledImage ?? string.Empty;
         UpdateDismantledImageVisibility();
 
         var smoke = item.GetComponent<SmokeProviderComponent>();
@@ -335,28 +278,12 @@ public class EquipmentViewModel : CrudViewModelBase<Unit>
     /// <inheritdoc />
     protected override void OnSave(object? parameter)
     {
-        ValidateName();
-        
         if (string.IsNullOrWhiteSpace(BreakdownNumber)) BreakdownNumber = "12";
-
-        // Required fields must not be empty on save
-        if (string.IsNullOrWhiteSpace(Firepower)) AddError(nameof(Firepower), "Firepower is required.");
-        if (string.IsNullOrWhiteSpace(Range)) AddError(nameof(Range), "Range is required.");
         if (string.IsNullOrWhiteSpace(RemovalNumber)) RemovalNumber = "0";
         if (string.IsNullOrWhiteSpace(RepairNumber)) RepairNumber = "0";
         if (string.IsNullOrWhiteSpace(PortageCost)) PortageCost = "0";
 
-        ValidateFirepower();
-        ValidateRange();
-        ValidateROF();
-        ValidateBreakdown();
-        ValidateRemovalNumber();
-        ValidateRepairNumber();
-        ValidatePortage();
-        ValidateDismantledPortage();
-        ValidateSmoke();
-
-        if (HasErrors)
+        if (!ValidateAllProperties())
         {
             ShowToast("Please fix the validation errors.");
             return;
@@ -410,124 +337,50 @@ public class EquipmentViewModel : CrudViewModelBase<Unit>
             if (wrapper != null)
             {
                 int index = Items.IndexOf(wrapper);
-                if (index >= 0) Items[index] = new SelectableItem<Unit>(unit, NotifySelectionChanged);
+                if (index >= 0)
+                {
+                    OnItemRemoved(EditingItem);
+                    Items[index] = new SelectableItem<Unit>(unit, NotifySelectionChanged);
+                    OnItemAdded(unit);
+                }
             }
         }
         else
         {
             Items.Add(new SelectableItem<Unit>(unit, NotifySelectionChanged));
+            OnItemAdded(unit);
         }
 
         IsAdding = false;
     }
 
-    private void ValidateName()
+    protected override bool ValidateAllProperties()
     {
-        ClearErrors(nameof(Name));
-        if (string.IsNullOrWhiteSpace(Name)) AddError(nameof(Name), "Id is required.");
-        else ValidateUniqueness();
-    }
+        bool isValid = base.ValidateAllProperties();
 
-    private void ValidateUniqueness()
-    {
-        if (string.IsNullOrWhiteSpace(Name)) return;
-
-        if (Items.Any(i => i.Item != EditingItem && 
-                          i.Item.Name.Equals(Name, StringComparison.OrdinalIgnoreCase) && 
-                          i.Item.Nationality == SelectedNationality &&
-                          i.Item.GetComponent<MachineGunComponent>()?.Type == SelectedMachineGunType))
+        if (!string.IsNullOrWhiteSpace(Name))
         {
-            AddError(nameof(Name), "Equipment with this Id, Nationality and Type already exists.");
-        }
-    }
-
-    private void ValidateFirepower()
-    {
-        ClearErrors(nameof(Firepower));
-        if (string.IsNullOrWhiteSpace(Firepower)) return;
-        if (!int.TryParse(Firepower, out int fp) || fp <= 0) AddError(nameof(Firepower), "Must be a positive number.");
-    }
-
-    private void ValidateRange()
-    {
-        ClearErrors(nameof(Range));
-        if (string.IsNullOrWhiteSpace(Range)) return;
-        if (!int.TryParse(Range, out int r) || r <= 0) AddError(nameof(Range), "Must be a positive number.");
-    }
-
-    private void ValidateROF()
-    {
-        ClearErrors(nameof(RateOfFire));
-        if (string.IsNullOrWhiteSpace(RateOfFire)) return;
-        if (!int.TryParse(RateOfFire, out int rof) || rof <= 0) AddError(nameof(RateOfFire), "Must be a positive number.");
-    }
-
-    private void ValidateBreakdown()
-    {
-        ClearErrors(nameof(BreakdownNumber));
-        if (string.IsNullOrWhiteSpace(BreakdownNumber)) return;
-        if (!int.TryParse(BreakdownNumber, out int bn) || bn < 0) AddError(nameof(BreakdownNumber), "Must be a non-negative number.");
-    }
-
-    private void ValidateRemovalNumber()
-    {
-        ClearErrors(nameof(RemovalNumber));
-        if (string.IsNullOrWhiteSpace(RemovalNumber)) return;
-        if (!int.TryParse(RemovalNumber, out int rn) || rn < 0) AddError(nameof(RemovalNumber), "Must be a non-negative number.");
-    }
-
-    private void ValidateRepairNumber()
-    {
-        ClearErrors(nameof(RepairNumber));
-        if (string.IsNullOrWhiteSpace(RepairNumber)) return;
-        if (!int.TryParse(RepairNumber, out int rn) || rn < 0) AddError(nameof(RepairNumber), "Must be a non-negative number.");
-    }
-
-    private void ValidatePortage()
-    {
-        ClearErrors(nameof(PortageCost));
-        if (string.IsNullOrWhiteSpace(PortageCost)) 
-        {
-            UpdateDismantledImageVisibility();
-            return;
-        }
-        if (!int.TryParse(PortageCost, out int pc) || pc < 0) AddError(nameof(PortageCost), "Must be a non-negative number.");
-        UpdateDismantledImageVisibility();
-    }
-
-    private void ValidateDismantledPortage()
-    {
-        var previouslyHadDismantledCost = !string.IsNullOrWhiteSpace(DismantledCost);
-        
-        ClearErrors(nameof(DismantledCost));
-        if (!string.IsNullOrWhiteSpace(DismantledCost))
-        {
-            if (!int.TryParse(DismantledCost, out int dc) || dc <= 0) AddError(nameof(DismantledCost), "Must be a positive number.");
+            if (Items.Any(i => i.Item != EditingItem && 
+                              i.Item.Name.Equals(Name, StringComparison.OrdinalIgnoreCase) && 
+                              i.Item.Nationality == SelectedNationality &&
+                              i.Item.GetComponent<MachineGunComponent>()?.Type == SelectedMachineGunType))
+            {
+                AddError(nameof(Name), "Equipment with this Id, Nationality and Type already exists.");
+                isValid = false;
+            }
         }
 
-        var currentlyHasDismantledCost = !string.IsNullOrWhiteSpace(DismantledCost);
-
-        // Logic: if it reappears, clear the image
-        if (currentlyHasDismantledCost && !previouslyHadDismantledCost)
+        if (HasSmokeExponent && string.IsNullOrWhiteSpace(SmokePlacementExponent))
         {
-            DismantledImage = string.Empty;
+            AddError(nameof(SmokePlacementExponent), "Smoke exponent is required.");
+            isValid = false;
         }
 
-        UpdateDismantledImageVisibility();
+        return isValid;
     }
 
     private void UpdateDismantledImageVisibility()
     {
         ShowDismantledImage = !string.IsNullOrWhiteSpace(PortageCost) && !string.IsNullOrWhiteSpace(DismantledCost);
-    }
-
-    private void ValidateSmoke()
-    {
-        ClearErrors(nameof(SmokePlacementExponent));
-        if (HasSmokeExponent)
-        {
-            if (string.IsNullOrWhiteSpace(SmokePlacementExponent)) AddError(nameof(SmokePlacementExponent), "Smoke exponent is required when enabled.");
-            else if (!int.TryParse(SmokePlacementExponent, out int se) || se < 0) AddError(nameof(SmokePlacementExponent), "Must be a non-negative number.");
-        }
     }
 }

@@ -2,16 +2,20 @@ using ASL.Models;
 using ASL.Models.Components;
 using System;
 using System.Linq;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Windows.Data;
+using ASLInputTool.Infrastructure;
 
 namespace ASLInputTool.ViewModels;
 
 /// <summary>
 /// ViewModel for managing Squad and Half-Squad MMC counters.
 /// </summary>
-public class SquadsViewModel : CrudViewModelBase<Unit>
+public class SquadsViewModel : UnitViewModelBase
 {
+    protected override string UnitCategoryFilter => "Infantry";
     private string _name = string.Empty;
     private string _firepower = string.Empty;
     private string _range = string.Empty;
@@ -20,8 +24,6 @@ public class SquadsViewModel : CrudViewModelBase<Unit>
     private string _bpv = string.Empty;
     private Nationality _selectedNationality = Nationality.German;
     private UnitClass _selectedClass = UnitClass.FirstLine;
-    private string? _imagePathFront;
-    private string? _imagePathBack;
     private InfantryScale _selectedScale = InfantryScale.Squad;
     private bool _hasAssaultFire;
     private bool _hasSprayingFire;
@@ -29,57 +31,48 @@ public class SquadsViewModel : CrudViewModelBase<Unit>
     private bool _hasELR;
     private bool _hasSmokeExponent;
     private string _smokePlacementExponent = string.Empty;
-    private Nationality? _selectedNationalityFilter;
 
-    /// <summary>
-    /// Gets the filtered view of items.
-    /// </summary>
-    public ICollectionView FilteredItems => CollectionViewSource.GetDefaultView(Items);
-
-    /// <summary>
-    /// Gets or sets the nationality to filter the list by.
-    /// </summary>
-    public Nationality? SelectedNationalityFilter
-    {
-        get => _selectedNationalityFilter;
-        set
-        {
-            if (SetProperty(ref _selectedNationalityFilter, value))
-            {
-                FilteredItems.Refresh();
-            }
-        }
-    }
 
     /// <summary>
     /// Gets or sets the name/identity of the squad.
     /// </summary>
-    public string Name { get => _name; set { SetProperty(ref _name, value); ValidateName(); } }
+    [Required(ErrorMessage = "Unit identity is required.")]
+    public string Name { get => _name; set => SetProperty(ref _name, value); }
 
     /// <summary>
     /// Gets or sets the firepower value as a string for UI binding.
     /// </summary>
-    public string Firepower { get => _firepower; set { SetProperty(ref _firepower, value); ValidateFirepower(); } }
+    [Required(ErrorMessage = "Firepower is required.")]
+    [Range(typeof(int), "1", "30", ErrorMessage = "Firepower must be between 1 and 30.")]
+    public string Firepower { get => _firepower; set => SetProperty(ref _firepower, value); }
 
     /// <summary>
     /// Gets or sets the range value as a string for UI binding.
     /// </summary>
-    public string Range { get => _range; set { SetProperty(ref _range, value); ValidateRange(); } }
+    [Required(ErrorMessage = "Range is required.")]
+    [Range(typeof(int), "0", "50", ErrorMessage = "Range must be between 0 and 50.")]
+    public string Range { get => _range; set => SetProperty(ref _range, value); }
 
     /// <summary>
     /// Gets or sets the morale value as a string for UI binding.
     /// </summary>
-    public string Morale { get => _morale; set { SetProperty(ref _morale, value); ValidateMorale(); } }
+    [Required(ErrorMessage = "Morale is required.")]
+    [Range(typeof(int), "0", "10", ErrorMessage = "Morale must be between 0 and 10.")]
+    public string Morale { get => _morale; set => SetProperty(ref _morale, value); }
 
     /// <summary>
     /// Gets or sets the broken morale value as a string for UI binding.
     /// </summary>
-    public string BrokenMorale { get => _brokenMorale; set { SetProperty(ref _brokenMorale, value); ValidateBrokenMorale(); } }
+    [Required(ErrorMessage = "Broken morale is required.")]
+    [Range(typeof(int), "1", "12", ErrorMessage = "Broken morale must be between 1 and 12.")]
+    public string BrokenMorale { get => _brokenMorale; set => SetProperty(ref _brokenMorale, value); }
 
     /// <summary>
     /// Gets or sets the BPV value as a string for UI binding.
     /// </summary>
-    public string BPV { get => _bpv; set { SetProperty(ref _bpv, value); ValidateBPV(); } }
+    [Required(ErrorMessage = "BPV is required.")]
+    [Range(typeof(int), "1", "100", ErrorMessage = "BPV must be between 1 and 100.")]
+    public string BPV { get => _bpv; set => SetProperty(ref _bpv, value); }
 
     /// <summary>
     /// Gets or sets the selected nationality for the squad.
@@ -87,13 +80,7 @@ public class SquadsViewModel : CrudViewModelBase<Unit>
     public Nationality SelectedNationality 
     { 
         get => _selectedNationality; 
-        set 
-        { 
-            if (SetProperty(ref _selectedNationality, value))
-            {
-                ValidateUniqueness();
-            }
-        } 
+        set => SetProperty(ref _selectedNationality, value);
     }
 
     /// <summary>
@@ -101,15 +88,6 @@ public class SquadsViewModel : CrudViewModelBase<Unit>
     /// </summary>
     public UnitClass SelectedClass { get => _selectedClass; set => SetProperty(ref _selectedClass, value); }
 
-    /// <summary>
-    /// Gets or sets the file path for the front image.
-    /// </summary>
-    public string? ImagePathFront { get => _imagePathFront; set => SetProperty(ref _imagePathFront, value); }
-
-    /// <summary>
-    /// Gets or sets the file path for the back image.
-    /// </summary>
-    public string? ImagePathBack { get => _imagePathBack; set => SetProperty(ref _imagePathBack, value); }
 
     /// <summary>
     /// Gets or sets the scale of the infantry unit.
@@ -128,14 +106,25 @@ public class SquadsViewModel : CrudViewModelBase<Unit>
                 if (!CanHaveSmoke) HasSmokeExponent = false;
                 if (!CanHaveELR) HasELR = false;
 
+                if (value == InfantryScale.Crew)
+                {
+                    SelectedClass = UnitClass.Elite;
+                }
+
                 OnPropertyChanged(nameof(CanHaveAssaultFire));
                 OnPropertyChanged(nameof(CanHaveSprayingFire));
                 OnPropertyChanged(nameof(CanHaveSelfRally));
                 OnPropertyChanged(nameof(CanHaveELR));
                 OnPropertyChanged(nameof(CanHaveSmoke));
+                OnPropertyChanged(nameof(IsClassSelectionEnabled));
             }
         } 
     }
+
+    /// <summary>
+    /// Gets a value indicating whether Class selection is enabled.
+    /// </summary>
+    public bool IsClassSelectionEnabled => SelectedScale != InfantryScale.Crew;
 
     /// <summary>
     /// Gets a value indicating whether Assault Fire can be applied.
@@ -195,7 +184,7 @@ public class SquadsViewModel : CrudViewModelBase<Unit>
                 if (!value) 
                 {
                     SmokePlacementExponent = string.Empty;
-                    ValidateSmoke();
+                    ClearErrors(nameof(SmokePlacementExponent));
                 }
             }
         } 
@@ -204,22 +193,17 @@ public class SquadsViewModel : CrudViewModelBase<Unit>
     /// <summary>
     /// Gets or sets the smoke placement exponent as a string.
     /// </summary>
+    [Range(typeof(int), "1", "9", ErrorMessage = "Smoke exponent must be between 1 and 9.")]
     public string SmokePlacementExponent 
     { 
         get => _smokePlacementExponent; 
-        set 
-        { 
-            if (SetProperty(ref _smokePlacementExponent, value))
-            {
-                ValidateSmoke();
-            }
-        } 
+        set => SetProperty(ref _smokePlacementExponent, value); 
     }
 
     /// <summary>
-    /// Gets the list of available nationalities.
+    /// Gets the list of available infantry scales.
     /// </summary>
-    public IEnumerable<Nationality> Nationalities => Enum.GetValues(typeof(Nationality)).Cast<Nationality>();
+    public IEnumerable<InfantryScale> Scales => Enum.GetValues(typeof(InfantryScale)).Cast<InfantryScale>();
 
     /// <summary>
     /// Gets the list of available unit classes.
@@ -227,200 +211,68 @@ public class SquadsViewModel : CrudViewModelBase<Unit>
     public IEnumerable<UnitClass> UnitClasses => Enum.GetValues(typeof(UnitClass)).Cast<UnitClass>();
 
     /// <summary>
-    /// Gets the list of available infantry scales (excluding SMC).
-    /// </summary>
-    public IEnumerable<InfantryScale> Scales => Enum.GetValues(typeof(InfantryScale))
-        .Cast<InfantryScale>()
-        .Where(s => s != InfantryScale.SMC);
-
-    /// <summary>
-    /// Command to pick the front image.
-    /// </summary>
-    public RelayCommand PickFrontImageCommand { get; }
-
-    /// <summary>
-    /// Command to pick the back image.
-    /// </summary>
-    public RelayCommand PickBackImageCommand { get; }
-
-    /// <summary>
-    /// Command to clear the nationality filter.
-    /// </summary>
-    public RelayCommand ClearFilterCommand { get; }
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="SquadsViewModel"/> class.
     /// </summary>
-    public SquadsViewModel()
+    public SquadsViewModel(IUnitRepository repository) : base(repository)
     {
         DisplayName = "Squads";
-        PickFrontImageCommand = new RelayCommand(_ => ExecutePickImage(true));
-        PickBackImageCommand = new RelayCommand(_ => ExecutePickImage(false));
-        ClearFilterCommand = new RelayCommand(_ => SelectedNationalityFilter = null);
-        
-        FilteredItems.Filter = obj =>
+    }
+
+    protected override void ValidateProperty(object? value, string? propertyName)
+    {
+        base.ValidateProperty(value, propertyName);
+
+        if (propertyName == nameof(SmokePlacementExponent))
         {
-            if (obj is SelectableItem<Unit> wrapper)
+            if (HasSmokeExponent && string.IsNullOrWhiteSpace(value as string))
             {
-                if (SelectedNationalityFilter == null) return true;
-                return wrapper.Item.Nationality == SelectedNationalityFilter;
+                AddError(nameof(SmokePlacementExponent), "Smoke exponent is required.");
             }
-            return true;
-        };
-    }
-
-    private void ValidateName()
-    {
-        ClearErrors(nameof(Name));
-        if (string.IsNullOrWhiteSpace(Name))
-        {
-            AddError(nameof(Name), "Unit identity is required.");
-            ShowToast("Unit identity is required.");
-        }
-        else
-        {
-            ValidateUniqueness();
         }
     }
 
-    private void ValidateFirepower()
+    protected override bool ValidateAllProperties()
     {
-        ClearErrors(nameof(Firepower));
-        if (string.IsNullOrWhiteSpace(Firepower))
-        {
-            AddError(nameof(Firepower), "Firepower is required.");
-            ShowToast("Firepower is required.");
-        }
-        else if (!int.TryParse(Firepower, out int f) || f <= 0)
-        {
-            AddError(nameof(Firepower), "Firepower must be a positive number.");
-            ShowToast("Firepower must be a positive number.");
-        }
-        else
-        {
-            ValidateUniqueness();
-        }
-    }
+        bool isValid = base.ValidateAllProperties();
 
-    private void ValidateRange()
-    {
-        ClearErrors(nameof(Range));
-        if (string.IsNullOrWhiteSpace(Range))
-        {
-            AddError(nameof(Range), "Range is required.");
-            ShowToast("Range is required.");
-        }
-        else if (!int.TryParse(Range, out int r) || r <= 0)
-        {
-            AddError(nameof(Range), "Range must be a positive number.");
-            ShowToast("Range must be a positive number.");
-        }
-        else
-        {
-            ValidateUniqueness();
-        }
-    }
-
-    private void ValidateMorale()
-    {
-        ClearErrors(nameof(Morale));
-        if (string.IsNullOrWhiteSpace(Morale))
-        {
-            AddError(nameof(Morale), "Morale is required.");
-            ShowToast("Morale is required.");
-        }
-        else if (!int.TryParse(Morale, out int m) || m <= 0)
-        {
-            AddError(nameof(Morale), "Morale must be a positive number.");
-            ShowToast("Morale must be a positive number.");
-        }
-        else
-        {
-            ValidateUniqueness();
-        }
-    }
-
-    private void ValidateBrokenMorale()
-    {
-        ClearErrors(nameof(BrokenMorale));
-        if (string.IsNullOrWhiteSpace(BrokenMorale))
-        {
-            AddError(nameof(BrokenMorale), "Broken morale is required.");
-            ShowToast("Broken morale is required.");
-        }
-        else if (!int.TryParse(BrokenMorale, out int m) || m <= 0)
-        {
-            AddError(nameof(BrokenMorale), "Broken morale must be a positive number.");
-            ShowToast("Broken morale must be a positive number.");
-        }
-    }
-
-    private void ValidateBPV()
-    {
-        ClearErrors(nameof(BPV));
+        // Extra enforcement for BPV to bypass strange TryValidateObject skipping bug
         if (string.IsNullOrWhiteSpace(BPV))
         {
             AddError(nameof(BPV), "BPV is required.");
-            ShowToast("BPV is required.");
+            isValid = false;
         }
-        else if (!int.TryParse(BPV, out int b) || b <= 0)
-        {
-            AddError(nameof(BPV), "BPV must be a positive number.");
-            ShowToast("BPV must be a positive number.");
-        }
-    }
 
-    private void ValidateSmoke()
-    {
-        ClearErrors(nameof(SmokePlacementExponent));
-        if (HasSmokeExponent)
+        if (!string.IsNullOrWhiteSpace(Name) && 
+            int.TryParse(Firepower, out int fp) && 
+            int.TryParse(Range, out int r) && 
+            int.TryParse(Morale, out int m))
         {
-            if (string.IsNullOrWhiteSpace(SmokePlacementExponent))
+            if (Items.Any(i => i.Item != EditingItem && 
+                              i.Item.Name.Equals(Name, StringComparison.OrdinalIgnoreCase) && 
+                              i.Item.Nationality == SelectedNationality &&
+                              (i.Item.FirePower?.Firepower ?? 0) == fp &&
+                              (i.Item.FirePower?.Range ?? 0) == r &&
+                              (i.Item.Infantry?.Morale ?? 0) == m))
             {
-                AddError(nameof(SmokePlacementExponent), "Smoke exponent is required when enabled.");
-            }
-            else if (!int.TryParse(SmokePlacementExponent, out int se) || se < 0)
-            {
-                AddError(nameof(SmokePlacementExponent), "Smoke exponent must be a non-negative number.");
+                AddError(nameof(Name), "An identical unit already exists for this nationality.");
+                isValid = false;
             }
         }
+
+        if (HasSmokeExponent && string.IsNullOrWhiteSpace(SmokePlacementExponent))
+        {
+            AddError(nameof(SmokePlacementExponent), "Smoke exponent is required.");
+            isValid = false;
+        }
+
+        return isValid;
     }
 
-    private void ValidateUniqueness()
+    /// <inheritdoc />
+    protected override void OnImagePicked(int imageType, string filePath)
     {
-        if (string.IsNullOrWhiteSpace(Name) || 
-            !int.TryParse(Firepower, out int fp) || 
-            !int.TryParse(Range, out int r) || 
-            !int.TryParse(Morale, out int m))
-        {
-            return;
-        }
-
-        if (Items.Any(i => i.Item != EditingItem && 
-                          i.Item.Name.Equals(Name, StringComparison.OrdinalIgnoreCase) && 
-                          i.Item.Nationality == SelectedNationality &&
-                          (i.Item.FirePower?.Firepower ?? 0) == fp &&
-                          (i.Item.FirePower?.Range ?? 0) == r &&
-                          (i.Item.Infantry?.Morale ?? 0) == m))
-        {
-            AddError(nameof(Name), "An identical unit already exists for this nationality.");
-            ShowToast("Duplicate unit detected!");
-        }
-    }
-
-    private void ExecutePickImage(bool front)
-    {
-        var openDialog = new Microsoft.Win32.OpenFileDialog
-        {
-            Filter = "Image files (*.jpg, *.png)|*.jpg;*.png",
-            Title = front ? "Select Squad Front Image" : "Select Squad Back Image"
-        };
-
-        if (openDialog.ShowDialog() == true)
-        {
-            if (front) ImagePathFront = openDialog.FileName;
-            else ImagePathBack = openDialog.FileName;
-        }
+        if (imageType == 0) ImagePathFront = filePath;
+        else if (imageType == 1) ImagePathBack = filePath;
     }
 
     /// <inheritdoc />
@@ -440,8 +292,8 @@ public class SquadsViewModel : CrudViewModelBase<Unit>
         OnPropertyChanged(nameof(BrokenMorale));
         OnPropertyChanged(nameof(BPV));
         SelectedNationality = Nationality.German;
-        SelectedClass = UnitClass.FirstLine;
         SelectedScale = InfantryScale.Squad;
+        SelectedClass = UnitClass.FirstLine;
         ImagePathFront = null;
         ImagePathBack = null;
         HasAssaultFire = false;
@@ -486,15 +338,7 @@ public class SquadsViewModel : CrudViewModelBase<Unit>
     /// <inheritdoc />
     protected override void OnSave(object? parameter)
     {
-        ValidateName();
-        ValidateFirepower();
-        ValidateRange();
-        ValidateMorale();
-        ValidateBrokenMorale();
-        ValidateBPV();
-        ValidateSmoke();
-
-        if (HasErrors)
+        if (!ValidateAllProperties())
         {
             ShowToast("Please fix the validation errors.");
             return;
@@ -541,12 +385,18 @@ public class SquadsViewModel : CrudViewModelBase<Unit>
             if (wrapper != null)
             {
                 int index = Items.IndexOf(wrapper);
-                if (index >= 0) Items[index] = new SelectableItem<Unit>(unit, NotifySelectionChanged);
+                if (index >= 0)
+                {
+                    OnItemRemoved(EditingItem);
+                    Items[index] = new SelectableItem<Unit>(unit, NotifySelectionChanged);
+                    OnItemAdded(unit);
+                }
             }
         }
         else
         {
             Items.Add(new SelectableItem<Unit>(unit, NotifySelectionChanged));
+            OnItemAdded(unit);
         }
         
         IsAdding = false;

@@ -4,6 +4,7 @@ using ASL.Models;
 using System.Linq;
 using System;
 using System.Collections.Generic;
+using ASLInputTool.Infrastructure;
 
 namespace ASLInputTool.ViewModels;
 
@@ -11,7 +12,7 @@ namespace ASLInputTool.ViewModels;
 /// ViewModel for the Scenario entry and list view.
 /// Handles historical scenarios including place, date, description, and sides.
 /// </summary>
-public class ScenariosViewModel : CrudViewModelBase<Scenario>
+public class ScenariosViewModel : CrudViewModelBase<Scenario>, IInitializeableFromRepository
 {
     private string _name = string.Empty;
     private string _reference = string.Empty;
@@ -61,6 +62,11 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>
     /// Gets or sets the path to the image representing the scenario (e.g., from the scenario card).
     /// </summary>
     public string? ImagePath { get => _imagePath; set => SetProperty(ref _imagePath, value); }
+
+    /// <summary>
+    /// Command to pick an image for the scenario.
+    /// </summary>
+    public RelayCommand PickImageCommand { get; }
 
     /// <summary>
     /// Gets or sets the number of turns for the scenario.
@@ -132,16 +138,26 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>
     /// </summary>
     public IEnumerable<Nationality> AvailableNationalities => Enum.GetValues<Nationality>();
 
+    private readonly IScenarioRepository _repository;
+
     /// <summary>
-    /// Command to pick an image for the scenario.
+    /// Initializes the ViewModel's items from the central repository.
     /// </summary>
-    public RelayCommand PickImageCommand { get; }
+    public void InitializeFromRepository()
+    {
+        Items.Clear();
+        foreach (var scenario in _repository.AllScenarios)
+        {
+            Items.Add(new SelectableItem<Scenario>(scenario, NotifySelectionChanged));
+        }
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ScenariosViewModel"/> class.
     /// </summary>
-    public ScenariosViewModel()
+    public ScenariosViewModel(IScenarioRepository repository)
     {
+        _repository = repository;
         DisplayName = "Scenarios";
         PickImageCommand = new RelayCommand(_ => ExecutePickImage());
     }
@@ -334,14 +350,26 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>
             if (wrapper != null)
             {
                 int index = Items.IndexOf(wrapper);
-                if (index >= 0) Items[index] = new SelectableItem<Scenario>(scenario, NotifySelectionChanged);
+                if (index >= 0)
+                {
+                    OnItemRemoved(EditingItem);
+                    Items[index] = new SelectableItem<Scenario>(scenario, NotifySelectionChanged);
+                    OnItemAdded(scenario);
+                }
             }
         }
         else
         {
             Items.Add(new SelectableItem<Scenario>(scenario, NotifySelectionChanged));
+            OnItemAdded(scenario);
         }
 
         IsAdding = false;
     }
+
+    /// <inheritdoc />
+    protected override void OnItemAdded(Scenario item) => _repository.Add(item);
+
+    /// <inheritdoc />
+    protected override void OnItemRemoved(Scenario item) => _repository.Remove(item);
 }

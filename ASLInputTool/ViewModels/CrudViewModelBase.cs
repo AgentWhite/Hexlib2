@@ -117,6 +117,7 @@ public abstract class CrudViewModelBase<T> : ViewModelBase
             foreach (var wrapper in selected)
             {
                 Items.Remove(wrapper);
+                OnItemRemoved(wrapper.Item);
             }
             OnPropertyChanged(nameof(HasSelectedItems));
         }
@@ -143,6 +144,16 @@ public abstract class CrudViewModelBase<T> : ViewModelBase
     /// </summary>
     /// <param name="parameter">The command parameter.</param>
     protected abstract void OnSave(object? parameter);
+
+    /// <summary>
+    /// Called when an item is added to the managed collection.
+    /// </summary>
+    protected virtual void OnItemAdded(T item) { }
+
+    /// <summary>
+    /// Called when an item is removed from the managed collection.
+    /// </summary>
+    protected virtual void OnItemRemoved(T item) { }
 
     /// <summary>
     /// Displays a temporary toast notification in the UI.

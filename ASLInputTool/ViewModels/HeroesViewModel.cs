@@ -3,69 +3,58 @@ using ASL.Models.Components;
 using System;
 using System.Linq;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Windows.Data;
+using ASLInputTool.Infrastructure;
 
 namespace ASLInputTool.ViewModels;
 
 /// <summary>
 /// ViewModel for managing Hero counters.
 /// </summary>
-public class HeroesViewModel : CrudViewModelBase<Unit>
+public class HeroesViewModel : UnitViewModelBase
 {
+    protected override string UnitCategoryFilter => "Hero";
     private string _name = string.Empty;
     private string _firepower = string.Empty;
     private string _range = string.Empty;
     private string _morale = string.Empty;
     private string _brokenMorale = string.Empty;
     private Nationality _selectedNationality = Nationality.German;
-    private string? _imagePathFront;
-    private string? _imagePathBack;
-    private Nationality? _selectedNationalityFilter;
 
-    /// <summary>
-    /// Gets the filtered view of items.
-    /// </summary>
-    public ICollectionView FilteredItems => CollectionViewSource.GetDefaultView(Items);
-
-    /// <summary>
-    /// Gets or sets the nationality to filter the list by.
-    /// </summary>
-    public Nationality? SelectedNationalityFilter
-    {
-        get => _selectedNationalityFilter;
-        set
-        {
-            if (SetProperty(ref _selectedNationalityFilter, value))
-            {
-                FilteredItems.Refresh();
-            }
-        }
-    }
 
     /// <summary>
     /// Gets or sets the name of the hero.
     /// </summary>
-    public string Name { get => _name; set { SetProperty(ref _name, value); ValidateName(); } }
+    [Required(ErrorMessage = "Hero name is required.")]
+    public string Name { get => _name; set => SetProperty(ref _name, value); }
 
     /// <summary>
     /// Gets or sets the firepower value as a string for UI binding.
     /// </summary>
-    public string Firepower { get => _firepower; set { SetProperty(ref _firepower, value); ValidateFirepower(); } }
+    [Required(ErrorMessage = "Firepower is required.")]
+    [Range(typeof(int), "1", "30", ErrorMessage = "Firepower must be between 1 and 30.")]
+    public string Firepower { get => _firepower; set => SetProperty(ref _firepower, value); }
 
     /// <summary>
     /// Gets or sets the range value as a string for UI binding.
     /// </summary>
-    public string Range { get => _range; set { SetProperty(ref _range, value); ValidateRange(); } }
+    [Required(ErrorMessage = "Range is required.")]
+    [Range(typeof(int), "0", "50", ErrorMessage = "Range must be between 0 and 50.")]
+    public string Range { get => _range; set => SetProperty(ref _range, value); }
 
     /// <summary>
     /// Gets or sets the morale value as a string for UI binding.
     /// </summary>
-    public string Morale { get => _morale; set { SetProperty(ref _morale, value); ValidateMorale(); } }
+    [Required(ErrorMessage = "Morale is required.")]
+    [Range(typeof(int), "0", "10", ErrorMessage = "Morale must be between 0 and 10.")]
+    public string Morale { get => _morale; set => SetProperty(ref _morale, value); }
 
     /// <summary>
     /// Gets or sets the broken morale value as a string for UI binding.
     /// </summary>
-    public string BrokenMorale { get => _brokenMorale; set { SetProperty(ref _brokenMorale, value); ValidateBrokenMorale(); } }
+    [Range(typeof(int), "1", "12", ErrorMessage = "Broken morale must be between 1 and 12.")]
+    public string BrokenMorale { get => _brokenMorale; set => SetProperty(ref _brokenMorale, value); }
 
     /// <summary>
     /// Gets a value indicating whether this hero can have a broken morale value (false for Japanese).
@@ -82,156 +71,67 @@ public class HeroesViewModel : CrudViewModelBase<Unit>
         { 
             if (SetProperty(ref _selectedNationality, value))
             {
-                ValidateName();
                 OnPropertyChanged(nameof(CanHaveBrokenMorale));
-                ValidateBrokenMorale();
+                if (SelectedNationality == Nationality.Japanese)
+                {
+                    ClearErrors(nameof(BrokenMorale));
+                }
+                else
+                {
+                    ValidateProperty(BrokenMorale, nameof(BrokenMorale));
+                }
             }
         } 
     }
 
-    /// <summary>
-    /// Gets or sets the file path for the front image.
-    /// </summary>
-    public string? ImagePathFront { get => _imagePathFront; set => SetProperty(ref _imagePathFront, value); }
-
-    /// <summary>
-    /// Gets or sets the file path for the back image.
-    /// </summary>
-    public string? ImagePathBack { get => _imagePathBack; set => SetProperty(ref _imagePathBack, value); }
-
-    /// <summary>
-    /// Gets the list of available nationalities.
-    /// </summary>
-    public IEnumerable<Nationality> Nationalities => Enum.GetValues(typeof(Nationality)).Cast<Nationality>();
-
-    /// <summary>
-    /// Command to pick the front image.
-    /// </summary>
-    public RelayCommand PickFrontImageCommand { get; }
-
-    /// <summary>
-    /// Command to pick the back image.
-    /// </summary>
-    public RelayCommand PickBackImageCommand { get; }
-
-    /// <summary>
-    /// Command to clear the nationality filter.
-    /// </summary>
-    public RelayCommand ClearFilterCommand { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="HeroesViewModel"/> class.
     /// </summary>
-    public HeroesViewModel()
+    public HeroesViewModel(IUnitRepository repository) : base(repository)
     {
         DisplayName = "Heroes";
-        PickFrontImageCommand = new RelayCommand(_ => ExecutePickImage(true));
-        PickBackImageCommand = new RelayCommand(_ => ExecutePickImage(false));
-        ClearFilterCommand = new RelayCommand(_ => SelectedNationalityFilter = null);
-        
-        FilteredItems.Filter = obj =>
-        {
-            if (obj is SelectableItem<Unit> wrapper)
-            {
-                if (SelectedNationalityFilter == null) return true;
-                return wrapper.Item.Nationality == SelectedNationalityFilter;
-            }
-            return true;
-        };
     }
 
-    private void ValidateName()
+    protected override void ValidateProperty(object? value, string? propertyName)
     {
-        ClearErrors(nameof(Name));
-        if (string.IsNullOrWhiteSpace(Name))
+        base.ValidateProperty(value, propertyName);
+
+        if (propertyName == nameof(BrokenMorale))
         {
-            AddError(nameof(Name), "Hero name is required.");
-            ShowToast("Hero name is required.");
+            if (CanHaveBrokenMorale && string.IsNullOrWhiteSpace(value as string))
+            {
+                AddError(nameof(BrokenMorale), "Broken morale is required.");
+            }
         }
-        else if (Items.Any(i => i.Item != EditingItem && 
-                               i.Item.Name.Equals(Name, StringComparison.OrdinalIgnoreCase) && 
-                               i.Item.Nationality == SelectedNationality))
+    }
+
+    protected override bool ValidateAllProperties()
+    {
+        bool isValid = base.ValidateAllProperties();
+
+        if (Items.Any(i => i.Item != EditingItem && 
+                           i.Item.Name.Equals(Name, StringComparison.OrdinalIgnoreCase) && 
+                           i.Item.Nationality == SelectedNationality))
         {
             AddError(nameof(Name), "A hero with this name already exists for this nationality.");
-            ShowToast("Duplicate hero name!");
+            isValid = false;
         }
-    }
 
-    private void ValidateFirepower()
-    {
-        ClearErrors(nameof(Firepower));
-        if (string.IsNullOrWhiteSpace(Firepower))
-        {
-            AddError(nameof(Firepower), "Firepower is required.");
-            ShowToast("Firepower is required.");
-        }
-        else if (!int.TryParse(Firepower, out int f) || f <= 0)
-        {
-            AddError(nameof(Firepower), "Firepower must be a positive number.");
-            ShowToast("Firepower must be a positive number.");
-        }
-    }
-
-    private void ValidateRange()
-    {
-        ClearErrors(nameof(Range));
-        if (string.IsNullOrWhiteSpace(Range))
-        {
-            AddError(nameof(Range), "Range is required.");
-            ShowToast("Range is required.");
-        }
-        else if (!int.TryParse(Range, out int r) || r <= 0)
-        {
-            AddError(nameof(Range), "Range must be a positive number.");
-            ShowToast("Range must be a positive number.");
-        }
-    }
-
-    private void ValidateMorale()
-    {
-        ClearErrors(nameof(Morale));
-        if (string.IsNullOrWhiteSpace(Morale))
-        {
-            AddError(nameof(Morale), "Morale is required.");
-            ShowToast("Morale is required.");
-        }
-        else if (!int.TryParse(Morale, out int m) || m <= 0)
-        {
-            AddError(nameof(Morale), "Morale must be a positive number.");
-            ShowToast("Morale must be a positive number.");
-        }
-    }
-
-    private void ValidateBrokenMorale()
-    {
-        ClearErrors(nameof(BrokenMorale));
-        if (!CanHaveBrokenMorale) return;
-
-        if (string.IsNullOrWhiteSpace(BrokenMorale))
+        if (CanHaveBrokenMorale && string.IsNullOrWhiteSpace(BrokenMorale))
         {
             AddError(nameof(BrokenMorale), "Broken morale is required.");
-            ShowToast("Broken morale is required.");
+            isValid = false;
         }
-        else if (!int.TryParse(BrokenMorale, out int m) || m <= 0)
-        {
-            AddError(nameof(BrokenMorale), "Broken morale must be a positive number.");
-            ShowToast("Broken morale must be a positive number.");
-        }
+
+        return isValid;
     }
 
-    private void ExecutePickImage(bool front)
+    /// <inheritdoc />
+    protected override void OnImagePicked(int imageType, string filePath)
     {
-        var openDialog = new Microsoft.Win32.OpenFileDialog
-        {
-            Filter = "Image files (*.jpg, *.png)|*.jpg;*.png",
-            Title = front ? "Select Hero Front Image" : "Select Hero Back Image"
-        };
-
-        if (openDialog.ShowDialog() == true)
-        {
-            if (front) ImagePathFront = openDialog.FileName;
-            else ImagePathBack = openDialog.FileName;
-        }
+        if (imageType == 0) ImagePathFront = filePath;
+        else if (imageType == 1) ImagePathBack = filePath;
     }
 
     /// <inheritdoc />
@@ -277,13 +177,7 @@ public class HeroesViewModel : CrudViewModelBase<Unit>
     /// <inheritdoc />
     protected override void OnSave(object? parameter)
     {
-        ValidateName();
-        ValidateFirepower();
-        ValidateRange();
-        ValidateMorale();
-        ValidateBrokenMorale();
-
-        if (HasErrors)
+        if (!ValidateAllProperties())
         {
             ShowToast("Please fix the validation errors.");
             return;
@@ -319,12 +213,18 @@ public class HeroesViewModel : CrudViewModelBase<Unit>
             if (wrapper != null)
             {
                 int index = Items.IndexOf(wrapper);
-                if (index >= 0) Items[index] = new SelectableItem<Unit>(unit, NotifySelectionChanged);
+                if (index >= 0)
+                {
+                    OnItemRemoved(EditingItem);
+                    Items[index] = new SelectableItem<Unit>(unit, NotifySelectionChanged);
+                    OnItemAdded(unit);
+                }
             }
         }
         else
         {
             Items.Add(new SelectableItem<Unit>(unit, NotifySelectionChanged));
+            OnItemAdded(unit);
         }
         
         IsAdding = false;
