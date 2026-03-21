@@ -41,24 +41,41 @@
 
         <!-- List View -->
         <Grid Grid.Row="1" Visibility="{Binding IsAdding, Converter={StaticResource InverseBoolToVis}}">
-            <DataGrid ItemsSource="{Binding Items}" AutoGenerateColumns="False" IsReadOnly="False" Background="{StaticResource WindowBackgroundBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Filter UI -->
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                <Label Content="Filter by Nationality:" VerticalAlignment="Center" Foreground="Gray"/>
+                <ComboBox ItemsSource="{Binding Nationalities}" 
+                          SelectedItem="{Binding SelectedNationalityFilter}"
+                          Width="120" Margin="5,0,0,0"
+                          VerticalAlignment="Center"/>
+                <Button Content="Clear" Command="{Binding ClearFilterCommand}" 
+                        Margin="5,0,0,0" Padding="10,2"
+                        Visibility="{Binding SelectedNationalityFilter, Converter={StaticResource NullToVis}, ConverterParameter=Inverse}"/>
+            </StackPanel>
+
+            <DataGrid Grid.Row="1" ItemsSource="{Binding FilteredItems}" AutoGenerateColumns="False" IsReadOnly="False" Background="{StaticResource WindowBackgroundBrush}">
                 <DataGrid.InputBindings>
                     <MouseBinding MouseAction="LeftDoubleClick" 
                                   Command="{Binding EditCommand}" 
                                   CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
                 </DataGrid.InputBindings>
                 <DataGrid.Columns>
-                    <DataGridCheckBoxColumn Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" Width="30" IsReadOnly="False" />
-                    <DataGridTemplateColumn Header="Image" Width="60">
+                    <DataGridCheckBoxColumn Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" Width="30" IsReadOnly="False" CanUserSort="False" />
+                    <DataGridTemplateColumn Header="Image" Width="70" CanUserSort="False">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Image Source="{Binding Item.ImagePathFront, Converter={StaticResource ImageSource}}" Height="45" Stretch="Uniform"/>
+                                <Image Source="{Binding Item.ImagePathFront, Converter={StaticResource ImageSource}}" Height="54" Stretch="Uniform"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTextColumn Header="Name" Binding="{Binding Item.Name}" Width="*" IsReadOnly="True" />
                     <DataGridTextColumn Header="Nationality" Binding="{Binding Item.Nationality}" Width="120" IsReadOnly="True" />
-                    <DataGridTextColumn Header="Stats" Binding="{Binding Item, Converter={StaticResource CounterStats}}" Width="100" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Stats" Binding="{Binding Item, Converter={StaticResource CounterStats}}" Width="100" IsReadOnly="True" SortMemberPath="Item.Leadership.Leadership" />
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>

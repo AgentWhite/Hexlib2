@@ -83,7 +83,7 @@ public class MainViewModel : ViewModelBase
                 sourceProject.Counters.AddRange(_locator.Get<LeadersViewModel>().Items.Select(i => i.Item));
                 sourceProject.Counters.AddRange(_locator.Get<HeroesViewModel>().Items.Select(i => i.Item));
                 sourceProject.Counters.AddRange(_locator.Get<SquadsViewModel>().Items.Select(i => i.Item));
-                sourceProject.Counters.AddRange(_locator.Get<SupportWeaponViewModel>().Items.Select(i => i.Item));
+                sourceProject.Counters.AddRange(_locator.Get<EquipmentViewModel>().Items.Select(i => i.Item));
 
                 var projectToSave = _saveManager.PrepareProjectForSaving(sourceProject, saveDialog.FileName);
 
@@ -119,7 +119,7 @@ public class MainViewModel : ViewModelBase
                     var leadersVm = _locator.Get<LeadersViewModel>();
                     var heroesVm = _locator.Get<HeroesViewModel>();
                     var squadsVm = _locator.Get<SquadsViewModel>();
-                    var supportWeaponsVm = _locator.Get<SupportWeaponViewModel>();
+                    var equipmentVm = _locator.Get<EquipmentViewModel>();
                     var scenariosVm = _locator.Get<ScenariosViewModel>();
                     var modulesVm = _locator.Get<ModulesViewModel>();
 
@@ -153,7 +153,7 @@ public class MainViewModel : ViewModelBase
 
                     leadersVm.Items.Clear();
                     squadsVm.Items.Clear();
-                    supportWeaponsVm.Items.Clear();
+                    equipmentVm.Items.Clear();
                     heroesVm.Items.Clear();
 
                     foreach (var unit in project.Counters)
@@ -172,7 +172,7 @@ public class MainViewModel : ViewModelBase
                         }
                         else if (unit.IsSupportWeapon)
                         {
-                            supportWeaponsVm.Items.Add(new SelectableItem<Unit>(unit, supportWeaponsVm.NotifySelectionChanged));
+                            equipmentVm.Items.Add(new SelectableItem<Unit>(unit, equipmentVm.NotifySelectionChanged));
                         }
                     }
                     

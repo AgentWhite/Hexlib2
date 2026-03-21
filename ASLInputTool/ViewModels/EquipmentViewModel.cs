@@ -1,15 +1,16 @@
 using ASL.Models;
 using ASL.Models.Components;
-using System.Collections.Generic;
 using System;
 using System.Linq;
+using System.ComponentModel;
+using System.Windows.Data;
 
 namespace ASLInputTool.ViewModels;
 
 /// <summary>
-/// ViewModel for managing Support Weapon (LMG, MMG, HMG, etc.) counters.
+/// ViewModel for managing Equipment (LMG, MMG, HMG, etc.) counters.
 /// </summary>
-public class SupportWeaponViewModel : CrudViewModelBase<Unit>
+public class EquipmentViewModel : CrudViewModelBase<Unit>
 {
     private string _name = string.Empty;
     private string _firepower = string.Empty;
@@ -29,6 +30,27 @@ public class SupportWeaponViewModel : CrudViewModelBase<Unit>
     private string? _imagePathBack;
     private string? _dismantledImage;
     private bool _showDismantledImage;
+    private Nationality? _selectedNationalityFilter;
+
+    /// <summary>
+    /// Gets the filtered view of items.
+    /// </summary>
+    public ICollectionView FilteredItems => CollectionViewSource.GetDefaultView(Items);
+
+    /// <summary>
+    /// Gets or sets the nationality to filter the list by.
+    /// </summary>
+    public Nationality? SelectedNationalityFilter
+    {
+        get => _selectedNationalityFilter;
+        set
+        {
+            if (SetProperty(ref _selectedNationalityFilter, value))
+            {
+                FilteredItems.Refresh();
+            }
+        }
+    }
 
     /// <summary>
     /// Gets or sets the name/type of the support weapon.
@@ -190,22 +212,38 @@ public class SupportWeaponViewModel : CrudViewModelBase<Unit>
     public RelayCommand PickDismantledImageCommand { get; }
 
     /// <summary>
-    /// Initializes a new instance of the class.
+    /// Command to clear the nationality filter.
     /// </summary>
-    public SupportWeaponViewModel()
+    public RelayCommand ClearFilterCommand { get; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EquipmentViewModel"/> class.
+    /// </summary>
+    public EquipmentViewModel()
     {
-        DisplayName = "Support Weapons";
+        DisplayName = "Equipment";
         PickFrontImageCommand = new RelayCommand(_ => ExecutePickImage(0));
         PickBackImageCommand = new RelayCommand(_ => ExecutePickImage(1));
         PickDismantledImageCommand = new RelayCommand(_ => ExecutePickImage(2));
+        ClearFilterCommand = new RelayCommand(_ => SelectedNationalityFilter = null);
+        
+        FilteredItems.Filter = obj =>
+        {
+            if (obj is SelectableItem<Unit> wrapper)
+            {
+                if (SelectedNationalityFilter == null) return true;
+                return wrapper.Item.Nationality == SelectedNationalityFilter;
+            }
+            return true;
+        };
     }
 
     private void ExecutePickImage(int imageType) // 0: Front, 1: Back, 2: Dismantled
     {
         string dialogTitle = imageType switch
         {
-            0 => "Select Weapon Front Image",
-            1 => "Select Weapon Back Image",
+            0 => "Select Equipment Front Image",
+            1 => "Select Equipment Back Image",
             2 => "Select Dismantled Image",
             _ => "Select Image"
         };
@@ -399,7 +437,7 @@ public class SupportWeaponViewModel : CrudViewModelBase<Unit>
                           i.Item.Nationality == SelectedNationality &&
                           i.Item.GetComponent<MachineGunComponent>()?.Type == SelectedMachineGunType))
         {
-            AddError(nameof(Name), "Weapon with this Id, Nationality and Type already exists.");
+            AddError(nameof(Name), "Equipment with this Id, Nationality and Type already exists.");
         }
     }
 

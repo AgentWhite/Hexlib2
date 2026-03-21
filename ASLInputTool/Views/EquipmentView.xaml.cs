@@ -3,14 +3,14 @@ using System.Windows.Controls;
 namespace ASLInputTool.Views;
 
 /// <summary>
-/// Interaction logic for SupportWeaponsView.xaml
+/// Interaction logic for EquipmentView.xaml
 /// </summary>
-public partial class SupportWeaponsView : UserControl
+public partial class EquipmentView : UserControl
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="SupportWeaponsView"/> class.
+    /// Initializes a new instance of the <see cref="EquipmentView"/> class.
     /// </summary>
-    public SupportWeaponsView()
+    public EquipmentView()
     {
         InitializeComponent();
     }

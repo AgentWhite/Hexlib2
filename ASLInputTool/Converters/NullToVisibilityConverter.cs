@@ -16,7 +16,14 @@ public class NullToVisibilityConverter : IValueConverter
     {
         bool hasValue = value != null;
         if (value is string s) hasValue = !string.IsNullOrWhiteSpace(s);
+
+        bool inverse = parameter != null && parameter.ToString()?.Equals("Inverse", StringComparison.OrdinalIgnoreCase) == true;
         
+        if (inverse)
+        {
+            return hasValue ? Visibility.Visible : Visibility.Collapsed;
+        }
+
         return hasValue ? Visibility.Collapsed : Visibility.Visible;
     }
 

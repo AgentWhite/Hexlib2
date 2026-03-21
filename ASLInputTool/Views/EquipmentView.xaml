@@ -1,11 +1,11 @@
-<UserControl x:Class="ASLInputTool.Views.SupportWeaponsView"
+<UserControl x:Class="ASLInputTool.Views.EquipmentView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:vm="clr-namespace:ASLInputTool.ViewModels"
              mc:Ignorable="d" 
-             d:DataContext="{d:DesignInstance vm:SupportWeaponViewModel}"
+             d:DataContext="{d:DesignInstance vm:EquipmentViewModel}"
              d:DesignHeight="600" d:DesignWidth="800">
     <UserControl.Resources>
         <Style TargetType="Button">
@@ -27,8 +27,8 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="0,0,0,20">
-            <TextBlock Text="Support Weapons" FontSize="24" FontWeight="Bold" VerticalAlignment="Center"/>
-            <Button Content="Add Weapon" Command="{Binding AddCommand}" 
+            <TextBlock Text="Equipment" FontSize="24" FontWeight="Bold" VerticalAlignment="Center"/>
+            <Button Content="Add Equipment" Command="{Binding AddCommand}" 
                     Visibility="{Binding IsAdding, Converter={StaticResource InverseBoolToVis}}"
                     Margin="20,0,0,0" Padding="15,5" Background="{StaticResource ControlBorderBrush}" Foreground="White" FontWeight="Bold"/>
             <Button Content="Delete Selected" Command="{Binding DeleteSelectedCommand}"
@@ -41,18 +41,35 @@
 
         <!-- List View -->
         <Grid Grid.Row="1" Visibility="{Binding IsAdding, Converter={StaticResource InverseBoolToVis}}">
-            <DataGrid ItemsSource="{Binding Items}" AutoGenerateColumns="False" IsReadOnly="False" Background="{StaticResource WindowBackgroundBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Filter UI -->
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                <Label Content="Filter by Nationality:" VerticalAlignment="Center" Foreground="Gray"/>
+                <ComboBox ItemsSource="{Binding Nationalities}" 
+                          SelectedItem="{Binding SelectedNationalityFilter}"
+                          Width="120" Margin="5,0,0,0"
+                          VerticalAlignment="Center"/>
+                <Button Content="Clear" Command="{Binding ClearFilterCommand}" 
+                        Margin="5,0,0,0" Padding="10,2"
+                        Visibility="{Binding SelectedNationalityFilter, Converter={StaticResource NullToVis}, ConverterParameter=Inverse}"/>
+            </StackPanel>
+
+            <DataGrid Grid.Row="1" ItemsSource="{Binding FilteredItems}" AutoGenerateColumns="False" IsReadOnly="False" Background="{StaticResource WindowBackgroundBrush}">
                 <DataGrid.InputBindings>
                     <MouseBinding MouseAction="LeftDoubleClick" 
                                    Command="{Binding EditCommand}" 
                                    CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
                 </DataGrid.InputBindings>
                 <DataGrid.Columns>
-                    <DataGridCheckBoxColumn Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" Width="30" IsReadOnly="False" />
-                    <DataGridTemplateColumn Header="Image" Width="60">
+                    <DataGridCheckBoxColumn Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" Width="30" IsReadOnly="False" CanUserSort="False" />
+                    <DataGridTemplateColumn Header="Image" Width="70" CanUserSort="False">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Image Source="{Binding Item.ImagePathFront, Converter={StaticResource ImageSource}}" Height="45" Stretch="Uniform"/>
+                                <Image Source="{Binding Item.ImagePathFront, Converter={StaticResource ImageSource}}" Height="54" Stretch="Uniform"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -219,7 +236,7 @@
                     </StackPanel>
                 </GroupBox>
 
-                    <Button Content="Save Support Weapon" Command="{Binding SaveCommand}" Margin="0,20,0,0" Padding="20,10" HorizontalAlignment="Right" Background="{StaticResource AccentBrush}" Foreground="White" FontWeight="Bold"/>
+                    <Button Content="Save Equipment" Command="{Binding SaveCommand}" Margin="0,20,0,0" Padding="20,10" HorizontalAlignment="Right" Background="{StaticResource AccentBrush}" Foreground="White" FontWeight="Bold"/>
                 </StackPanel>
             </Grid>
         </ScrollViewer>

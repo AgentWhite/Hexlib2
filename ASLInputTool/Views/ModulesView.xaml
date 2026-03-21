@@ -40,7 +40,7 @@
                                   CommandParameter="{Binding SelectedItem, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
                 </DataGrid.InputBindings>
                 <DataGrid.Columns>
-                    <DataGridCheckBoxColumn Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" Width="30" IsReadOnly="False" />
+                    <DataGridCheckBoxColumn Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" Width="30" IsReadOnly="False" CanUserSort="False" />
                     <DataGridTextColumn Header="Full Name" Binding="{Binding Item.FullName}" Width="*" IsReadOnly="True" />
                     <DataGridTextColumn Header="Type" Binding="{Binding Item.Module}" Width="150" IsReadOnly="True" />
                     <DataGridCheckBoxColumn Header="Finished" Binding="{Binding Item.IsFinished}" Width="80" IsReadOnly="True" />

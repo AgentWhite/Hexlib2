@@ -1,8 +1,9 @@
 using ASL.Models;
 using ASL.Models.Components;
-using System.Collections.Generic;
 using System;
 using System.Linq;
+using System.ComponentModel;
+using System.Windows.Data;
 
 namespace ASLInputTool.ViewModels;
 
@@ -19,6 +20,27 @@ public class LeadersViewModel : CrudViewModelBase<Unit>
     private Nationality _selectedNationality = Nationality.German;
     private string? _imagePathFront;
     private string? _imagePathBack;
+    private Nationality? _selectedNationalityFilter;
+
+    /// <summary>
+    /// Gets the filtered view of items.
+    /// </summary>
+    public ICollectionView FilteredItems => CollectionViewSource.GetDefaultView(Items);
+
+    /// <summary>
+    /// Gets or sets the nationality to filter the list by.
+    /// </summary>
+    public Nationality? SelectedNationalityFilter
+    {
+        get => _selectedNationalityFilter;
+        set
+        {
+            if (SetProperty(ref _selectedNationalityFilter, value))
+            {
+                FilteredItems.Refresh();
+            }
+        }
+    }
 
     /// <summary>
     /// Gets or sets the name of the leader.
@@ -99,6 +121,11 @@ public class LeadersViewModel : CrudViewModelBase<Unit>
     public RelayCommand PickBackImageCommand { get; }
 
     /// <summary>
+    /// Command to clear the nationality filter.
+    /// </summary>
+    public RelayCommand ClearFilterCommand { get; }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="LeadersViewModel"/> class.
     /// </summary>
     public LeadersViewModel()
@@ -106,6 +133,17 @@ public class LeadersViewModel : CrudViewModelBase<Unit>
         DisplayName = "Leaders";
         PickFrontImageCommand = new RelayCommand(_ => ExecutePickImage(true));
         PickBackImageCommand = new RelayCommand(_ => ExecutePickImage(false));
+        ClearFilterCommand = new RelayCommand(_ => SelectedNationalityFilter = null);
+        
+        FilteredItems.Filter = obj =>
+        {
+            if (obj is SelectableItem<Unit> wrapper)
+            {
+                if (SelectedNationalityFilter == null) return true;
+                return wrapper.Item.Nationality == SelectedNationalityFilter;
+            }
+            return true;
+        };
     }
 
     private void ValidateName()
