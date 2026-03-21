@@ -5,9 +5,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:vm="clr-namespace:ASLInputTool.ViewModels"
              xmlns:controls="clr-namespace:ASLInputTool.Controls"
+             xmlns:converters="clr-namespace:ASLInputTool.Converters"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance vm:EquipmentViewModel}"
              d:DesignHeight="600" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <converters:EquipmentTypeConverter x:Key="EquipmentTypeConverter"/>
+        <converters:EnumToStringConverter x:Key="EnumToStringConverter"/>
+    </UserControl.Resources>
     
     <Grid Margin="20" Background="{StaticResource WindowBackgroundBrush}">
         <Grid.RowDefinitions>
@@ -44,7 +50,7 @@
                     </DataGridTemplateColumn>
                     <DataGridTextColumn Header="Name" Binding="{Binding Item.Name}" Width="*" IsReadOnly="True" />
                     <DataGridTextColumn Header="Nationality" Binding="{Binding Item.Nationality}" Width="120" IsReadOnly="True" />
-                    <DataGridTextColumn Header="Type" Binding="{Binding Item.MachineGun.Type}" Width="120" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Type" Binding="{Binding Item, Converter={StaticResource EquipmentTypeConverter}}" Width="120" IsReadOnly="True" />
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
@@ -88,7 +94,16 @@
                     <Label Content="Nationality" FontWeight="SemiBold"/>
                     <ComboBox Margin="0,0,0,10" Padding="5" ItemsSource="{Binding Nationalities}" SelectedItem="{Binding SelectedNationality}"/>
 
-                    <GroupBox Header="Machine Gun" Margin="0,10">
+                    <Label Content="Equipment Type" FontWeight="SemiBold"/>
+                    <ComboBox Margin="0,0,0,10" Padding="5" ItemsSource="{Binding EquipmentTypes}" SelectedItem="{Binding SelectedEquipmentType}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <GroupBox Header="Machine Gun" Margin="0,10" Visibility="{Binding IsMachineGun, Converter={StaticResource BoolToVis}}">
                     <StackPanel>
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                             <StackPanel Margin="0,0,20,0">
@@ -123,55 +138,110 @@
                             </StackPanel>
                         </Grid>
 
-                        <!-- Reliability Grid -->
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="Radio / Telephone" Margin="0,10" Visibility="{Binding IsRadioOrPhone, Converter={StaticResource BoolToVis}}">
+                    <StackPanel>
+                        <Label Content="Contact Number" FontWeight="SemiBold"/>
+                        <TextBox Width="50" HorizontalAlignment="Left" Margin="0,0,0,10" Tag="8" Text="{Binding ContactNumber}" LostFocus="OnTextBoxLostFocus"/>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="Light Anti Tank" Margin="0,10" Visibility="{Binding IsLightAntiTank, Converter={StaticResource BoolToVis}}">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <StackPanel Margin="0,0,20,0">
+                                <Label Content="Type" FontWeight="SemiBold"/>
+                                <ComboBox Width="120" Padding="5" 
+                                          ItemsSource="{Binding LightAntiTankWeaponTypes}" 
+                                          SelectedItem="{Binding SelectedLightAntiTankWeaponType}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </StackPanel>
+                            <StackPanel VerticalAlignment="Bottom" Margin="0,0,10,5">
+                                <CheckBox Content="Shaped Charge" IsChecked="{Binding IsShapedCharge}" VerticalContentAlignment="Center"/>
+                            </StackPanel>
+                            <StackPanel VerticalAlignment="Bottom" Margin="0,0,0,5">
+                                <CheckBox Content="Backblast" IsChecked="{Binding HasBackBlast}" VerticalContentAlignment="Center"/>
+                            </StackPanel>
+                        </StackPanel>
+
                         <Grid Margin="0,0,0,10">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0" Margin="0,0,20,0" HorizontalAlignment="Center">
-                                <Label Content="Breakdown" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                    <TextBox Width="50" HorizontalAlignment="Center" Tag="12" 
-                                             Text="{Binding BreakdownNumber}" LostFocus="OnTextBoxLostFocus"
-                                             ToolTip="If left empty a default value of 12 will be applied."/>
-                                    <Border Width="22" Height="22" Margin="4,0,0,0" 
-                                            Background="{StaticResource ControlBorderBrush}" 
-                                            CornerRadius="11" VerticalAlignment="Center"
-                                            ToolTip="If left empty a default value of 12 will be applied.">
-                                        <TextBlock Text="?" Foreground="White" FontSize="12" FontWeight="Bold" 
-                                                   HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-1,0,0"/>
-                                    </Border>
-                                </StackPanel>
+                                <Label Content="Firepower" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                <TextBox Width="50" HorizontalAlignment="Center" Text="{Binding Firepower}" LostFocus="OnTextBoxLostFocus"/>
                             </StackPanel>
-                            <StackPanel Grid.Column="1" Margin="0,0,20,0" HorizontalAlignment="Center">
-                                <Label Content="Removal" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                                <TextBox Width="50" HorizontalAlignment="Center" Tag="0" Text="{Binding RemovalNumber}" LostFocus="OnTextBoxLostFocus"/>
-                            </StackPanel>
-                            <StackPanel Grid.Column="2" Margin="0,0,20,0" HorizontalAlignment="Center">
-                                <Label Content="Repair" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                                <TextBox Width="50" HorizontalAlignment="Center" Tag="0" Text="{Binding RepairNumber}" LostFocus="OnTextBoxLostFocus"/>
-                            </StackPanel>
-                            <StackPanel Grid.Column="3" Margin="0,0,20,0" HorizontalAlignment="Center">
-                                <Label Content="Assembled Cost" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                                <TextBox Width="50" HorizontalAlignment="Center" Tag="3" Text="{Binding PortageCost}" LostFocus="OnTextBoxLostFocus"/>
-                            </StackPanel>
-                            <StackPanel Grid.Column="4" HorizontalAlignment="Center">
-                                <Label Content="Dismantled Cost" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-                                <TextBox Width="50" HorizontalAlignment="Center" Tag="2" Text="{Binding DismantledCost}" LostFocus="OnTextBoxLostFocus"/>
+                            <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                                <Label Content="Range" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                <TextBox Width="50" HorizontalAlignment="Center" Text="{Binding Range}" LostFocus="OnTextBoxLostFocus"/>
                             </StackPanel>
                         </Grid>
 
-                        <!-- Smoke section -->
-                        <StackPanel Orientation="Horizontal" Margin="0,10">
-                            <CheckBox Content="Smoke Placement Exponent" IsChecked="{Binding HasSmokeExponent}" VerticalContentAlignment="Center"/>
-                            <TextBox Width="40" Margin="10,0,0,0" Text="{Binding SmokePlacementExponent}" IsEnabled="{Binding HasSmokeExponent}" LostFocus="OnTextBoxLostFocus"/>
+                        <StackPanel Margin="0,10,0,0">
+                            <CheckBox Content="Enable To Hit Table" IsEnabled="{Binding CanEnableToHitTable}" IsChecked="{Binding HasToHitTable}" VerticalContentAlignment="Center" Margin="0,0,0,10"/>
+                            <DataGrid ItemsSource="{Binding PrivateToHitTable}" 
+                                      Visibility="{Binding HasToHitTable, Converter={StaticResource BoolToVis}}" 
+                                      AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" 
+                                      HeadersVisibility="Column" HorizontalAlignment="Left" Width="140">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Range" Binding="{Binding Range}" Width="60" IsReadOnly="True" />
+                                    <DataGridTextColumn Header="To-Hit" Binding="{Binding ToHit, UpdateSourceTrigger=PropertyChanged}" Width="*" IsReadOnly="False" />
+                                </DataGrid.Columns>
+                            </DataGrid>
                         </StackPanel>
                     </StackPanel>
                 </GroupBox>
+
+                <!-- Common Reliability Grid -->
+                <Grid Margin="0,10,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" Margin="0,0,20,0" HorizontalAlignment="Center" Visibility="{Binding IsLightAntiTank, Converter={StaticResource InverseBoolToVis}}">
+                        <Label Content="Breakdown" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <TextBox Width="50" HorizontalAlignment="Center" Tag="12" 
+                                     Text="{Binding BreakdownNumber}" LostFocus="OnTextBoxLostFocus"
+                                     ToolTip="If left empty a default value of 12 will be applied."/>
+                            <Border Width="22" Height="22" Margin="4,0,0,0" 
+                                    Background="{StaticResource ControlBorderBrush}" 
+                                    CornerRadius="11" VerticalAlignment="Center"
+                                    ToolTip="If left empty a default value of 12 will be applied.">
+                                <TextBlock Text="?" Foreground="White" FontSize="12" FontWeight="Bold" 
+                                           HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-1,0,0"/>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Margin="0,0,20,0" HorizontalAlignment="Center">
+                        <Label Content="Removal" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                        <TextBox Width="50" HorizontalAlignment="Center" Tag="0" Text="{Binding RemovalNumber}" LostFocus="OnTextBoxLostFocus"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2" Margin="0,0,20,0" HorizontalAlignment="Center" Visibility="{Binding IsLightAntiTank, Converter={StaticResource InverseBoolToVis}}">
+                        <Label Content="Repair" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                        <TextBox Width="50" HorizontalAlignment="Center" Tag="0" Text="{Binding RepairNumber}" LostFocus="OnTextBoxLostFocus"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="3" Margin="0,0,20,0" HorizontalAlignment="Center" Visibility="{Binding ShowPortage, Converter={StaticResource BoolToVis}}">
+                        <Label Content="Assembled Cost" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                        <TextBox Width="50" HorizontalAlignment="Center" Tag="3" Text="{Binding PortageCost}" LostFocus="OnTextBoxLostFocus"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="4" HorizontalAlignment="Center" Visibility="{Binding IsMachineGun, Converter={StaticResource BoolToVis}}">
+                        <Label Content="Dismantled Cost" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                        <TextBox Width="50" HorizontalAlignment="Center" Tag="2" Text="{Binding DismantledCost}" LostFocus="OnTextBoxLostFocus"/>
+                    </StackPanel>
+                </Grid>
 
                     <Button Content="Save Equipment" Command="{Binding SaveCommand}" Margin="0,20,0,0" Padding="20,10" HorizontalAlignment="Right" Background="{StaticResource AccentBrush}" Foreground="White" FontWeight="Bold"/>
                 </StackPanel>

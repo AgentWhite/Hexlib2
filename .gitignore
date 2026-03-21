@@ -2,6 +2,13 @@
 bin/
 obj/
 
+# Agent scratch pad files
+err*.txt
+ext*.txt
+out*.txt
+build_*.txt
+er*.txt
+
 # Visual Studio temporary files, build results, and more
 *.user
 *.suo

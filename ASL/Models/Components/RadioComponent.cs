@@ -28,4 +28,13 @@ public class RadioComponent : IUnitComponent
     /// Gets or sets the contact number required for the radio.
     /// </summary>
     public int ContactNumber { get; set; }
+
+    /// <summary>
+    /// Gets or sets the battery ID to the OBA (Off Board Artillery).
+    /// </summary>
+    public string? BatteryId { get; set; }
+    /// <summary>
+    /// If the contact roll has succeded and the unit has contact with the OBA (Off Board Artillery).
+    /// </summary>
+    public bool HasContact {get; set; }
 }
