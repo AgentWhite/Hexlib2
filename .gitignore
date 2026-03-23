@@ -61,6 +61,10 @@ build_errors.txt
 build_log.txt
 full_build_output.txt
 build_output.txt
+clean_warnings.txt
+full_build_warnings.txt
+test_build.txt
+test_error.txt
 
 # OS files
 Thumbs.db

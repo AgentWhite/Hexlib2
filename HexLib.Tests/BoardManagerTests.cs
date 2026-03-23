@@ -120,4 +120,51 @@ public class BoardManagerTests
         // Attempting to join the exact same board B onto the bottom of A
         Assert.Throws<InvalidOperationException>(() => boardA.Join(boardB, BoardEdge.Bottom));
     }
+
+    [Fact]
+    public void GetHexById_UniqueId_ReturnsHex()
+    {
+        var manager = new BoardManager<object, object>();
+        var board = CreateBoard("1", 1, 1);
+        board.GetHexAt(HexMath.OffsetToCube(0, 0))!.Id = "U6";
+        manager.SetAnchorBoard(board);
+
+        var hex = manager.GetHexById("U6");
+        Assert.NotNull(hex);
+        Assert.Equal("U6", hex.Id);
+    }
+
+    [Fact]
+    public void GetHexById_DuplicateId_ThrowsException()
+    {
+        var manager = new BoardManager<object, object>();
+        var board1 = CreateBoard("1", 1, 1);
+        board1.GetHexAt(HexMath.OffsetToCube(0, 0))!.Id = "U6";
+        manager.SetAnchorBoard(board1);
+
+        var board2 = CreateBoard("2", 1, 1);
+        board2.GetHexAt(HexMath.OffsetToCube(0, 0))!.Id = "U6";
+        manager.AddBoard(board2, 10, 0);
+
+        Assert.Throws<InvalidOperationException>(() => manager.GetHexById("U6"));
+    }
+
+    [Fact]
+    public void GetHexById_WithBoardPrefix_ReturnsCorrectHex()
+    {
+        var manager = new BoardManager<object, object>();
+        var board1 = CreateBoard("1", 1, 1);
+        board1.GetHexAt(HexMath.OffsetToCube(0, 0))!.Id = "U6";
+        manager.SetAnchorBoard(board1);
+
+        var board2 = CreateBoard("2", 1, 1);
+        board2.GetHexAt(HexMath.OffsetToCube(0, 0))!.Id = "U6";
+        manager.AddBoard(board2, 10, 0);
+
+        var hex = manager.GetHexById("2U6");
+        Assert.NotNull(hex);
+        
+        var globalCoord = manager.ToGlobalCoordinate(hex);
+        Assert.Equal(HexMath.OffsetToCube(10, 0), globalCoord);
+    }
 }

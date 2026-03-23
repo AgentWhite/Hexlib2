@@ -176,6 +176,48 @@ public class BoardManager<THexMetadata, TEdgeData>
     }
 
     /// <summary>
+    /// Retrieves a hex by its ID or by a combination of Board Name and Hex ID.
+    /// If multiple hexes match the query, or if no hexes match, an exception is thrown.
+    /// </summary>
+    /// <param name="hexQuery">The hex ID to search for, optionally prefixed with the board name (e.g., 'U6' or '3U6').</param>
+    /// <returns>The uniquely matching hex.</returns>
+    public Hex<THexMetadata> GetHexById(string hexQuery)
+    {
+        if (string.IsNullOrWhiteSpace(hexQuery))
+            throw new ArgumentException("Hex query cannot be null or whitespace.", nameof(hexQuery));
+
+        var matches = new List<Hex<THexMetadata>>();
+
+        foreach (var board in _boards.Values)
+        {
+            foreach (var hex in board.Hexes.Values)
+            {
+                // Match just the hex ID
+                if (string.Equals(hex.Id, hexQuery, StringComparison.OrdinalIgnoreCase))
+                {
+                    matches.Add(hex);
+                }
+                // Match board name + hex ID
+                else if (string.Equals(board.Name + hex.Id, hexQuery, StringComparison.OrdinalIgnoreCase))
+                {
+                    matches.Add(hex);
+                }
+            }
+        }
+
+        if (matches.Count == 0)
+        {
+            throw new InvalidOperationException($"No hex found matching query '{hexQuery}'.");
+        }
+        if (matches.Count > 1)
+        {
+            throw new InvalidOperationException($"Multiple hexes found matching query '{hexQuery}'. Please prefix with the board name to be more specific.");
+        }
+
+        return matches[0];
+    }
+
+    /// <summary>
     /// Translates a given Hex's local logical coordinate into the Manager's unified global CubeCoordinate space.
     /// </summary>
     public CubeCoordinate ToGlobalCoordinate(Hex<THexMetadata> hex)
