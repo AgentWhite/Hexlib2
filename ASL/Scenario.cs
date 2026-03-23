@@ -59,4 +59,10 @@ public class Scenario
     /// Gets or sets a value indicating whether the final turn is a half-turn (only the first player acts).
     /// </summary>
     public bool HasHalfTurn { get; set; }
+
+    /// <summary>
+    /// Defines which physical direction on the global map represents 
+    /// Magnetic North for ASL rules (Wind, Drift, Random Direction, etc).
+    /// </summary>
+    public HexLib.PhysicalDirection MagneticNorth { get; set; } = HexLib.PhysicalDirection.NorthEast;
 }
