@@ -113,7 +113,8 @@ public class BoardEditorViewModel : ViewModelBase
                 y += _hexSize * Math.Sqrt(3);
 
             var points = GetHexPoints(x, y, _hexSize);
-            _hexes.Add(new HexViewModel(col, row, points));
+            double labelY = y - (_hexSize * Math.Sqrt(3) / 2.0) + (_hexSize * 0.1); // Closer to top edge
+            _hexes.Add(new HexViewModel(col, row, points, hex.Id, x, labelY, _hexSize));
         }
     }
 

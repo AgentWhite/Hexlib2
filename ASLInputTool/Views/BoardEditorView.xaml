@@ -34,16 +34,27 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Path Data="{Binding Points}" Stroke="Black" StrokeThickness="1" Fill="Transparent">
-                                <Path.ToolTip>
-                                    <ToolTip>
-                                        <StackPanel>
-                                            <TextBlock Text="{Binding Column, StringFormat='Col: {0}'}"/>
-                                            <TextBlock Text="{Binding Row, StringFormat='Row: {0}'}"/>
-                                        </StackPanel>
-                                    </ToolTip>
-                                </Path.ToolTip>
-                            </Path>
+                            <Canvas>
+                                <Path Data="{Binding Points}" Stroke="Black" StrokeThickness="1" Fill="Transparent">
+                                    <Path.ToolTip>
+                                        <ToolTip>
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Column, StringFormat='Col: {0}'}"/>
+                                                <TextBlock Text="{Binding Row, StringFormat='Row: {0}'}"/>
+                                                <TextBlock Text="{Binding Id, StringFormat='ID: {0}'}"/>
+                                            </StackPanel>
+                                        </ToolTip>
+                                    </Path.ToolTip>
+                                </Path>
+                                <TextBlock Text="{Binding Id}" 
+                                           Canvas.Left="{Binding LabelLeft}" 
+                                           Canvas.Top="{Binding LabelY}"
+                                           Width="{Binding HexSize}"
+                                           TextAlignment="Center"
+                                           FontSize="10"
+                                           Foreground="DarkGray"
+                                           IsHitTestVisible="False" />
+                            </Canvas>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

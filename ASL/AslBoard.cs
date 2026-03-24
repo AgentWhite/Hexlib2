@@ -62,6 +62,21 @@ public class AslBoard
     }
 
     /// <summary>
+    /// Generates an ASL coordinate string (e.g., "A1", "AA10") from column and row indices.
+    /// </summary>
+    /// <param name="col">0-based column index.</param>
+    /// <param name="row">0-based row index.</param>
+    /// <returns>The ASL coordinate string.</returns>
+    public static string GetAslCoordinate(int col, int row)
+    {
+        int letterIndex = col % 26;
+        int repeatCount = col / 26 + 1;
+        char letter = (char)('A' + letterIndex);
+        string colStr = new string(letter, repeatCount);
+        return $"{colStr}{row + 1}";
+    }
+
+    /// <summary>
     /// Populates the underlying HexLib board with hexes based on current Width and Height.
     /// </summary>
     public void PopulateBoard()
@@ -109,7 +124,9 @@ public class AslBoard
         var cube = HexMath.OffsetToCube(c, r, HexTopOrientation.FlatTopped);
         if (_board.GetHexAt(cube) == null)
         {
-            _board.AddHex(new Hex<ASLHexMetadata>(cube));
+            var hex = new Hex<ASLHexMetadata>(cube);
+            hex.Id = GetAslCoordinate(c, r);
+            _board.AddHex(hex);
         }
     }
     /// <summary>
