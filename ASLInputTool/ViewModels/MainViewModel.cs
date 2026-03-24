@@ -79,7 +79,8 @@ public class MainViewModel : ViewModelBase
                 {
                     Counters = _locator.UnitRepository.AllUnits.ToList(),
                     Scenarios = _locator.ScenarioRepository.AllScenarios.ToList(),
-                    Modules = _locator.ModuleRepository.AllModules.ToList()
+                    Modules = _locator.ModuleRepository.AllModules.ToList(),
+                    Boards = _locator.BoardRepository.AllBoards.ToList()
                 };
 
                 var projectToSave = _saveManager.PrepareProjectForSaving(sourceProject, saveDialog.FileName);
@@ -116,11 +117,13 @@ public class MainViewModel : ViewModelBase
                     _locator.UnitRepository.Initialize(project.Counters);
                     _locator.ScenarioRepository.Initialize(project.Scenarios);
                     _locator.ModuleRepository.Initialize(project.Modules ?? new List<AslModule>());
+                    _locator.BoardRepository.Initialize(project.Boards ?? new List<AslBoard>());
 
                     // Process data (fix image paths etc)
                     _locator.UnitRepository.ProcessData(openDialog.FileName);
                     _locator.ScenarioRepository.ProcessData(openDialog.FileName);
                     _locator.ModuleRepository.ProcessData(openDialog.FileName);
+                    _locator.BoardRepository.ProcessData(openDialog.FileName);
 
                     // Initialize child ViewModels from repositories
                     foreach (var vm in _locator.GetAll().OfType<IInitializeableFromRepository>())

@@ -21,4 +21,9 @@ public class ASLProject
     /// Gets or sets the list of game modules in the project.
     /// </summary>
     public List<AslModule> Modules { get; set; } = new();
+
+    /// <summary>
+    /// Gets or sets the collection of map boards in the project.
+    /// </summary>
+    public List<AslBoard> Boards { get; set; } = new();
 }

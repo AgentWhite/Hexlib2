@@ -13,6 +13,7 @@ public class ViewModelLocator
     private readonly IUnitRepository _unitRepository;
     private readonly IScenarioRepository _scenarioRepository;
     private readonly IModuleRepository _moduleRepository;
+    private readonly IBoardRepository _boardRepository;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ViewModelLocator"/> class and registers default ViewModels.
@@ -23,6 +24,7 @@ public class ViewModelLocator
         _unitRepository = new UnitRepository();
         _scenarioRepository = new ScenarioRepository();
         _moduleRepository = new ModuleRepository();
+        _boardRepository = new BoardRepository();
 
         // Register default instances with injected dependencies
         Register<LeadersViewModel>(new LeadersViewModel(_unitRepository));
@@ -31,6 +33,7 @@ public class ViewModelLocator
         Register<EquipmentViewModel>(new EquipmentViewModel(_unitRepository));
         Register<ScenariosViewModel>(new ScenariosViewModel(_scenarioRepository));
         Register<ModulesViewModel>(new ModulesViewModel(_moduleRepository));
+        Register<BoardsViewModel>(new BoardsViewModel(_boardRepository));
     }
 
     /// <summary>
@@ -47,6 +50,11 @@ public class ViewModelLocator
     /// Gets the registered module repository.
     /// </summary>
     public IModuleRepository ModuleRepository => _moduleRepository;
+
+    /// <summary>
+    /// Gets the registered board repository.
+    /// </summary>
+    public IBoardRepository BoardRepository => _boardRepository;
 
     /// <summary>
     /// Registers a ViewModel instance.
