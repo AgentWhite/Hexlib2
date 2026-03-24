@@ -32,7 +32,7 @@ public class AslBoard
     /// <summary>
     /// Gets or sets the hex height of the map.
     /// </summary>
-    public int Height { get; set; } = 11;
+    public int Height { get; set; } = 10;
 
     /// <summary>
     /// Gets or sets the width of the canvas in pixels.

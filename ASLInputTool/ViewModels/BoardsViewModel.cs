@@ -42,14 +42,14 @@ public class BoardsViewModel : CrudViewModelBase<AslBoard>, IInitializeableFromR
                 if (value == MapType.Standard)
                 {
                     Width = 33;
-                    Height = 11;
+                    Height = 10;
                 }
             }
         }
     }
 
     private int _width = 33;
-    private int _height = 11;
+    private int _height = 10;
 
     /// <summary>
     /// Gets or sets the width of the board.
@@ -137,7 +137,7 @@ public class BoardsViewModel : CrudViewModelBase<AslBoard>, IInitializeableFromR
         Name = string.Empty;
         Type = MapType.Standard;
         Width = 33;
-        Height = 11;
+        Height = 10;
         CanvasWidth = 1000;
         CanvasHeight = 1000;
         Editor = null;

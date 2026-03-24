@@ -44,7 +44,45 @@ public class BoardEditorViewModel : ViewModelBase
     {
         _board = board;
         DisplayName = "Board Editor";
+        RecalculateHexSize();
         GenerateHexGrid();
+    }
+
+    private void RecalculateHexSize()
+    {
+        var halfSides = _board.Board.HalfHexSides;
+        
+        // Horizontal distance (Odd-Q Flat-Topped):
+        // Distance between centers: 1.5 * size
+        // Width of one hex: 2 * size
+        // If Left is halved, we start at center - 0.5 * size (vertical edge). Offset to 0.
+        // If Right is halved, we end at center + 0.5 * size (vertical edge).
+        
+        double multiplierW = 1.5 * _board.Width - 0.5;
+        if (!halfSides.HasFlag(BoardEdge.Left)) multiplierW += 0.5;
+        if (!halfSides.HasFlag(BoardEdge.Right)) multiplierW += 0.5;
+
+        double sizeW = _board.CanvasWidth / multiplierW;
+
+        // Vertical distance:
+        // Distance between rows: sqrt(3) * size
+        // Height of one hex: sqrt(3) * size
+        // Total height including point: (Height + 0.5) * sqrt(3) * size
+        // If Top is halved, we start at flat top (center - 0.5 * sqrt(3) * size). 
+        // Wait, flat-topped hexes have flat top/bottom!
+        // Height of hex = sqrt(3) * size.
+        // Even columns start at center 0. Odd at center 0.5 * h.
+        // Bottom of Row H-1 (Odd) is at (H-1 + 0.5 + 0.5) * h = H * h.
+        // Top of Row 0 (Even) is at -0.5 * h.
+        // So total height is (Height + 0.5) * h.
+        
+        double multiplierH = Math.Sqrt(3) * _board.Height;
+        if (!halfSides.HasFlag(BoardEdge.Top)) multiplierH += Math.Sqrt(3) * 0.5;
+        if (!halfSides.HasFlag(BoardEdge.Bottom)) multiplierH += Math.Sqrt(3) * 0.5;
+        
+        double sizeH = _board.CanvasHeight / multiplierH;
+
+        _hexSize = Math.Min(sizeW, sizeH);
     }
 
     private void GenerateHexGrid()

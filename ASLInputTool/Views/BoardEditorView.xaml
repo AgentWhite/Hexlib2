@@ -29,7 +29,7 @@
                 <ItemsControl ItemsSource="{Binding Hexes}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <Canvas x:Name="EditorCanvas" Width="{Binding Board.CanvasWidth}" Height="{Binding Board.CanvasHeight}" Background="Transparent" />
+                            <Canvas x:Name="EditorCanvas" Width="{Binding Board.CanvasWidth}" Height="{Binding Board.CanvasHeight}" Background="White" ClipToBounds="True" />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
