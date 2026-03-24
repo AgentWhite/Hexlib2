@@ -73,7 +73,13 @@ public class AslBoard
         int repeatCount = col / 26 + 1;
         char letter = (char)('A' + letterIndex);
         string colStr = new string(letter, repeatCount);
-        return $"{colStr}{row + 1}";
+        
+        // ASL Staggered Labeling:
+        // Even columns (A, C, E...) start at halved hex row 0 (index 0). 
+        // Odd columns (B, D, F...) start at full hex row 1 (index 0).
+        int rowLabel = (col % 2 == 0) ? row : row + 1;
+        
+        return $"{colStr}{rowLabel}";
     }
 
     /// <summary>
@@ -106,17 +112,18 @@ public class AslBoard
             }
         }
 
-        // Fill gaps for Top/Bottom HalfHexSides
-        if (_board.HalfHexSides.HasFlag(BoardEdge.Top))
-        {
-            // For FlatTopped Odd-Q, Odd columns (1, 3...) have a gap at the top (Row -1)
-            for (int c = 1; c < Width; c += 2) AddHexIfMissing(c, -1);
-        }
+        // Fill gaps to ensure straight board boundaries
+        // Standard ASL: Even columns (A, C, E...) start at center 0 (half-hex top)
+        // Odd columns (B, D, F...) start at center 0.5h (full-hex top)
+        // If Top is halved, Even columns are already halved at r=0.
+        // If Bottom is halved, Even columns need an extra hex at r=Height to be halved at the bottom boundary.
         if (_board.HalfHexSides.HasFlag(BoardEdge.Bottom))
         {
-            // Even columns (0, 2...) have a gap at the bottom (Row Height)
             for (int c = 0; c < Width; c += 2) AddHexIfMissing(c, Height);
         }
+        
+        // Note: Odd columns (B, D...) are full-hexes at both top (r=0) and bottom (r=Height-1)
+        // when Height is the units of height.
     }
 
     private void AddHexIfMissing(int c, int r)

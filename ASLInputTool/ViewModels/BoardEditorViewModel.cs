@@ -53,32 +53,21 @@ public class BoardEditorViewModel : ViewModelBase
         var halfSides = _board.Board.HalfHexSides;
         
         // Horizontal distance (Odd-Q Flat-Topped):
-        // Distance between centers: 1.5 * size
-        // Width of one hex: 2 * size
-        // If Left is halved, we start at center - 0.5 * size (vertical edge). Offset to 0.
-        // If Right is halved, we end at center + 0.5 * size (vertical edge).
-        
-        double multiplierW = 1.5 * _board.Width - 0.5;
-        if (!halfSides.HasFlag(BoardEdge.Left)) multiplierW += 0.5;
+        // If Left is halved, center of Col 0 is at 0.
+        // If Right is halved, right vertical edge of Col W-1 is max width.
+        // Width of board = (1.5 * (W-1) + 0.5) * size.
+        double multiplierW = 1.5 * _board.Width - 1.0;
+        if (!halfSides.HasFlag(BoardEdge.Left)) multiplierW += 1.0;
         if (!halfSides.HasFlag(BoardEdge.Right)) multiplierW += 0.5;
 
         double sizeW = _board.CanvasWidth / multiplierW;
 
         // Vertical distance:
-        // Distance between rows: sqrt(3) * size
-        // Height of one hex: sqrt(3) * size
-        // Total height including point: (Height + 0.5) * sqrt(3) * size
-        // If Top is halved, we start at flat top (center - 0.5 * sqrt(3) * size). 
-        // Wait, flat-topped hexes have flat top/bottom!
-        // Height of hex = sqrt(3) * size.
-        // Even columns start at center 0. Odd at center 0.5 * h.
-        // Bottom of Row H-1 (Odd) is at (H-1 + 0.5 + 0.5) * h = H * h.
-        // Top of Row 0 (Even) is at -0.5 * h.
-        // So total height is (Height + 0.5) * h.
-        
+        // If Top is halved, center of Row 0 (Even) is at 0.
+        // Top edge of board is at 0.
+        // Bottom edge of board is at Height * h.
         double multiplierH = Math.Sqrt(3) * _board.Height;
         if (!halfSides.HasFlag(BoardEdge.Top)) multiplierH += Math.Sqrt(3) * 0.5;
-        if (!halfSides.HasFlag(BoardEdge.Bottom)) multiplierH += Math.Sqrt(3) * 0.5;
         
         double sizeH = _board.CanvasHeight / multiplierH;
 
@@ -96,24 +85,19 @@ public class BoardEditorViewModel : ViewModelBase
             var (col, row) = hex.Location.ToOffset(orientation);
             
             // Calculate pixel center for FlatTopped (Odd-Q)
+            // Stagger: Odd columns (B, D...) are shifted DOWN by 0.5h
             double x = _hexSize * 1.5 * col;
             double y = _hexSize * Math.Sqrt(3) * (row + (col % 2 == 1 ? 0.5 : 0));
             
             // Adjust origin based on Half-Hex Sides
-            // If Left is a half-hex side, Col 0 is a half-column, so we cut at 0.5*size
-            if (halfSides.HasFlag(BoardEdge.Left))
-                x += _hexSize * 0.5;
-            else
+            if (!halfSides.HasFlag(BoardEdge.Left))
                 x += _hexSize;
 
-            // If Top is a half-hex side, the Row -1 hexes should be partially visible
-            if (halfSides.HasFlag(BoardEdge.Top))
+            if (!halfSides.HasFlag(BoardEdge.Top))
                 y += _hexSize * Math.Sqrt(3) / 2;
-            else
-                y += _hexSize * Math.Sqrt(3);
 
             var points = GetHexPoints(x, y, _hexSize);
-            double labelY = y - (_hexSize * Math.Sqrt(3) / 2.0) + (_hexSize * 0.1); // Closer to top edge
+            double labelY = y - (_hexSize * Math.Sqrt(3) / 2.0) + (_hexSize * 0.1); 
             _hexes.Add(new HexViewModel(col, row, points, hex.Id, x, labelY, _hexSize));
         }
     }
