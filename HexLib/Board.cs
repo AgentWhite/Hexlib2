@@ -106,6 +106,12 @@ public class Board<THexMetadata, TEdgeData>
         return edge;
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether odd columns (indices 1, 3, etc.) are shifted down relative to even columns.
+    /// Default is true. Used as a hint for offset coordinate translations and UI rendering.
+    /// </summary>
+    public bool ShiftingOddColumns { get; set; } = true;
+
     private readonly Dictionary<CubeCoordinate, Hex<THexMetadata>> _hexes = new Dictionary<CubeCoordinate, Hex<THexMetadata>>();
     private readonly Dictionary<BoardEdge, Board<THexMetadata, TEdgeData>> _neighbors = new Dictionary<BoardEdge, Board<THexMetadata, TEdgeData>>();
     

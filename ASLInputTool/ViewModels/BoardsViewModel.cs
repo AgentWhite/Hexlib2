@@ -16,6 +16,7 @@ public class BoardsViewModel : CrudViewModelBase<AslBoard>, IInitializeableFromR
     private MapType _type = MapType.Standard;
     private int _canvasWidth = 1000;
     private int _canvasHeight = 1000;
+    private bool _isFirstColShiftedDown = false;
     private BoardEditorViewModel? _editor;
     private readonly IBoardRepository _repository;
 
@@ -82,6 +83,11 @@ public class BoardsViewModel : CrudViewModelBase<AslBoard>, IInitializeableFromR
     public int CanvasHeight { get => _canvasHeight; set => SetProperty(ref _canvasHeight, value); }
 
     /// <summary>
+    /// Gets or sets a value indicating whether the first column is shifted down.
+    /// </summary>
+    public bool IsFirstColShiftedDown { get => _isFirstColShiftedDown; set => SetProperty(ref _isFirstColShiftedDown, value); }
+
+    /// <summary>
     /// Gets or sets the currently active board editor.
     /// </summary>
     public BoardEditorViewModel? Editor { get => _editor; set => SetProperty(ref _editor, value); }
@@ -123,7 +129,8 @@ public class BoardsViewModel : CrudViewModelBase<AslBoard>, IInitializeableFromR
             Width = Width, 
             Height = Height,
             CanvasWidth = CanvasWidth,
-            CanvasHeight = CanvasHeight
+            CanvasHeight = CanvasHeight,
+            IsFirstColShiftedDown = IsFirstColShiftedDown
         };
         board.PopulateBoard();
         Editor = new BoardEditorViewModel(board);
@@ -140,6 +147,7 @@ public class BoardsViewModel : CrudViewModelBase<AslBoard>, IInitializeableFromR
         Height = 10;
         CanvasWidth = 1000;
         CanvasHeight = 1000;
+        IsFirstColShiftedDown = false;
         Editor = null;
         ClearErrors();
     }
@@ -154,6 +162,7 @@ public class BoardsViewModel : CrudViewModelBase<AslBoard>, IInitializeableFromR
         Height = item.Height;
         CanvasWidth = item.CanvasWidth;
         CanvasHeight = item.CanvasHeight;
+        IsFirstColShiftedDown = item.IsFirstColShiftedDown;
         Editor = null;
     }
 
@@ -182,7 +191,8 @@ public class BoardsViewModel : CrudViewModelBase<AslBoard>, IInitializeableFromR
             Width = Width, 
             Height = Height,
             CanvasWidth = CanvasWidth,
-            CanvasHeight = CanvasHeight
+            CanvasHeight = CanvasHeight,
+            IsFirstColShiftedDown = IsFirstColShiftedDown
         };
 
         if (EditingItem != null)

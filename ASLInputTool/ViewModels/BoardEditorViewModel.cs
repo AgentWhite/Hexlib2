@@ -52,27 +52,38 @@ public class BoardEditorViewModel : ViewModelBase
     {
         var halfSides = _board.Board.HalfHexSides;
         
-        // Horizontal distance (Odd-Q Flat-Topped):
-        // If Left is halved, center of Col 0 is at 0.
-        // If Right is halved, right vertical edge of Col W-1 is max width.
-        // Width of board = (1.5 * (W-1) + 0.5) * size.
-        double multiplierW = 1.5 * _board.Width - 1.0;
+        // Horizontal span calculation:
+        // center-to-center steps are 1.5S each.
+        // Plus left overhang (S if full, 0 if halved) and right overhang (S if full, 0 if halved).
+        double multiplierW = 1.5 * (_board.Width - 1);
         if (!halfSides.HasFlag(BoardEdge.Left)) multiplierW += 1.0;
-        if (!halfSides.HasFlag(BoardEdge.Right)) multiplierW += 0.5;
-
-        double sizeW = _board.CanvasWidth / multiplierW;
-
-        // Vertical distance:
-        // If Top is halved, center of Row 0 (Even) is at 0.
-        // Top edge of board is at 0.
-        // Bottom edge of board is at Height * h.
-        double multiplierH = Math.Sqrt(3) * _board.Height;
-        if (!halfSides.HasFlag(BoardEdge.Top)) multiplierH += Math.Sqrt(3) * 0.5;
+        if (!halfSides.HasFlag(BoardEdge.Right)) multiplierW += 1.0;
         
-        double sizeH = _board.CanvasHeight / multiplierH;
+        // Vertical span calculation:
+        // Distance between rows is sqrt(3)*S.
+        // For a standard board (Height rows), centers range from 0 to Height*H.
+        // If bottom is NOT halved, we need an extra 0.5H at the end.
+        // If top is NOT halved, we start at 0.5H, so we add 0.5H at the start.
+        double h_unit = Math.Sqrt(3);
+        double multiplierH = h_unit * _board.Height;
+        if (!halfSides.HasFlag(BoardEdge.Top)) multiplierH += h_unit * 0.5;
+        if (!halfSides.HasFlag(BoardEdge.Bottom)) multiplierH += h_unit * 0.5;
 
+        // Calculate maximum possible hex size to fit within both dimensions
+        double sizeW = _board.CanvasWidth / multiplierW;
+        double sizeH = _board.CanvasHeight / multiplierH;
+        
         _hexSize = Math.Min(sizeW, sizeH);
+        
+        // Update Actual Dimensions for the View (so the background white rectangle matches the grid exactly)
+        ActualGridWidth = multiplierW * _hexSize;
+        ActualGridHeight = multiplierH * _hexSize;
+        OnPropertyChanged(nameof(ActualGridWidth));
+        OnPropertyChanged(nameof(ActualGridHeight));
     }
+
+    public double ActualGridWidth { get; private set; }
+    public double ActualGridHeight { get; private set; }
 
     private void GenerateHexGrid()
     {
@@ -85,9 +96,10 @@ public class BoardEditorViewModel : ViewModelBase
             var (col, row) = hex.Location.ToOffset(orientation);
             
             // Calculate pixel center for FlatTopped (Odd-Q)
-            // Stagger: Odd columns (B, D...) are shifted DOWN by 0.5h
+            // Stagger: Determine which columns are shifted down by 0.5h
+            bool isShiftedDown = _board.Board.ShiftingOddColumns ? (col % 2 == 1) : (col % 2 == 0);
             double x = _hexSize * 1.5 * col;
-            double y = _hexSize * Math.Sqrt(3) * (row + (col % 2 == 1 ? 0.5 : 0));
+            double y = _hexSize * Math.Sqrt(3) * (row + (isShiftedDown ? 0.5 : 0));
             
             // Adjust origin based on Half-Hex Sides
             if (!halfSides.HasFlag(BoardEdge.Left))

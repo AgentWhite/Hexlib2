@@ -25,6 +25,15 @@ public class AslBoard
     public MapType Type { get; set; } = MapType.Standard;
 
     /// <summary>
+    /// Gets or sets a value indicating whether the first column (A) is shifted down relative to the second (B).
+    /// </summary>
+    public bool IsFirstColShiftedDown
+    {
+        get => !Board.ShiftingOddColumns;
+        set => Board.ShiftingOddColumns = !value;
+    }
+
+    /// <summary>
     /// Gets or sets the hex width of the map.
     /// </summary>
     public int Width { get; set; } = 33;
@@ -67,7 +76,7 @@ public class AslBoard
     /// <param name="col">0-based column index.</param>
     /// <param name="row">0-based row index.</param>
     /// <returns>The ASL coordinate string.</returns>
-    public static string GetAslCoordinate(int col, int row)
+    public static string GetAslCoordinate(int col, int row, bool shiftingOddColumns = true)
     {
         int letterIndex = col % 26;
         int repeatCount = col / 26 + 1;
@@ -75,9 +84,11 @@ public class AslBoard
         string colStr = new string(letter, repeatCount);
         
         // ASL Staggered Labeling:
-        // Even columns (A, C, E...) start at halved hex row 0 (index 0). 
-        // Odd columns (B, D, F...) start at full hex row 1 (index 0).
-        int rowLabel = (col % 2 == 0) ? row : row + 1;
+        // A column is "high" (starts at center 0) if it is NOT shifted down.
+        // If shiftingOddColumns is true: Even columns (0, 2...) are high. Label row.
+        // If shiftingOddColumns is false: Odd columns (1, 3...) are high. Label row.
+        bool isHigherColumn = (shiftingOddColumns) ? (col % 2 == 0) : (col % 2 != 0);
+        int rowLabel = isHigherColumn ? row : row + 1;
         
         return $"{colStr}{rowLabel}";
     }
@@ -113,13 +124,14 @@ public class AslBoard
         }
 
         // Fill gaps to ensure straight board boundaries
-        // Standard ASL: Even columns (A, C, E...) start at center 0 (half-hex top)
-        // Odd columns (B, D, F...) start at center 0.5h (full-hex top)
-        // If Top is halved, Even columns are already halved at r=0.
-        // If Bottom is halved, Even columns need an extra hex at r=Height to be halved at the bottom boundary.
+        // Standard ASL: Even columns are high (halved at top/bottom center).
+        // If ShiftingOddColumns is true: Col 0, 2... are high.
+        // If ShiftingOddColumns is false: Col 1, 3... are high.
+        int firstHighCol = _board.ShiftingOddColumns ? 0 : 1;
+
         if (_board.HalfHexSides.HasFlag(BoardEdge.Bottom))
         {
-            for (int c = 0; c < Width; c += 2) AddHexIfMissing(c, Height);
+            for (int c = firstHighCol; c < Width; c += 2) AddHexIfMissing(c, Height);
         }
         
         // Note: Odd columns (B, D...) are full-hexes at both top (r=0) and bottom (r=Height-1)
@@ -132,7 +144,7 @@ public class AslBoard
         if (_board.GetHexAt(cube) == null)
         {
             var hex = new Hex<ASLHexMetadata>(cube);
-            hex.Id = GetAslCoordinate(c, r);
+            hex.Id = GetAslCoordinate(c, r, _board.ShiftingOddColumns);
             _board.AddHex(hex);
         }
     }

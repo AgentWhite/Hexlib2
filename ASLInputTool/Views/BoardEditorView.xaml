@@ -23,41 +23,49 @@
         </Border>
 
         <!-- Canvas Area -->
-        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-            <Grid Background="White" Width="{Binding Board.CanvasWidth}" Height="{Binding Board.CanvasHeight}">
-                <!-- The Canvas for SVG and Bitmap graphics -->
-                <ItemsControl ItemsSource="{Binding Hexes}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <Canvas x:Name="EditorCanvas" Width="{Binding Board.CanvasWidth}" Height="{Binding Board.CanvasHeight}" Background="White" ClipToBounds="True" />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Canvas>
-                                <Path Data="{Binding Points}" Stroke="Black" StrokeThickness="1" Fill="Transparent">
-                                    <Path.ToolTip>
-                                        <ToolTip>
-                                            <StackPanel>
-                                                <TextBlock Text="{Binding Column, StringFormat='Col: {0}'}"/>
-                                                <TextBlock Text="{Binding Row, StringFormat='Row: {0}'}"/>
-                                                <TextBlock Text="{Binding Id, StringFormat='ID: {0}'}"/>
-                                            </StackPanel>
-                                        </ToolTip>
-                                    </Path.ToolTip>
-                                </Path>
-                                <TextBlock Text="{Binding Id}" 
-                                           Canvas.Left="{Binding LabelLeft}" 
-                                           Canvas.Top="{Binding LabelY}"
-                                           Width="{Binding HexSize}"
-                                           TextAlignment="Center"
-                                           FontSize="10"
-                                           Foreground="DarkGray"
-                                           IsHitTestVisible="False" />
-                            </Canvas>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+        <ScrollViewer Grid.Row="1" Background="{StaticResource WindowBackgroundBrush}" 
+                      HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Margin="50">
+                <Border CornerRadius="2">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="15" Direction="-45" RenderingBias="Quality" ShadowDepth="5" Opacity="0.3"/>
+                    </Border.Effect>
+                    <Grid Width="{Binding ActualGridWidth}" Height="{Binding ActualGridHeight}">
+                        <!-- The Canvas for SVG and Bitmap graphics -->
+                        <ItemsControl ItemsSource="{Binding Hexes}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Canvas x:Name="EditorCanvas" Width="{Binding ActualGridWidth}" Height="{Binding ActualGridHeight}" Background="White" ClipToBounds="True" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Canvas>
+                                        <Path Data="{Binding Points}" Stroke="Black" StrokeThickness="1" Fill="Transparent">
+                                            <Path.ToolTip>
+                                                <ToolTip>
+                                                    <StackPanel>
+                                                        <TextBlock Text="{Binding Column, StringFormat='Col: {0}'}"/>
+                                                        <TextBlock Text="{Binding Row, StringFormat='Row: {0}'}"/>
+                                                        <TextBlock Text="{Binding Id, StringFormat='ID: {0}'}"/>
+                                                    </StackPanel>
+                                                </ToolTip>
+                                            </Path.ToolTip>
+                                        </Path>
+                                        <TextBlock Text="{Binding Id}" 
+                                                   Canvas.Left="{Binding LabelLeft}" 
+                                                   Canvas.Top="{Binding LabelY}"
+                                                   Width="{Binding HexSize}"
+                                                   TextAlignment="Center"
+                                                   FontSize="10"
+                                                   Foreground="DarkGray"
+                                                   IsHitTestVisible="False" />
+                                    </Canvas>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Grid>
+                </Border>
             </Grid>
         </ScrollViewer>
     </Grid>

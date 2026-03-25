@@ -63,6 +63,7 @@
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="1.5*" />
                         </Grid.ColumnDefinitions>
                         
                         <StackPanel Grid.Column="0" Margin="0,0,10,0">
@@ -80,9 +81,13 @@
                             <TextBox Text="{Binding Width, UpdateSourceTrigger=PropertyChanged}" Tag="Units"/>
                         </StackPanel>
      
-                        <StackPanel Grid.Column="3" Margin="10,0,0,0" Visibility="{Binding IsDimensionsVisible, Converter={StaticResource BoolToVis}}">
+                        <StackPanel Grid.Column="3" Margin="10,0,10,0" Visibility="{Binding IsDimensionsVisible, Converter={StaticResource BoolToVis}}">
                             <Label Content="Height" FontWeight="SemiBold"/>
                             <TextBox Text="{Binding Height, UpdateSourceTrigger=PropertyChanged}" Tag="Units"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="4" Margin="10,0,0,0" VerticalAlignment="Center" Visibility="{Binding IsDimensionsVisible, Converter={StaticResource BoolToVis}}">
+                            <CheckBox Content="Shift Col A Down" IsChecked="{Binding IsFirstColShiftedDown}" FontWeight="SemiBold" VerticalAlignment="Bottom" Margin="0,0,0,5"/>
                         </StackPanel>
                     </Grid>
      
