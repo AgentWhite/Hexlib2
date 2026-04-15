@@ -3,33 +3,32 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace ASLInputTool.Converters;
-
-/// <summary>
-/// Returns Visible if value is null or whitespace string, Collapsed otherwise.
-/// Useful for things that should only show if no data is present.
-/// </summary>
-public class NullToVisibilityConverter : IValueConverter
+namespace ASLInputTool.Converters
 {
-    /// <inheritdoc />
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    /// <summary>
+    /// Returns Visible if value is null or whitespace string, Collapsed otherwise.
+    /// Useful for things that should only show if no data is present.
+    /// </summary>
+    public class NullToVisibilityConverter : IValueConverter
     {
-        bool hasValue = value != null;
-        if (value is string s) hasValue = !string.IsNullOrWhiteSpace(s);
-
-        bool inverse = parameter != null && parameter.ToString()?.Equals("Inverse", StringComparison.OrdinalIgnoreCase) == true;
-        
-        if (inverse)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return hasValue ? Visibility.Visible : Visibility.Collapsed;
+            bool hasValue = value != null;
+            if (value is string s) hasValue = !string.IsNullOrWhiteSpace(s);
+
+            bool inverse = parameter != null && parameter.ToString()?.Equals("Inverse", StringComparison.OrdinalIgnoreCase) == true;
+            
+            if (inverse)
+            {
+                return hasValue ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            return hasValue ? Visibility.Collapsed : Visibility.Visible;
         }
 
-        return hasValue ? Visibility.Collapsed : Visibility.Visible;
-    }
-
-    /// <inheritdoc />
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-        throw new NotImplementedException();
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

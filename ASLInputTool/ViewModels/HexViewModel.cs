@@ -1,7 +1,10 @@
-using System.Windows.Media;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Input;
 using System.Text;
 using System.Globalization;
+using ASL;
+using HexLib;
 
 namespace ASLInputTool.ViewModels;
 
@@ -14,6 +17,16 @@ public class HexViewModel : ViewModelBase
     /// Gets or sets the SVG path data for the hex outline.
     /// </summary>
     public string Points { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the absolute 6 vertices of the hex.
+    /// </summary>
+    public Point[] HexCorners { get; set; } = new Point[6];
+
+    /// <summary>
+    /// Gets the logical cube coordinate of this hex.
+    /// </summary>
+    public CubeCoordinate Location { get; }
 
     /// <summary>
     /// Gets or sets the column index.
@@ -50,20 +63,79 @@ public class HexViewModel : ViewModelBase
     /// </summary>
     public double LabelLeft => LabelX - (HexSize * 0.5);
 
+    private readonly ASLHexMetadata _metadata;
+    private bool _isSelected;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether this hex is currently selected.
+    /// </summary>
+    public bool IsSelected 
+    { 
+        get => _isSelected; 
+        set => SetProperty(ref _isSelected, value); 
+    }
+
+    private bool _isEdge0Selected;
+    public bool IsEdge0Selected { get => _isEdge0Selected; set => SetProperty(ref _isEdge0Selected, value); }
+
+    private bool _isEdge1Selected;
+    public bool IsEdge1Selected { get => _isEdge1Selected; set => SetProperty(ref _isEdge1Selected, value); }
+
+    private bool _isEdge2Selected;
+    public bool IsEdge2Selected { get => _isEdge2Selected; set => SetProperty(ref _isEdge2Selected, value); }
+
+    private bool _isEdge3Selected;
+    public bool IsEdge3Selected { get => _isEdge3Selected; set => SetProperty(ref _isEdge3Selected, value); }
+
+    private bool _isEdge4Selected;
+    public bool IsEdge4Selected { get => _isEdge4Selected; set => SetProperty(ref _isEdge4Selected, value); }
+
+    private bool _isEdge5Selected;
+    public bool IsEdge5Selected { get => _isEdge5Selected; set => SetProperty(ref _isEdge5Selected, value); }
+
+    /// <summary>
+    /// Gets or sets the terrain type for this hex.
+    /// </summary>
+    public TerrainType Terrain
+    {
+        get => _metadata.Terrain;
+        set { _metadata.Terrain = value; OnPropertyChanged(); }
+    }
+
+    /// <summary>
+    /// Gets or sets the elevation level for this hex.
+    /// </summary>
+    public int Elevation
+    {
+        get => _metadata.Elevation;
+        set { _metadata.Elevation = value; OnPropertyChanged(); }
+    }
+
+    /// <summary>
+    /// Command invoked to select an edge of this hex.
+    /// </summary>
+    public ICommand SelectEdgeCommand { get; }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="HexViewModel"/> class.
     /// </summary>
-    /// <param name="col">Column index.</param>
-    /// <param name="row">Row index.</param>
-    /// <param name="points">SVG path data.</param>
-    public HexViewModel(int col, int row, string points, string id, double lx, double ly, double size)
+    public HexViewModel(int col, int row, CubeCoordinate location, string points, Point[] corners, string id, double lx, double ly, double size, ASLHexMetadata metadata, Action<HexViewModel, int> onSelectEdge)
     {
         Column = col;
         Row = row;
+        Location = location;
         Points = points;
+        HexCorners = corners;
         Id = id;
         LabelX = lx;
         LabelY = ly;
         HexSize = size;
+        _metadata = metadata;
+        SelectEdgeCommand = new RelayCommand<string>(param => {
+            if (int.TryParse(param, out int edgeIndex))
+            {
+                onSelectEdge?.Invoke(this, edgeIndex);
+            }
+        });
     }
 }

@@ -3,28 +3,44 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:c="clr-namespace:ASLInputTool.Converters"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="700" d:DesignWidth="1100">
+    <UserControl.Resources>
+        <c:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
+        <c:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+        <c:CenterOffsetConverter x:Key="CenterOffsetConverter" />
+        <c:TerrainColorConverter x:Key="TerrainColorConverter" />
+    </UserControl.Resources>
     <Grid Background="{StaticResource WindowBackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="250" />
+        </Grid.ColumnDefinitions>
 
         <!-- Toolbar -->
-        <Border Grid.Row="0" Background="{StaticResource ControlBorderBrush}" Padding="10">
+        <Border Grid.Row="0" Grid.ColumnSpan="2" Background="{StaticResource ControlBorderBrush}" Padding="10">
             <StackPanel Orientation="Horizontal">
                 <Button Content="Zoom In" Margin="0,0,10,0" Padding="10,5"/>
                 <Button Content="Zoom Out" Margin="0,0,10,0" Padding="10,5"/>
                 <Separator Margin="10,0"/>
-                <Button Content="Select" Margin="0,0,10,0" Padding="10,5"/>
-                <Button Content="Draw" Margin="0,0,10,0" Padding="10,5"/>
+                <RadioButton Content="Select" IsChecked="{Binding CurrentTool, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Select}" 
+                             Style="{StaticResource {x:Type ToggleButton}}" Padding="10,5" Margin="0,0,5,0"/>
+                <RadioButton Content="Paint" IsChecked="{Binding CurrentTool, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Paint}" 
+                             Style="{StaticResource {x:Type ToggleButton}}" Padding="10,5" Margin="0,0,10,0"/>
+                <Separator Margin="10,0"/>
+                <Button Content="Save Board" Command="{Binding SaveCommand}" Padding="10,5" FontWeight="Bold" Foreground="DarkGreen"/>
             </StackPanel>
         </Border>
 
         <!-- Canvas Area -->
-        <ScrollViewer Grid.Row="1" Background="{StaticResource WindowBackgroundBrush}" 
-                      HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer Grid.Row="1" Grid.Column="0" Background="{StaticResource WindowBackgroundBrush}" 
+                       HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
             <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Margin="50">
                 <Border CornerRadius="2">
                     <Border.Effect>
@@ -38,30 +54,63 @@
                                     <Canvas x:Name="EditorCanvas" Width="{Binding ActualGridWidth}" Height="{Binding ActualGridHeight}" Background="White" ClipToBounds="True" />
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemContainerStyle>
+                                <Style TargetType="ContentPresenter">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="Panel.ZIndex" Value="1"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ItemsControl.ItemContainerStyle>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Canvas>
-                                        <Path Data="{Binding Points}" Stroke="Black" StrokeThickness="1">
+                                        <Path Data="{Binding Points}">
+                                            <Path.InputBindings>
+                                                <MouseBinding MouseAction="LeftClick" 
+                                                              Command="{Binding DataContext.SelectHexCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
+                                                              CommandParameter="{Binding}" />
+                                            </Path.InputBindings>
                                             <Path.Style>
                                                 <Style TargetType="Path">
-                                                    <Setter Property="Fill" Value="Transparent"/>
+                                                    <Setter Property="Stroke" Value="Black"/>
+                                                    <Setter Property="StrokeThickness" Value="1"/>
+                                                    <Setter Property="Fill" Value="{Binding Terrain, Converter={StaticResource TerrainColorConverter}}"/>
                                                     <Style.Triggers>
                                                         <Trigger Property="IsMouseOver" Value="True">
                                                             <Setter Property="Fill" Value="#33FF0000"/>
                                                         </Trigger>
+                                                        <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                            <Setter Property="Stroke" Value="#FFFF6666"/>
+                                                            <Setter Property="StrokeThickness" Value="3"/>
+                                                        </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
                                             </Path.Style>
                                             <Path.ToolTip>
                                                 <ToolTip>
                                                     <StackPanel>
-                                                        <TextBlock Text="{Binding Column, StringFormat='Col: {0}'}"/>
-                                                        <TextBlock Text="{Binding Row, StringFormat='Row: {0}'}"/>
-                                                        <TextBlock Text="{Binding Id, StringFormat='ID: {0}'}"/>
+                                                        <TextBlock Text="{Binding Id, StringFormat='Hex: {0}'}" FontWeight="Bold"/>
+                                                        <TextBlock Text="{Binding Terrain, StringFormat='Terrain: {0}'}"/>
+                                                        <TextBlock Text="{Binding Elevation, StringFormat='Elevation: {0}'}"/>
                                                     </StackPanel>
                                                 </ToolTip>
                                             </Path.ToolTip>
                                         </Path>
+                                        
+                                        <!-- Hotspot for Drag-to-Paint -->
+                                        <Border Width="{Binding HexSize}" Height="{Binding HexSize}" 
+                                                Background="Transparent" 
+                                                Canvas.Left="{Binding LabelX, Converter={StaticResource CenterOffsetConverter}, ConverterParameter=0.5}"
+                                                Canvas.Top="{Binding LabelY, Converter={StaticResource CenterOffsetConverter}, ConverterParameter=0.5}">
+                                            <i:Interaction.Triggers>
+                                                <i:EventTrigger EventName="MouseEnter">
+                                                    <i:InvokeCommandAction Command="{Binding DataContext.PaintHexCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
+                                                                           CommandParameter="{Binding}" />
+                                                </i:EventTrigger>
+                                            </i:Interaction.Triggers>
+                                        </Border>
                                         <TextBlock Text="{Binding Id}" 
                                                    Canvas.Left="{Binding LabelLeft}" 
                                                    Canvas.Top="{Binding LabelY}"
@@ -70,13 +119,159 @@
                                                    FontSize="10"
                                                    Foreground="DarkGray"
                                                    IsHitTestVisible="False" />
+                                        
+                                        <!-- Hex Edges for Selection -->
+                                        <Line X1="{Binding HexCorners[0].X}" Y1="{Binding HexCorners[0].Y}" X2="{Binding HexCorners[1].X}" Y2="{Binding HexCorners[1].Y}" StrokeThickness="8">
+                                            <Line.InputBindings>
+                                                <MouseBinding MouseAction="LeftClick" Command="{Binding SelectEdgeCommand}" CommandParameter="0"/>
+                                            </Line.InputBindings>
+                                            <Line.Style>
+                                                <Style TargetType="Line">
+                                                    <Setter Property="Stroke" Value="Transparent"/>
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True"><Setter Property="Stroke" Value="Cyan"/></Trigger>
+                                                        <DataTrigger Binding="{Binding IsEdge0Selected}" Value="True"><Setter Property="Stroke" Value="Gold"/></DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Line.Style>
+                                        </Line>
+                                        <Line X1="{Binding HexCorners[1].X}" Y1="{Binding HexCorners[1].Y}" X2="{Binding HexCorners[2].X}" Y2="{Binding HexCorners[2].Y}" StrokeThickness="8">
+                                            <Line.InputBindings>
+                                                <MouseBinding MouseAction="LeftClick" Command="{Binding SelectEdgeCommand}" CommandParameter="1"/>
+                                            </Line.InputBindings>
+                                            <Line.Style>
+                                                <Style TargetType="Line">
+                                                    <Setter Property="Stroke" Value="Transparent"/>
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True"><Setter Property="Stroke" Value="Cyan"/></Trigger>
+                                                        <DataTrigger Binding="{Binding IsEdge1Selected}" Value="True"><Setter Property="Stroke" Value="Gold"/></DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Line.Style>
+                                        </Line>
+                                        <Line X1="{Binding HexCorners[2].X}" Y1="{Binding HexCorners[2].Y}" X2="{Binding HexCorners[3].X}" Y2="{Binding HexCorners[3].Y}" StrokeThickness="8">
+                                            <Line.InputBindings>
+                                                <MouseBinding MouseAction="LeftClick" Command="{Binding SelectEdgeCommand}" CommandParameter="2"/>
+                                            </Line.InputBindings>
+                                            <Line.Style>
+                                                <Style TargetType="Line">
+                                                    <Setter Property="Stroke" Value="Transparent"/>
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True"><Setter Property="Stroke" Value="Cyan"/></Trigger>
+                                                        <DataTrigger Binding="{Binding IsEdge2Selected}" Value="True"><Setter Property="Stroke" Value="Gold"/></DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Line.Style>
+                                        </Line>
+                                        <Line X1="{Binding HexCorners[3].X}" Y1="{Binding HexCorners[3].Y}" X2="{Binding HexCorners[4].X}" Y2="{Binding HexCorners[4].Y}" StrokeThickness="8">
+                                            <Line.InputBindings>
+                                                <MouseBinding MouseAction="LeftClick" Command="{Binding SelectEdgeCommand}" CommandParameter="3"/>
+                                            </Line.InputBindings>
+                                            <Line.Style>
+                                                <Style TargetType="Line">
+                                                    <Setter Property="Stroke" Value="Transparent"/>
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True"><Setter Property="Stroke" Value="Cyan"/></Trigger>
+                                                        <DataTrigger Binding="{Binding IsEdge3Selected}" Value="True"><Setter Property="Stroke" Value="Gold"/></DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Line.Style>
+                                        </Line>
+                                        <Line X1="{Binding HexCorners[4].X}" Y1="{Binding HexCorners[4].Y}" X2="{Binding HexCorners[5].X}" Y2="{Binding HexCorners[5].Y}" StrokeThickness="8">
+                                            <Line.InputBindings>
+                                                <MouseBinding MouseAction="LeftClick" Command="{Binding SelectEdgeCommand}" CommandParameter="4"/>
+                                            </Line.InputBindings>
+                                            <Line.Style>
+                                                <Style TargetType="Line">
+                                                    <Setter Property="Stroke" Value="Transparent"/>
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True"><Setter Property="Stroke" Value="Cyan"/></Trigger>
+                                                        <DataTrigger Binding="{Binding IsEdge4Selected}" Value="True"><Setter Property="Stroke" Value="Gold"/></DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Line.Style>
+                                        </Line>
+                                        <Line X1="{Binding HexCorners[5].X}" Y1="{Binding HexCorners[5].Y}" X2="{Binding HexCorners[0].X}" Y2="{Binding HexCorners[0].Y}" StrokeThickness="8">
+                                            <Line.InputBindings>
+                                                <MouseBinding MouseAction="LeftClick" Command="{Binding SelectEdgeCommand}" CommandParameter="5"/>
+                                            </Line.InputBindings>
+                                            <Line.Style>
+                                                <Style TargetType="Line">
+                                                    <Setter Property="Stroke" Value="Transparent"/>
+                                                    <Style.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True"><Setter Property="Stroke" Value="Cyan"/></Trigger>
+                                                        <DataTrigger Binding="{Binding IsEdge5Selected}" Value="True"><Setter Property="Stroke" Value="Gold"/></DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Line.Style>
+                                        </Line>
                                     </Canvas>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
+                        
+                        <!-- Overlay background image -->
+                        <Image Source="{Binding BackgroundImagePath}" Stretch="Fill" Opacity="0.4" IsHitTestVisible="False" />
                     </Grid>
                 </Border>
             </Grid>
         </ScrollViewer>
+
+        <!-- Sidebar / Tools Pane -->
+        <Border Grid.Row="1" Grid.Column="1" Background="{StaticResource ControlBorderBrush}" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1,0,0,0" Padding="15">
+            <StackPanel>
+                <TextBlock Text="Properties" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+                
+                <!-- Tool Options -->
+                <GroupBox Header="Brush Settings" Margin="0,0,0,15">
+                    <StackPanel Margin="5">
+                        <TextBlock Text="Active Terrain:"/>
+                        <ComboBox ItemsSource="{Binding AvailableTerrainTypes}" SelectedItem="{Binding ActiveTerrain}" Margin="0,5,0,0">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Rectangle Width="16" Height="16" Margin="0,0,5,0" Fill="{Binding Converter={StaticResource TerrainColorConverter}}" Stroke="Gray" StrokeThickness="1" />
+                                        <TextBlock Text="{Binding}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+                </GroupBox>
+
+                <!-- Selected Hex Info -->
+                <GroupBox Header="Selected Hex" Visibility="{Binding SelectedHex, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=Inverse}">
+                    <StackPanel Margin="5" DataContext="{Binding SelectedHex}">
+                        <TextBlock Text="{Binding Id, StringFormat='ID: {0}'}" FontWeight="Bold" Margin="0,0,10,10"/>
+                        
+                        <TextBlock Text="Terrain:"/>
+                        <ComboBox ItemsSource="{Binding DataContext.AvailableTerrainTypes, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                  SelectedItem="{Binding Terrain}" Margin="0,5,0,10">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Rectangle Width="16" Height="16" Margin="0,0,5,0" Fill="{Binding Converter={StaticResource TerrainColorConverter}}" Stroke="Gray" StrokeThickness="1" />
+                                        <TextBlock Text="{Binding}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
+                        <TextBlock Text="{Binding Elevation, StringFormat='Elevation: {0}'}"/>
+                        <Slider Minimum="0" Maximum="5" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding Elevation}"/>
+                    </StackPanel>
+                </GroupBox>
+
+                <!-- Selected Hexside Info -->
+                <GroupBox Header="Selected Hexside" Visibility="{Binding SelectedEdge, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=Inverse}">
+                    <StackPanel Margin="5" DataContext="{Binding SelectedEdge.Data}">
+                        <CheckBox Content="Wall" IsChecked="{Binding HasWall}" Margin="0,5"/>
+                        <CheckBox Content="Hedge" IsChecked="{Binding HasHedge}" Margin="0,5"/>
+                        <CheckBox Content="Bocage" IsChecked="{Binding HasBocage}" Margin="0,5"/>
+                        <CheckBox Content="Road" IsChecked="{Binding HasRoad}" Margin="0,5"/>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+        </Border>
     </Grid>
 </UserControl>

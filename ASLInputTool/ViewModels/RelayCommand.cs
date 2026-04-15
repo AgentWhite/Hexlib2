@@ -36,3 +36,29 @@ public class RelayCommand : ICommand
     /// <inheritdoc />
     public void Execute(object? parameter) => _execute(parameter);
 }
+
+/// <summary>
+/// Generic implementation of RelayCommand.
+/// </summary>
+/// <typeparam name="T">The type of the parameter.</typeparam>
+public class RelayCommand<T> : ICommand
+{
+    private readonly Action<T?> _execute;
+    private readonly Predicate<T?>? _canExecute;
+
+    public RelayCommand(Action<T?> execute, Predicate<T?>? canExecute = null)
+    {
+        _execute = execute ?? throw new ArgumentNullException(nameof(execute));
+        _canExecute = canExecute;
+    }
+
+    public event EventHandler? CanExecuteChanged
+    {
+        add => CommandManager.RequerySuggested += value;
+        remove => CommandManager.RequerySuggested -= value;
+    }
+
+    public bool CanExecute(object? parameter) => _canExecute == null || _canExecute((T?)parameter);
+
+    public void Execute(object? parameter) => _execute((T?)parameter);
+}

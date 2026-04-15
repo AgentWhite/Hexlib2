@@ -24,14 +24,31 @@ public class AslBoard
     /// </summary>
     public MapType Type { get; set; } = MapType.Standard;
 
-    /// <summary>
-    /// Gets or sets a value indicating whether the first column (A) is shifted down relative to the second (B).
-    /// </summary>
     public bool IsFirstColShiftedDown
     {
         get => !Board.ShiftingOddColumns;
         set => Board.ShiftingOddColumns = !value;
     }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the top edge contains half-hexes.
+    /// </summary>
+    public bool IsTopRowHalf { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the bottom edge contains half-hexes.
+    /// </summary>
+    public bool IsBottomRowHalf { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the left edge contains half-hexes.
+    /// </summary>
+    public bool IsLeftEdgeHalf { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the right edge contains half-hexes.
+    /// </summary>
+    public bool IsRightEdgeHalf { get; set; } = true;
 
     /// <summary>
     /// Gets or sets the hex width of the map.
@@ -83,12 +100,9 @@ public class AslBoard
         char letter = (char)('A' + letterIndex);
         string colStr = new string(letter, repeatCount);
         
-        // ASL Staggered Labeling:
-        // A column is "high" (starts at center 0) if it is NOT shifted down.
-        // If shiftingOddColumns is true: Even columns (0, 2...) are high. Label row.
-        // If shiftingOddColumns is false: Odd columns (1, 3...) are high. Label row.
-        bool isHigherColumn = (shiftingOddColumns) ? (col % 2 == 0) : (col % 2 != 0);
-        int rowLabel = isHigherColumn ? row : row + 1;
+        // ASL standard labeling simply uses row numbers 1..10
+        // regardless of staggering offset.
+        int rowLabel = row + 1;
         
         return $"{colStr}{rowLabel}";
     }
@@ -105,15 +119,23 @@ public class AslBoard
             _board.Name = Name;
         }
 
-        // Set HalfHexSides for Standard boards
+        // Set HalfHexSides for Standard boards (8"x22", 33 columns A-GG, 10 rows 1-10)
+        // Standard boards are halved at A/GG and Top/Bottom (High cols halved).
         if (Type == MapType.Standard)
         {
-            _board.HalfHexSides = BoardEdge.Top | BoardEdge.Bottom | BoardEdge.Left | BoardEdge.Right;
+            IsFirstColShiftedDown = true;
+            IsTopRowHalf = true;
+            IsBottomRowHalf = true;
+            IsLeftEdgeHalf = true;
+            IsRightEdgeHalf = true;
         }
-        else
-        {
-            _board.HalfHexSides = BoardEdge.None;
-        }
+
+        // Apply HalfHexSides to underlying board
+        _board.HalfHexSides = BoardEdge.None;
+        if (IsTopRowHalf) _board.HalfHexSides |= BoardEdge.Top;
+        if (IsBottomRowHalf) _board.HalfHexSides |= BoardEdge.Bottom;
+        if (IsLeftEdgeHalf) _board.HalfHexSides |= BoardEdge.Left;
+        if (IsRightEdgeHalf) _board.HalfHexSides |= BoardEdge.Right;
 
         for (int r = 0; r < Height; r++)
         {
@@ -146,6 +168,13 @@ public class AslBoard
             var hex = new Hex<ASLHexMetadata>(cube);
             hex.Id = GetAslCoordinate(c, r, _board.ShiftingOddColumns);
             _board.AddHex(hex);
+        }
+
+        // Ensure metadata is ALWAYS initialized
+        var finalHex = _board.GetHexAt(cube);
+        if (finalHex != null)
+        {
+            finalHex.Metadata ??= new ASLHexMetadata();
         }
     }
     /// <summary>
