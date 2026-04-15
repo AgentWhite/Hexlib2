@@ -1,0 +1,1275 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ASL</name>
+    </assembly>
+    <members>
+        <member name="T:ASL.AslBoard">
+            <summary>
+            Represents a map board in the ASL system.
+            </summary>
+        </member>
+        <member name="P:ASL.AslBoard.Name">
+            <summary>
+            Gets or sets the name/identifier of the map (e.g., "1", "4", "62").
+            </summary>
+        </member>
+        <member name="P:ASL.AslBoard.Type">
+            <summary>
+            Gets or sets the type of this map.
+            </summary>
+        </member>
+        <member name="P:ASL.AslBoard.IsFirstColShiftedDown">
+            <summary>
+            Gets or sets a value indicating whether the first column (A) is shifted down relative to the second (B).
+            </summary>
+        </member>
+        <member name="P:ASL.AslBoard.Width">
+            <summary>
+            Gets or sets the hex width of the map.
+            </summary>
+        </member>
+        <member name="P:ASL.AslBoard.Height">
+            <summary>
+            Gets or sets the hex height of the map.
+            </summary>
+        </member>
+        <member name="P:ASL.AslBoard.CanvasWidth">
+            <summary>
+            Gets or sets the width of the canvas in pixels.
+            </summary>
+        </member>
+        <member name="P:ASL.AslBoard.CanvasHeight">
+            <summary>
+            Gets or sets the height of the canvas in pixels.
+            </summary>
+        </member>
+        <member name="P:ASL.AslBoard.Board">
+            <summary>
+            Gets or sets the underlying HexLib board.
+            </summary>
+        </member>
+        <member name="M:ASL.AslBoard.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:ASL.AslBoard"/> class.
+            </summary>
+        </member>
+        <member name="M:ASL.AslBoard.GetAslCoordinate(System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            Generates an ASL coordinate string (e.g., "A1", "AA10") from column and row indices.
+            </summary>
+            <param name="col">0-based column index.</param>
+            <param name="row">0-based row index.</param>
+            <returns>The ASL coordinate string.</returns>
+        </member>
+        <member name="M:ASL.AslBoard.PopulateBoard">
+            <summary>
+            Populates the underlying HexLib board with hexes based on current Width and Height.
+            </summary>
+        </member>
+        <member name="M:ASL.AslBoard.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:ASL.AslBoard"/> class with a name.
+            </summary>
+            <param name="name">The name of the board.</param>
+        </member>
+        <member name="T:ASL.ASLDateParser">
+            <summary>
+            Provides utility methods for parsing ASL-specific date strings.
+            </summary>
+        </member>
+        <member name="M:ASL.ASLDateParser.Parse(System.String)">
+            <summary>
+            Attempts to parse a date string like "September 2nd, 1941" or "Oct 3, 1942".
+            Removes ordinal suffixes (st, nd, rd, th) before parsing.
+            </summary>
+        </member>
+        <member name="T:ASL.ASLDice">
+            <summary>
+            Service responsible for ASL dice rolling mechanics.
+            </summary>
+        </member>
+        <member name="E:ASL.ASLDice.OnDiceRolled">
+            <summary>
+            Occurs whenever a dice roll is performed. UI components can subscribe to this to show animations or results.
+            </summary>
+        </member>
+        <member name="M:ASL.ASLDice.DR">
+            <summary>
+            Performs a 2d6 roll (one colored, one white).
+            </summary>
+            <returns>The result of the roll.</returns>
+        </member>
+        <member name="M:ASL.ASLDice.dr">
+            <summary>
+            Performs a single 1d6 roll (result is in WhiteDie).
+            </summary>
+            <returns>The result of the roll.</returns>
+        </member>
+        <member name="T:ASL.ASLEdgeData">
+            <summary>
+            Represents data on a hexside in ASL (Walls, Hedges, Roads, etc.).
+            </summary>
+        </member>
+        <member name="P:ASL.ASLEdgeData.HasWall">
+            <summary>Gets or sets a value indicating whether there is a wall on this hexside.</summary>
+        </member>
+        <member name="P:ASL.ASLEdgeData.HasHedge">
+            <summary>Gets or sets a value indicating whether there is a hedge on this hexside.</summary>
+        </member>
+        <member name="P:ASL.ASLEdgeData.HasBocage">
+            <summary>Gets or sets a value indicating whether there is bocage on this hexside.</summary>
+        </member>
+        <member name="P:ASL.ASLEdgeData.HasRoad">
+            <summary>
+            If true, a road follows this hexside (connecting two hexes).
+            </summary>
+        </member>
+        <member name="T:ASL.ASLHexMetadata">
+            <summary>
+            Metadata for ASL-specific hexes, including terrain and elevation.
+            </summary>
+        </member>
+        <member name="P:ASL.ASLHexMetadata.Terrain">
+            <summary>Gets or sets the type of terrain in this hex.</summary>
+        </member>
+        <member name="P:ASL.ASLHexMetadata.Elevation">
+            <summary>Gets or sets the elevation level of the hex (0=ground level).</summary>
+        </member>
+        <member name="P:ASL.ASLHexMetadata.HasSewer">
+            <summary>Gets or sets a value indicating whether this hex contains a sewer connection.</summary>
+        </member>
+        <member name="T:ASL.AslModule">
+            <summary>
+            Represents a physical ASL game module and its properties.
+            </summary>
+        </member>
+        <member name="P:ASL.AslModule.FrontImage">
+            <summary>
+            Gets or sets the file path to the front image of the module box.
+            </summary>
+        </member>
+        <member name="P:ASL.AslModule.BackImage">
+            <summary>
+            Gets or sets the file path to the back image of the module box.
+            </summary>
+        </member>
+        <member name="P:ASL.AslModule.Module">
+            <summary>
+            Gets or sets the specific module identity.
+            </summary>
+        </member>
+        <member name="P:ASL.AslModule.FullName">
+            <summary>
+            Gets or sets the full display name of the module.
+            </summary>
+        </member>
+        <member name="P:ASL.AslModule.Description">
+            <summary>
+            Gets or sets a description of the module contents.
+            </summary>
+        </member>
+        <member name="P:ASL.AslModule.RequiredModules">
+            <summary>
+            Gets or sets the list of other modules required to use this module.
+            </summary>
+        </member>
+        <member name="P:ASL.AslModule.IsFinished">
+            <summary>
+            Gets or sets a value indicating whether all data for this module has been fully implemented.
+            </summary>
+        </member>
+        <member name="M:ASL.AslModule.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:ASL.AslModule"/> class.
+            </summary>
+        </member>
+        <member name="M:ASL.AslModule.#ctor(ASL.Module,System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:ASL.AslModule"/> class with basic info.
+            </summary>
+            <param name="module">The module identity.</param>
+            <param name="fullName">Grand full name.</param>
+            <param name="description">Module overview.</param>
+        </member>
+        <member name="T:ASL.ASLProject">
+            <summary>
+            Bundles ASL data (Counters, Scenarios) together for project-level persistence.
+            </summary>
+        </member>
+        <member name="P:ASL.ASLProject.Counters">
+            <summary>
+            Gets or sets the list of counters in the project.
+            </summary>
+        </member>
+        <member name="P:ASL.ASLProject.Scenarios">
+            <summary>
+            Gets or sets the list of scenarios in the project.
+            </summary>
+        </member>
+        <member name="P:ASL.ASLProject.Modules">
+            <summary>
+            Gets or sets the list of game modules in the project.
+            </summary>
+        </member>
+        <member name="P:ASL.ASLProject.Boards">
+            <summary>
+            Gets or sets the collection of map boards in the project.
+            </summary>
+        </member>
+        <member name="T:ASL.DiceRollResult">
+            <summary>
+            Holds the result of an ASL dice roll, distinguishing between 1d6 (dr) and 2d6 (DR).
+            In a DR, the colored die and white die are tracked separately for mechanics like Snakes, Boxcars, and Sniper Activation.
+            </summary>
+        </member>
+        <member name="P:ASL.DiceRollResult.Total">
+            <summary>
+            The combined total of the dice rolled.
+            </summary>
+        </member>
+        <member name="P:ASL.DiceRollResult.WhiteDie">
+            <summary>
+            The value of the white die (the only die in a dr, or the first die in a DR).
+            </summary>
+        </member>
+        <member name="P:ASL.DiceRollResult.ColoredDie">
+            <summary>
+            The value of the colored die (the second die in a DR, or 0 in a dr).
+            </summary>
+        </member>
+        <member name="P:ASL.DiceRollResult.DiceCount">
+            <summary>
+            How many dice were rolled (1 or 2).
+            </summary>
+        </member>
+        <member name="M:ASL.DiceRollResult.#ctor(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:ASL.DiceRollResult"/> class.
+            </summary>
+            <param name="white">The result of the white die.</param>
+            <param name="colored">The result of the colored die (if 2d6).</param>
+            <param name="count">The number of dice rolled (1 or 2).</param>
+        </member>
+        <member name="M:ASL.DiceRollResult.ToString">
+            <summary>
+            Returns a string representation of the dice roll result.
+            </summary>
+            <returns>A string like "DR: 7 (3,4)" or "dr: 5".</returns>
+        </member>
+        <member name="T:ASL.Models.Components.BPVComponent">
+            <summary>
+            Component that defines the Basic Point Value (BPV) of a unit.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.BPVComponent.Owner">
+            <summary>
+            Gets the unit that owns this component.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.BPVComponent.ComponentName">
+            <summary>
+            Gets the name of the component.
+            </summary>
+        </member>
+        <member name="M:ASL.Models.Components.BPVComponent.Initialize(ASL.Models.Unit)">
+            <summary>
+            Initializes the component with its owner unit.
+            </summary>
+            <param name="owner">The unit that owns this component.</param>
+        </member>
+        <member name="P:ASL.Models.Components.BPVComponent.BPV">
+            <summary>
+            Gets or sets the Basic Point Value.
+            </summary>
+        </member>
+        <member name="T:ASL.Models.Components.BreakdownComponent">
+            <summary>
+            Component that defines the breakdown and removal numbers of a support weapon.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.BreakdownComponent.Owner">
+            <summary>
+            Gets the unit that owns this component.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.BreakdownComponent.ComponentName">
+            <summary>
+            Gets the name of the component.
+            </summary>
+        </member>
+        <member name="M:ASL.Models.Components.BreakdownComponent.Initialize(ASL.Models.Unit)">
+            <summary>
+            Initializes the component with its owner unit.
+            </summary>
+            <param name="owner">The unit that owns this component.</param>
+        </member>
+        <member name="P:ASL.Models.Components.BreakdownComponent.BreakdownNumber">
+            <summary>
+            Gets or sets the number at which the weapon breaks down.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.BreakdownComponent.RemovalNumber">
+            <summary>
+            Gets or sets the number at which the weapon is removed from play (permanent breakdown).
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.BreakdownComponent.RepairNumber">
+            <summary>
+            Gets or sets the number required to repair the weapon.
+            </summary>
+        </member>
+        <member name="T:ASL.Models.Components.FirePowerComponent">
+            <summary>
+            Component that defines the firepower and range of a unit.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.FirePowerComponent.Owner">
+            <summary>
+            Gets the unit that owns this component.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.FirePowerComponent.ComponentName">
+            <summary>
+            Gets the name of the component.
+            </summary>
+        </member>
+        <member name="M:ASL.Models.Components.FirePowerComponent.Initialize(ASL.Models.Unit)">
+            <summary>
+            Initializes the component with its owner unit.
+            </summary>
+            <param name="owner">The unit that owns this component.</param>
+        </member>
+        <member name="P:ASL.Models.Components.FirePowerComponent.Firepower">
+            <summary>
+            Gets or sets the base firepower value.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.FirePowerComponent.Range">
+            <summary>
+            Gets or sets the base range value (in hexes).
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.FirePowerComponent.RateOfFire">
+            <summary>
+            Gets or sets the rate of fire (ROF).
+            </summary>
+        </member>
+        <member name="T:ASL.Models.Components.HeroComponent">
+            <summary>
+            Component that marks a unit as a Hero.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.HeroComponent.Owner">
+            <summary>
+            Gets the unit that owns this component.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.HeroComponent.ComponentName">
+            <summary>
+            Gets the name of the component.
+            </summary>
+        </member>
+        <member name="M:ASL.Models.Components.HeroComponent.Initialize(ASL.Models.Unit)">
+            <summary>
+            Initializes the component with its owner unit.
+            </summary>
+            <param name="owner">The unit that owns this component.</param>
+        </member>
+        <member name="T:ASL.Models.Components.InfantryComponent">
+            <summary>
+            Component that defines basic infantry statistics and capabilities.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.InfantryComponent.HasAssaultFire">
+            <summary>
+            Gets or sets a value indicating whether the unit has Assault Fire capability.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.InfantryComponent.HasSprayingFire">
+            <summary>
+            Gets or sets a value indicating whether the unit has Spraying Fire capability.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.InfantryComponent.CanSelfRally">
+            <summary>
+            Gets or sets a value indicating whether the unit can Self Rally.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.InfantryComponent.HasELR">
+            <summary>
+            Gets or sets a value indicating whether the unit has ELR (Experience Level Rating) capability.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.InfantryComponent.Scale">
+            <summary>
+            Gets or sets the scale of the infantry unit (Squad, Half-Squad, Crew, SMC).
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.InfantryComponent.Morale">
+            <summary>
+            Gets or sets the unit's morale value.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.InfantryComponent.BrokenMorale">
+            <summary>
+            Gets or sets the unit's broken morale value, or null for units that don't have one (e.g., Japanese leaders).
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.InfantryComponent.AslClass">
+            <summary>
+            Gets or sets the ASL class of the unit (Elite, First Line, etc.).
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.InfantryComponent.Owner">
+            <summary>
+            gets the unit that owns this component.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.InfantryComponent.ComponentName">
+            <summary>
+            Gets the name of the component.
+            </summary>
+        </member>
+        <member name="M:ASL.Models.Components.InfantryComponent.Initialize(ASL.Models.Unit)">
+            <summary>
+            Initializes the component with its owner unit.
+            </summary>
+            <param name="owner">The unit that owns this component.</param>
+        </member>
+        <member name="T:ASL.Models.Components.IUnitComponent">
+            <summary>
+            Interface for all unit components. Components define specific capabilities and statistics for a Unit.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.IUnitComponent.Owner">
+            <summary>
+            Gets or sets the Unit that owns this component.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.IUnitComponent.ComponentName">
+            <summary>
+            Gets the unique name or type identifier for the component.
+            </summary>
+        </member>
+        <member name="M:ASL.Models.Components.IUnitComponent.Initialize(ASL.Models.Unit)">
+            <summary>
+            Initializes the component with its owner unit.
+            </summary>
+            <param name="owner">The unit that owns this component.</param>
+        </member>
+        <member name="T:ASL.Models.Components.LeadershipComponent">
+            <summary>
+            Component that defines the leadership bonus of a unit.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.LeadershipComponent.Owner">
+            <summary>
+            Gets the unit that owns this component.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.LeadershipComponent.ComponentName">
+            <summary>
+            Gets the name of the component.
+            </summary>
+        </member>
+        <member name="M:ASL.Models.Components.LeadershipComponent.Initialize(ASL.Models.Unit)">
+            <summary>
+            Initializes the component with its owner unit.
+            </summary>
+            <param name="owner">The unit that owns this component.</param>
+        </member>
+        <member name="P:ASL.Models.Components.LeadershipComponent.Leadership">
+            <summary>
+            Gets or sets the leadership modifier (e.g., -1, 0, 1).
+            </summary>
+        </member>
+        <member name="T:ASL.Models.Components.MachineGunComponent">
+            <summary>
+            Component that defines the specific type of machine gun.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.MachineGunComponent.Owner">
+            <summary>
+            Gets the unit that owns this component.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.MachineGunComponent.ComponentName">
+            <summary>
+            Gets the name of the component.
+            </summary>
+        </member>
+        <member name="M:ASL.Models.Components.MachineGunComponent.Initialize(ASL.Models.Unit)">
+            <summary>
+            Initializes the component with its owner unit.
+            </summary>
+            <param name="owner">The unit that owns this component.</param>
+        </member>
+        <member name="P:ASL.Models.Components.MachineGunComponent.Type">
+            <summary>
+            Gets or sets the type of the machine gun.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.MachineGunComponent.HasSprayingFire">
+            <summary>
+            Gets or sets a value indicating whether the machine gun has spraying fire capability.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.OrdnanceComponent.Owner">
+            <summary>
+            Gets the unit that owns this component.
+            </summary>
+        </member>
+        <member name="T:ASL.Models.Components.PortageComponent">
+            <summary>
+            Component that defines the portage (weight) and dismantle status of a unit.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.PortageComponent.Owner">
+            <summary>
+            Gets the unit that owns this component.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.PortageComponent.ComponentName">
+            <summary>
+            Gets the name of the component.
+            </summary>
+        </member>
+        <member name="M:ASL.Models.Components.PortageComponent.Initialize(ASL.Models.Unit)">
+            <summary>
+            Initializes the component with its owner unit.
+            </summary>
+            <param name="owner">The unit that owns this component.</param>
+        </member>
+        <member name="P:ASL.Models.Components.PortageComponent.AssembledCost">
+            <summary>
+            Gets or sets the portage cost (weight) of the unit when assembled.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.PortageComponent.DismantledCost">
+            <summary>
+            Gets or sets the portage cost (weight) of the unit when dismantled, if applicable.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.PortageComponent.IsDismantled">
+            <summary>
+            Gets or sets a value indicating whether the unit is currently dismantled.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.PortageComponent.DismantledImage">
+            <summary>
+            Gets or sets the file path to the image representing the unit when dismantled.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.PortageComponent.CanBeDismantled">
+            <summary>
+            Gets a value indicating whether the unit can be dismantled.
+            </summary>
+        </member>
+        <member name="M:ASL.Models.Components.PortageComponent.Dismantle">
+            <summary>
+            Dismantles the unit if it is capable of being dismantled.
+            </summary>
+        </member>
+        <member name="M:ASL.Models.Components.PortageComponent.Assemble">
+            <summary>
+            Assembles the unit.
+            </summary>
+        </member>
+        <member name="T:ASL.Models.Components.RadioComponent">
+            <summary>
+            Component that represents a Radio with a specific contact number.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.RadioComponent.Owner">
+            <summary>
+            Gets the unit that owns this component.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.RadioComponent.ComponentName">
+            <summary>
+            Gets the name of the component.
+            </summary>
+        </member>
+        <member name="M:ASL.Models.Components.RadioComponent.Initialize(ASL.Models.Unit)">
+            <summary>
+            Initializes the component with its owner unit.
+            </summary>
+            <param name="owner">The unit that owns this component.</param>
+        </member>
+        <member name="P:ASL.Models.Components.RadioComponent.ContactNumber">
+            <summary>
+            Gets or sets the contact number required for the radio.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.RadioComponent.BatteryId">
+            <summary>
+            Gets or sets the battery ID to the OBA (Off Board Artillery).
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.RadioComponent.HasContact">
+            <summary>
+            If the contact roll has succeded and the unit has contact with the OBA (Off Board Artillery).
+            </summary>
+        </member>
+        <member name="T:ASL.Models.Components.SmokeProviderComponent">
+            <summary>
+            Component that provides smoke placement capabilities.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.SmokeProviderComponent.ComponentName">
+            <inheritdoc/>
+        </member>
+        <member name="P:ASL.Models.Components.SmokeProviderComponent.Owner">
+            <inheritdoc/>
+        </member>
+        <member name="M:ASL.Models.Components.SmokeProviderComponent.Initialize(ASL.Models.Unit)">
+            <inheritdoc/>
+        </member>
+        <member name="P:ASL.Models.Components.SmokeProviderComponent.CapabilityNumber">
+            <summary>
+            Gets or sets the "Exponent" (for Infantry/SW) or "Depletion Number" (for Ordnance/Vehicles).
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Components.SmokeProviderComponent.SmokeType">
+            <summary>
+            Gets or sets the type of smoke provided.
+            </summary>
+        </member>
+        <member name="T:ASL.Models.InfantryScale">
+            <summary>
+            Specifies the scale of an infantry unit.
+            </summary>
+        </member>
+        <member name="F:ASL.Models.InfantryScale.Squad">
+            <summary>Full squad.</summary>
+        </member>
+        <member name="F:ASL.Models.InfantryScale.HalfSquad">
+            <summary>Half-squad.</summary>
+        </member>
+        <member name="F:ASL.Models.InfantryScale.Crew">
+            <summary>Gun or weapon crew.</summary>
+        </member>
+        <member name="F:ASL.Models.InfantryScale.SMC">
+            <summary>Single-man counter (Leader or Hero).</summary>
+        </member>
+        <member name="T:ASL.Models.MachineGunType">
+            <summary>
+            Specifies the type of machine gun.
+            </summary>
+        </member>
+        <member name="F:ASL.Models.MachineGunType.LMG">
+            <summary>
+            Light machine gun.
+            </summary>
+        </member>
+        <member name="F:ASL.Models.MachineGunType.MMG">
+            <summary>
+            Medium machine gun.
+            </summary>
+        </member>
+        <member name="F:ASL.Models.MachineGunType.HMG">
+            <summary>
+            Heavy machine gun.
+            </summary>
+        </member>
+        <member name="T:ASL.Models.Maps.MapType">
+            <summary>
+            Specifies the geometric or logical type of an ASL map.
+            </summary>
+        </member>
+        <member name="F:ASL.Models.Maps.MapType.Standard">
+            <summary>
+            A standard 10x33 hex board (e.g., Board 1).
+            </summary>
+        </member>
+        <member name="F:ASL.Models.Maps.MapType.NonStandard">
+            <summary>
+            A board with non-standard dimensions or half-hex configurations.
+            </summary>
+        </member>
+        <member name="F:ASL.Models.Maps.MapType.StandAlone">
+            <summary>
+            A standalone map (e.g., Red Barricades, Deluxe boards).
+            </summary>
+        </member>
+        <member name="T:ASL.Models.Nationality">
+            <summary>
+            Specifies the nationality of an ASL unit or scenario side.
+            </summary>
+        </member>
+        <member name="F:ASL.Models.Nationality.German">
+            <summary>German nationality.</summary>
+        </member>
+        <member name="F:ASL.Models.Nationality.Russian">
+            <summary>Russian / Soviet nationality.</summary>
+        </member>
+        <member name="F:ASL.Models.Nationality.Finnish">
+            <summary>Finnish nationality.</summary>
+        </member>
+        <member name="F:ASL.Models.Nationality.Partisan">
+            <summary>Partisan / Resistance forces.</summary>
+        </member>
+        <member name="F:ASL.Models.Nationality.American">
+            <summary>American nationality.</summary>
+        </member>
+        <member name="F:ASL.Models.Nationality.Japanese">
+            <summary>Japanese nationality.</summary>
+        </member>
+        <member name="T:ASL.Models.Player">
+            <summary>
+            Represents a participant in an ASL game.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Player.Name">
+            <summary>
+            Gets or sets the player's name.
+            </summary>
+        </member>
+        <member name="M:ASL.Models.Player.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:ASL.Models.Player"/> class.
+            </summary>
+            <param name="name">The name of the player.</param>
+        </member>
+        <member name="P:ASL.Models.Player.ScenarioSide">
+            <summary>
+            Gets or sets the scenario side for the player. Null means that
+            no side has been picked for this player. 
+            </summary>
+        </member>
+        <member name="T:ASL.Models.ScenarioSide">
+            <summary>
+            Represents a side in an ASL scenario, including nationality and role.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.ScenarioSide.Nationality">
+            <summary>
+            Gets or sets the nationality for this side.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.ScenarioSide.Side">
+            <summary>
+            Gets or sets the tactical side (Attacker or Defender).
+            </summary>
+        </member>
+        <member name="P:ASL.Models.ScenarioSide.Name">
+            <summary>
+            Gets or sets the name or designation of the forces (e.g., "The 10th Guards").
+            </summary>
+        </member>
+        <member name="T:ASL.Models.Side">
+            <summary>
+            Represents the side of a unit in a scenario and it determines
+            who sets up first and who moves first.
+            </summary>
+        </member>
+        <member name="F:ASL.Models.Side.Attacker">
+            <summary>
+            The attacker is the side that sets up second and moves first.
+            </summary>
+        </member>
+        <member name="F:ASL.Models.Side.Defender">
+            <summary>
+            The defender is the side that sets up first and moves second.
+            </summary>
+        </member>
+        <member name="T:ASL.Models.SmokeDeliveryMethod">
+            <summary>
+            Represents the method by which smoke is delivered.
+            </summary>
+        </member>
+        <member name="F:ASL.Models.SmokeDeliveryMethod.Placement_dr">
+            <summary>
+            Smoke is placed by an infantry unit.
+            </summary>
+        </member>
+        <member name="F:ASL.Models.SmokeDeliveryMethod.Ordnance_DR">
+            <summary>
+            Smoke is delivered by ordnance.
+            </summary>
+        </member>
+        <member name="F:ASL.Models.SmokeDeliveryMethod.Dispenser_DR">
+            <summary>
+            Smoke is delivered by a dispenser.
+            </summary>
+        </member>
+        <member name="T:ASL.Models.SmokeType">
+            <summary>
+            Represents the type of smoke.
+            </summary>
+        </member>
+        <member name="F:ASL.Models.SmokeType.White">
+            <summary>
+            White smoke.
+            </summary>
+        </member>
+        <member name="F:ASL.Models.SmokeType.WP">
+            <summary>
+            White Phosphorus smoke.
+            </summary>
+        </member>
+        <member name="F:ASL.Models.SmokeType.Candles">
+            <summary>
+            Candle smoke.
+            </summary>
+        </member>
+        <member name="F:ASL.Models.SmokeType.SmokeDischarger">
+            <summary>
+            Smoke Discharger smoke.
+            </summary>
+        </member>
+        <member name="T:ASL.Models.Unit">
+            <summary>
+            Represents a basic unit in the ASL system, which can be composed of multiple components.
+            Implements ICounter for hex-based positioning.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Unit.Id">
+            <summary>
+            Gets the unique identifier for the unit, currently defaulting to its Name.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Unit.Name">
+            <summary>
+            Gets or sets the name of the unit.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Unit.ImagePathFront">
+            <summary>
+            Gets or sets the file path to the front image of the unit's counter.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Unit.ImagePathBack">
+            <summary>
+            Gets or sets the file path to the back image of the unit's counter.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Unit.UnitType">
+            <summary>
+            Gets or sets the general unit type (SMC, MMC, etc.).
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Unit.Nationality">
+            <summary>
+            Gets or sets the nationality of the unit.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Unit.Parent">
+            <summary>
+            Gets or sets the parent unit (e.g., if this is a support weapon carried by a squad).
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Unit.Components">
+            <summary>
+            Gets or sets the list of components that define the unit's capabilities.
+            </summary>
+        </member>
+        <member name="M:ASL.Models.Unit.GetComponent``1">
+            <summary>
+            Retrieves a component of the specified type, if it exists.
+            </summary>
+            <typeparam name="T">The type of component to retrieve.</typeparam>
+            <returns>The component instance, or null if not found.</returns>
+        </member>
+        <member name="M:ASL.Models.Unit.HasComponent``1">
+            <summary>
+            Checks if the unit has a component of the specified type.
+            </summary>
+            <typeparam name="T">The type of component to check for.</typeparam>
+            <returns>True if the component exists; otherwise, false.</returns>
+        </member>
+        <member name="M:ASL.Models.Unit.AddComponent``1(``0)">
+            <summary>
+            Adds a component to the unit and initializes it.
+            </summary>
+            <typeparam name="T">The type of component to add.</typeparam>
+            <param name="comp">The component instance to add.</param>
+            <exception cref="T:System.InvalidOperationException">Thrown if a component of the same type already exists.</exception>
+        </member>
+        <member name="M:ASL.Models.Unit.RemoveComponent``1(``0)">
+            <summary>
+            Removes a specific component from the unit.
+            </summary>
+            <typeparam name="T">The type of component to remove.</typeparam>
+            <param name="comp">The component instance to remove.</param>
+        </member>
+        <member name="P:ASL.Models.Unit.IsLeader">
+            <summary>
+            Gets a value indicating whether this unit represents a Leader (SMC with Leadership and Infantry components).
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Unit.IsHero">
+            <summary>
+            Gets a value indicating whether this unit represents a Hero (SMC with Hero and Infantry components).
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Unit.IsHalfSquad">
+            <summary>
+            Gets a value indicating whether this unit represents a Half-Squad.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Unit.IsCrew">
+            <summary>
+            Gets a value indicating whether this unit represents a Crew.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Unit.IsSquad">
+            <summary>
+            Gets a value indicating whether this unit represents a full Squad.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Unit.IsSupportWeapon">
+            <summary>
+            Gets a value indicating whether this unit represents a Support Weapon.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Unit.Infantry">
+            <summary>
+            Gets the InfantryComponent of the unit, if present.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Unit.Leadership">
+            <summary>
+            Gets the LeadershipComponent of the unit, if present.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Unit.Hero">
+            <summary>
+            Gets the HeroComponent of the unit, if present.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Unit.FirePower">
+            <summary>
+            Gets the FirePowerComponent of the unit, if present.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Unit.Bpv">
+            <summary>
+            Gets the BPVComponent of the unit, if present.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Unit.Portage">
+            <summary>
+            Gets the PortageComponent of the unit, if present.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Unit.Breakdown">
+            <summary>
+            Gets the BreakdownComponent of the unit, if present.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Unit.MachineGun">
+            <summary>
+            Gets the MachineGunComponent of the unit, if present.
+            </summary>
+        </member>
+        <member name="P:ASL.Models.Unit.RateOfFire">
+            <summary>
+            Gets the Rate of Fire of the unit, if present.
+            </summary>
+        </member>
+        <member name="T:ASL.Models.UnitClass">
+            <summary>
+            Specifies the quality or experience class of an ASL MMC or SMC.
+            </summary>
+        </member>
+        <member name="F:ASL.Models.UnitClass.Elite">
+            <summary>High-quality elite units.</summary>
+        </member>
+        <member name="F:ASL.Models.UnitClass.FirstLine">
+            <summary>Standard front-line combat units.</summary>
+        </member>
+        <member name="F:ASL.Models.UnitClass.SecondLine">
+            <summary>Intermediate or reserve units.</summary>
+        </member>
+        <member name="F:ASL.Models.UnitClass.Green">
+            <summary>Inexperienced or new units.</summary>
+        </member>
+        <member name="F:ASL.Models.UnitClass.Conscript">
+            <summary>Low-quality draft units.</summary>
+        </member>
+        <member name="T:ASL.Models.UnitType">
+            <summary>
+            Specifies the general type of unit.
+            </summary>
+        </member>
+        <member name="F:ASL.Models.UnitType.SMC">
+            <summary>Single-Man Counter (Leaders, Heroes).</summary>
+        </member>
+        <member name="F:ASL.Models.UnitType.MMC">
+            <summary>Multi-Man Counter (Squads, Half-Squads, Crews).</summary>
+        </member>
+        <member name="F:ASL.Models.UnitType.Vehicle">
+            <summary>Vehicles (Tanks, Trucks, etc.).</summary>
+        </member>
+        <member name="F:ASL.Models.UnitType.Ordnance">
+            <summary>Ordnance (Guns, Mortars, etc.).</summary>
+        </member>
+        <member name="F:ASL.Models.UnitType.Mountable">
+            <summary>Mountable units (Horses, etc.).</summary>
+        </member>
+        <member name="T:ASL.Module">
+            <summary>
+            Represents the physical modules/boxes in the ASL system.
+            </summary>
+        </member>
+        <member name="F:ASL.Module.Paratrooper">
+            <summary>The "Paratrooper" module.</summary>
+        </member>
+        <member name="F:ASL.Module.BeyondValor">
+            <summary>The "Beyond Valor" module (German/Russian).</summary>
+        </member>
+        <member name="F:ASL.Module.Yanks">
+            <summary>The "Yanks" module (American).</summary>
+        </member>
+        <member name="T:ASL.MovementCalculator">
+            <summary>
+            Provides utility methods for calculating movement costs in an ASL game.
+            </summary>
+        </member>
+        <member name="M:ASL.MovementCalculator.CalculateCost(HexLib.Hex{ASL.ASLHexMetadata},HexLib.Hex{ASL.ASLHexMetadata},ASL.ASLEdgeData)">
+            <summary>
+            Calculates the cost to move from hex 'from' to hex 'to'.
+            Accounts for road bonuses if both hexes and the connecting edge have roads.
+            Accounts for wall/hedge penalties if the edge has them.
+            </summary>
+        </member>
+        <member name="T:ASL.Persistence.ASLSaveManager">
+            <summary>
+            Orchestrates saving and loading of ASL-specific data using a storage adapter.
+            </summary>
+        </member>
+        <member name="M:ASL.Persistence.ASLSaveManager.#ctor(HexLib.Persistence.IStorageAdapter)">
+            <summary>
+            Initializes a new instance of the <see cref="T:ASL.Persistence.ASLSaveManager"/> class.
+            </summary>
+            <param name="storage">The storage adapter to use for persistence.</param>
+        </member>
+        <member name="M:ASL.Persistence.ASLSaveManager.SaveCountersAsync(System.String,System.Collections.Generic.IEnumerable{ASL.Models.Unit})">
+            <summary>
+            Saves a collection of counters to storage.
+            </summary>
+            <param name="name">The name/key for the counter collection.</param>
+            <param name="counters">The counters to save.</param>
+            <returns>A task representing the asynchronous save operation.</returns>
+        </member>
+        <member name="M:ASL.Persistence.ASLSaveManager.LoadCountersAsync(System.String)">
+            <summary>
+            Loads a collection of counters from storage.
+            </summary>
+            <param name="name">The name/key of the counter collection to load.</param>
+            <returns>A list of loaded units.</returns>
+        </member>
+        <member name="M:ASL.Persistence.ASLSaveManager.ListCountersAsync">
+            <summary>
+            Lists all available counter collection keys in storage.
+            </summary>
+            <returns>A list of storage keys.</returns>
+        </member>
+        <member name="M:ASL.Persistence.ASLSaveManager.PrepareProjectForSaving(ASL.ASLProject,System.String)">
+            <summary>
+            Prepares a project for saving by copying all referenced images to a local "images" directory
+            and updating the project's image paths to be relative.
+            </summary>
+            <param name="sourceProject">The project containing absolute file paths.</param>
+            <param name="targetProjectFile">The absolute path to the .asl project file.</param>
+            <returns>A copy of the project with relative image paths.</returns>
+        </member>
+        <member name="M:ASL.Persistence.ASLSaveManager.SerializeProject(ASL.ASLProject)">
+            <summary>
+            Serializes an ASL project to a JSON string.
+            </summary>
+            <param name="project">The project to serialize.</param>
+            <returns>A JSON string.</returns>
+        </member>
+        <member name="M:ASL.Persistence.ASLSaveManager.DeserializeProject(System.String)">
+            <summary>
+            Deserializes an ASL project from a JSON string.
+            </summary>
+            <param name="json">The JSON string.</param>
+            <returns>The deserialized ASL project, or null if deserialization failed.</returns>
+        </member>
+        <member name="M:ASL.Persistence.ASLSaveManager.SaveScenarioAsync(ASL.Scenario)">
+            <summary>
+            Saves a single scenario to storage.
+            </summary>
+            <param name="scenario">The scenario to save.</param>
+            <returns>A task representing the asynchronous save operation.</returns>
+        </member>
+        <member name="M:ASL.Persistence.ASLSaveManager.LoadScenarioAsync(System.String)">
+            <summary>
+            Loads a single scenario from storage.
+            </summary>
+            <param name="name">The name/key of the scenario.</param>
+            <returns>The loaded scenario, or null if not found.</returns>
+        </member>
+        <member name="M:ASL.Persistence.ASLSaveManager.ListScenariosAsync">
+            <summary>
+            Lists all available scenario keys in storage.
+            </summary>
+            <returns>A list of scenario names.</returns>
+        </member>
+        <member name="M:ASL.Persistence.ASLSaveManager.SaveBoardAsync(System.String,HexLib.Board{ASL.ASLHexMetadata,ASL.ASLEdgeData})">
+            <summary>
+            Saves an ASL board/map to storage.
+            </summary>
+            <param name="name">The name/key for the board.</param>
+            <param name="board">The board object to save.</param>
+            <returns>A task representing the asynchronous save operation.</returns>
+        </member>
+        <member name="M:ASL.Persistence.ASLSaveManager.LoadBoardAsync(System.String)">
+            <summary>
+            Loads an ASL board/map from storage.
+            </summary>
+            <param name="name">The name/key of the board.</param>
+            <returns>The loaded board, or null if not found.</returns>
+        </member>
+        <member name="M:ASL.Persistence.ASLSaveManager.ListMapsAsync">
+            <summary>
+            Lists all available map/board keys in storage.
+            </summary>
+            <returns>A list of map names.</returns>
+        </member>
+        <member name="T:ASL.Scenario">
+            <summary>
+            Represents an ASL Scenario, defining the starting state and context of a game.
+            </summary>
+        </member>
+        <member name="P:ASL.Scenario.Name">
+            <summary>
+            Gets or sets the formal name of the scenario.
+            </summary>
+        </member>
+        <member name="P:ASL.Scenario.Reference">
+            <summary>
+            Gets or sets the scenario reference code (e.g., "ASL SCENARIO 1").
+            </summary>
+        </member>
+        <member name="P:ASL.Scenario.ImagePath">
+            <summary>
+            Gets or sets the file path to the image representing this scenario.
+            </summary>
+        </member>
+        <member name="P:ASL.Scenario.Description">
+            <summary>
+            Gets or sets the historical background and context of the scenario.
+            </summary>
+        </member>
+        <member name="P:ASL.Scenario.Module">
+            <summary>
+            Gets or sets the physical module this scenario belongs to.
+            </summary>
+        </member>
+        <member name="P:ASL.Scenario.ScenarioSides">
+            <summary>
+            Gets or sets the scenario sides for the scenario. Must at least contain
+            an attacker and a defender.
+            </summary>
+        </member>
+        <member name="P:ASL.Scenario.AttackerSide">
+            <summary>
+            Gets the side designated as the Attacker.
+            </summary>
+        </member>
+        <member name="P:ASL.Scenario.DefenderSide">
+            <summary>
+            Gets the side designated as the Defender.
+            </summary>
+        </member>
+        <member name="P:ASL.Scenario.Turns">
+            <summary>
+            Gets or sets the number of turns for the scenario.
+            </summary>
+        </member>
+        <member name="P:ASL.Scenario.HasHalfTurn">
+            <summary>
+            Gets or sets a value indicating whether the final turn is a half-turn (only the first player acts).
+            </summary>
+        </member>
+        <member name="P:ASL.Scenario.MagneticNorth">
+            <summary>
+            Defines which physical direction on the global map represents 
+            Magnetic North for ASL rules (Wind, Drift, Random Direction, etc).
+            </summary>
+        </member>
+        <member name="T:ASL.ScenarioDescription">
+            <summary>
+            Contains the historical context of a scenario, divided into location, date, and description.
+            </summary>
+        </member>
+        <member name="P:ASL.ScenarioDescription.Place">
+            <summary>
+            Gets or sets the geographical location where the scenario takes place.
+            </summary>
+        </member>
+        <member name="P:ASL.ScenarioDescription.Date">
+            <summary>
+            Gets or sets the textual representation of the date (e.g., "May 1940").
+            </summary>
+        </member>
+        <member name="P:ASL.ScenarioDescription.PreciseDate">
+            <summary>
+            Gets or sets a specific <see cref="T:System.DateTime"/> for rules processing if applicable.
+            </summary>
+        </member>
+        <member name="P:ASL.ScenarioDescription.DescriptionText">
+            <summary>
+            Gets or sets the detailed historical narrative of the events.
+            </summary>
+        </member>
+        <member name="P:ASL.ScenarioDescription.Aftermath">
+            <summary>
+            Gets or sets the textual description of the historical outcome/aftermath.
+            </summary>
+        </member>
+        <member name="M:ASL.ScenarioDescription.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:ASL.ScenarioDescription"/> class.
+            </summary>
+        </member>
+        <member name="M:ASL.ScenarioDescription.#ctor(System.String,System.String,System.String,System.String,System.Nullable{System.DateTime})">
+            <summary>
+            Initializes a new instance of the <see cref="T:ASL.ScenarioDescription"/> class with specified values.
+            </summary>
+        </member>
+        <member name="T:ASL.TerrainType">
+            <summary>
+            Specifies the type of terrain in a hex.
+            </summary>
+        </member>
+        <member name="F:ASL.TerrainType.OpenGround">
+            <summary>Clear terrain with no modifiers.</summary>
+        </member>
+        <member name="F:ASL.TerrainType.Woods">
+            <summary>Densely wooded area.</summary>
+        </member>
+        <member name="F:ASL.TerrainType.Orchard">
+            <summary>Area with scattered trees.</summary>
+        </member>
+        <member name="F:ASL.TerrainType.Grain">
+            <summary>Agricultural crops.</summary>
+        </member>
+        <member name="F:ASL.TerrainType.Brush">
+            <summary>Low, scrubby vegetation.</summary>
+        </member>
+        <member name="F:ASL.TerrainType.Building">
+            <summary>A generic building.</summary>
+        </member>
+        <member name="F:ASL.TerrainType.StoneBuilding">
+            <summary>A sturdy stone structure.</summary>
+        </member>
+        <member name="F:ASL.TerrainType.WoodenBuilding">
+            <summary>A lighter wooden structure.</summary>
+        </member>
+        <member name="F:ASL.TerrainType.Road">
+            <summary>A primary or secondary road.</summary>
+        </member>
+        <member name="F:ASL.TerrainType.Water">
+            <summary>A body of water.</summary>
+        </member>
+        <member name="F:ASL.TerrainType.Marsh">
+            <summary>A swampy or marshy area.</summary>
+        </member>
+    </members>
+</doc>

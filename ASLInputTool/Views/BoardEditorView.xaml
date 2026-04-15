@@ -26,8 +26,12 @@
         <!-- Toolbar -->
         <Border Grid.Row="0" Grid.ColumnSpan="2" Background="{StaticResource ControlBorderBrush}" Padding="10">
             <StackPanel Orientation="Horizontal">
-                <Button Content="Zoom In" Margin="0,0,10,0" Padding="10,5"/>
-                <Button Content="Zoom Out" Margin="0,0,10,0" Padding="10,5"/>
+                <RadioButton Content="Zoom In" IsChecked="{Binding CurrentTool, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=ZoomIn}" 
+                             Style="{StaticResource {x:Type ToggleButton}}" Padding="10,5" Margin="0,0,5,0"/>
+                <RadioButton Content="Zoom Out" IsChecked="{Binding CurrentTool, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=ZoomOut}" 
+                             Style="{StaticResource {x:Type ToggleButton}}" Padding="10,5" Margin="0,0,5,0"/>
+                <Button Content="Reset Zoom" Command="{Binding ResetZoomCommand}" Margin="0,0,5,0" Padding="10,5"/>
+                <TextBlock Text="{Binding ZoomLevel, StringFormat={}{0:P0}}" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="Gray" FontWeight="Bold"/>
                 <Separator Margin="10,0"/>
                 <RadioButton Content="Select" IsChecked="{Binding CurrentTool, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Select}" 
                              Style="{StaticResource {x:Type ToggleButton}}" Padding="10,5" Margin="0,0,5,0"/>
@@ -39,9 +43,14 @@
         </Border>
 
         <!-- Canvas Area -->
-        <ScrollViewer Grid.Row="1" Grid.Column="0" Background="{StaticResource WindowBackgroundBrush}" 
-                       HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-            <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Margin="50">
+        <ScrollViewer x:Name="BoardScrollViewer" Grid.Row="1" Grid.Column="0" Background="{StaticResource WindowBackgroundBrush}" 
+                       HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
+                       PreviewMouseWheel="OnBoardMouseWheel"
+                       PreviewMouseDown="OnBoardMouseDown">
+            <Grid x:Name="ZoomContainer" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="50">
+                <Grid.LayoutTransform>
+                    <ScaleTransform ScaleX="{Binding ZoomLevel}" ScaleY="{Binding ZoomLevel}" />
+                </Grid.LayoutTransform>
                 <Border CornerRadius="2">
                     <Border.Effect>
                         <DropShadowEffect BlurRadius="15" Direction="-45" RenderingBias="Quality" ShadowDepth="5" Opacity="0.3"/>
@@ -51,7 +60,8 @@
                         <ItemsControl ItemsSource="{Binding Hexes}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <Canvas x:Name="EditorCanvas" Width="{Binding ActualGridWidth}" Height="{Binding ActualGridHeight}" Background="White" ClipToBounds="True" />
+                                    <Canvas x:Name="EditorCanvas" Width="{Binding ActualGridWidth}" Height="{Binding ActualGridHeight}" Background="White" ClipToBounds="True">
+                                    </Canvas>
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemContainerStyle>

@@ -225,7 +225,7 @@ public class BoardsViewModel : CrudViewModelBase<AslBoard>, IInitializeableFromR
         var openFileDialog = new OpenFileDialog
         {
             Title = "Select Board Image",
-            Filter = "Image Files|*.png;*.jpg;*.jpeg;*.bmp|All Files|*.*"
+            Filter = "Image Files|*.png;*.jpg;*.jpeg;*.bmp;*.gif|All Files|*.*"
         };
 
         if (openFileDialog.ShowDialog() == true)

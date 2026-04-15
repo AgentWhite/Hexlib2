@@ -20,6 +20,7 @@ public class BoardEditorViewModel : ViewModelBase
     private HexEdgeSelection? _selectedEdge;
     private ToolMode _currentTool = ToolMode.Select;
     private TerrainType _activeTerrain = TerrainType.OpenGround;
+    private double _zoomLevel = 1.0;
     private ObservableCollection<HexViewModel> _hexes = new();
 
     /// <summary>
@@ -103,6 +104,15 @@ public class BoardEditorViewModel : ViewModelBase
     }
 
     /// <summary>
+    /// Gets or sets the current zoom scale.
+    /// </summary>
+    public double ZoomLevel
+    {
+        get => _zoomLevel;
+        set => SetProperty(ref _zoomLevel, Math.Max(0.1, Math.Min(10.0, value)));
+    }
+
+    /// <summary>
     /// Gets all available terrain types for selection.
     /// </summary>
     public Array AvailableTerrainTypes => Enum.GetValues(typeof(TerrainType));
@@ -128,6 +138,11 @@ public class BoardEditorViewModel : ViewModelBase
     public ICommand SaveCommand { get; }
 
     /// <summary>
+    /// Command to reset zoom to 100%.
+    /// </summary>
+    public ICommand ResetZoomCommand { get; }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="BoardEditorViewModel"/> class.
     /// </summary>
     /// <param name="board">The board to edit.</param>
@@ -140,6 +155,7 @@ public class BoardEditorViewModel : ViewModelBase
         SelectHexCommand = new RelayCommand<HexViewModel>(OnSelectHex);
         PaintHexCommand = new RelayCommand<HexViewModel>(OnPaintHex);
         SaveCommand = new RelayCommand(OnSave);
+        ResetZoomCommand = new RelayCommand(_ => ZoomLevel = 1.0);
         
         RecalculateHexSize();
         GenerateHexGrid();
