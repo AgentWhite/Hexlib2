@@ -79,12 +79,20 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Canvas>
-                                        <!-- Base Layer (Elevation framing) -->
-                                        <Path Data="{Binding Points}" Stroke="Black" StrokeThickness="1"
-                                              Fill="{Binding Elevation, Converter={StaticResource ElevationColorConverter}}">
+                                        <!-- Base Layer (Full Hex) -->
+                                        <!-- Shows Elevation frame if elevated, or Terrain color if at level 0 -->
+                                        <Path Data="{Binding Points}">
                                             <Path.Style>
                                                 <Style TargetType="Path">
+                                                    <Setter Property="Stroke" Value="Black"/>
+                                                    <Setter Property="StrokeThickness" Value="1"/>
+                                                    <Setter Property="Fill" Value="{Binding Elevation, Converter={StaticResource ElevationColorConverter}}"/>
                                                     <Style.Triggers>
+                                                        <!-- If not elevated, show Terrain color -->
+                                                        <DataTrigger Binding="{Binding IsElevated}" Value="False">
+                                                            <Setter Property="Fill" Value="{Binding Terrain, Converter={StaticResource TerrainColorConverter}}"/>
+                                                        </DataTrigger>
+                                                        <!-- Selection Border -->
                                                         <DataTrigger Binding="{Binding IsSelected}" Value="True">
                                                             <Setter Property="Stroke" Value="#FFFF6666"/>
                                                             <Setter Property="StrokeThickness" Value="3"/>
@@ -92,24 +100,6 @@
                                                     </Style.Triggers>
                                                 </Style>
                                             </Path.Style>
-                                        </Path>
-
-                                        <!-- Terrain Layer (Inner Hex) -->
-                                        <Path Data="{Binding InnerPoints}" IsHitTestVisible="False"
-                                              Fill="{Binding Terrain, Converter={StaticResource TerrainColorConverter}}">
-                                            <Path.Style>
-                                                <Style TargetType="Path">
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsElevated}" Value="False">
-                                                            <Setter Property="Visibility" Value="Collapsed"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Path.Style>
-                                        </Path>
-
-                                        <!-- Transparent Hitbox Path (for selection and mouse interaction) -->
-                                        <Path Data="{Binding Points}" Fill="Transparent" Stroke="Transparent">
                                             <Path.InputBindings>
                                                 <MouseBinding MouseAction="LeftClick" 
                                                               Command="{Binding DataContext.SelectHexCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
@@ -124,6 +114,21 @@
                                                     </StackPanel>
                                                 </ToolTip>
                                             </Path.ToolTip>
+                                        </Path>
+
+                                        <!-- Terrain Layer (Inner Hex) -->
+                                        <!-- Only visible if elevated, to show terrain inside the elevation frame -->
+                                        <Path Data="{Binding InnerPoints}" IsHitTestVisible="False"
+                                              Fill="{Binding Terrain, Converter={StaticResource TerrainColorConverter}}">
+                                            <Path.Style>
+                                                <Style TargetType="Path">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsElevated}" Value="False">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Path.Style>
                                         </Path>
 
                                         <!-- Integrated Building Square -->
