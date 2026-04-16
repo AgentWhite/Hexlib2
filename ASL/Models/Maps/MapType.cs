@@ -10,6 +10,15 @@ public enum MapType
     /// </summary>
     Standard,
 
+    /// <summary>Geomorphic half-board (10x17 hexes).</summary>
+    HalfBoard,
+
+    /// <summary>Bonus Pack board (17x20 hexes).</summary>
+    BonusPack,
+
+    /// <summary>Starter Pack board (17x22 hexes).</summary>
+    StarterPack,
+
     /// <summary>
     /// A board with non-standard dimensions or half-hex configurations.
     /// </summary>

@@ -9,14 +9,20 @@ namespace ASL;
 public class AslBoard
 {
     private Board<ASLHexMetadata, ASLEdgeData> _board;
+    private string _name = string.Empty;
+    private bool _isFirstColShiftedDown = true;
 
     /// <summary>
     /// Gets or sets the name/identifier of the map (e.g., "1", "4", "62").
     /// </summary>
     public string Name 
     { 
-        get => Board.Name; 
-        set => Board.Name = value; 
+        get => _name; 
+        set 
+        { 
+            _name = value; 
+            if (_board != null) _board.Name = value; 
+        } 
     }
 
     /// <summary>
@@ -24,10 +30,17 @@ public class AslBoard
     /// </summary>
     public MapType Type { get; set; } = MapType.Standard;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the first column (A) is shifted down relative to the second (B).
+    /// </summary>
     public bool IsFirstColShiftedDown
     {
-        get => !Board.ShiftingOddColumns;
-        set => Board.ShiftingOddColumns = !value;
+        get => _isFirstColShiftedDown;
+        set
+        {
+            _isFirstColShiftedDown = value;
+            if (_board != null) _board.ShiftingOddColumns = !value;
+        }
     }
 
     /// <summary>
@@ -112,23 +125,43 @@ public class AslBoard
     /// </summary>
     public void PopulateBoard()
     {
-        // Re-initialize board if dimensions or properties have changed
-        if (_board.Width != Width || _board.Height != Height || _board.TopOrientation != HexTopOrientation.FlatTopped)
-        {
-            _board = new Board<ASLHexMetadata, ASLEdgeData>(Width, Height, HexTopOrientation.FlatTopped);
-            _board.Name = Name;
-        }
-
-        // Set HalfHexSides for Standard boards (8"x22", 33 columns A-GG, 10 rows 1-10)
-        // Standard boards are halved at A/GG and Top/Bottom (High cols halved).
+        // Set Presets for Standard maps BEFORE re-initializing board.
+        // For HalfBoard, we allow user to override Width/Height, so we only set defaults in VM or if zero.
         if (Type == MapType.Standard)
         {
+            Width = 33;
+            Height = 10;
             IsFirstColShiftedDown = true;
             IsTopRowHalf = true;
             IsBottomRowHalf = true;
             IsLeftEdgeHalf = true;
             IsRightEdgeHalf = true;
         }
+        else if (Type == MapType.HalfBoard || Type == MapType.BonusPack || Type == MapType.StarterPack)
+        {
+            // Fix these categories as requested. Standard is already hardcoded above.
+            Width = 17; // All are 17 wide
+            
+            if (Type == MapType.HalfBoard) Height = 10;
+            else if (Type == MapType.BonusPack) Height = 20;
+            else if (Type == MapType.StarterPack) Height = 22;
+
+            // Always default to halved edges as they are geomorphic
+            IsTopRowHalf = true;
+            IsBottomRowHalf = true;
+            IsLeftEdgeHalf = true;
+            IsRightEdgeHalf = true;
+        }
+
+        // Re-initialize board if dimensions or properties have changed
+        if (_board == null || _board.Width != Width || _board.Height != Height || _board.TopOrientation != HexTopOrientation.FlatTopped)
+        {
+            _board = new Board<ASLHexMetadata, ASLEdgeData>(Width, Height, HexTopOrientation.FlatTopped);
+        }
+        
+        // Sync properties that the internal board tracks
+        _board.Name = Name;
+        _board.ShiftingOddColumns = !IsFirstColShiftedDown;
 
         // Apply HalfHexSides to underlying board
         _board.HalfHexSides = BoardEdge.None;

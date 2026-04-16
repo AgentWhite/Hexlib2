@@ -73,7 +73,11 @@
      
                         <StackPanel Grid.Column="1" Margin="10,0,10,0">
                             <Label Content="Board Type" FontWeight="SemiBold"/>
-                            <ComboBox ItemsSource="{Binding AvailableBoardTypes}" SelectedItem="{Binding Type}" Padding="5"/>
+                            <ComboBox ItemsSource="{Binding AvailableBoardTypes}" 
+                                      SelectedValue="{Binding Type}" 
+                                      SelectedValuePath="Type" 
+                                      DisplayMemberPath="Name" 
+                                      Padding="5"/>
                         </StackPanel>
      
                         <StackPanel Grid.Column="2" Margin="10,0,10,0" Visibility="{Binding IsDimensionsVisible, Converter={StaticResource BoolToVis}}">

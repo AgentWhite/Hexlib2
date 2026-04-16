@@ -84,10 +84,13 @@ public class BoardsViewModel : CrudViewModelBase<AslBoard>, IInitializeableFromR
             if (SetProperty(ref _type, value))
             {
                 OnPropertyChanged(nameof(IsDimensionsVisible));
-                if (value == MapType.Standard)
+                if (value == MapType.Standard || value == MapType.HalfBoard || value == MapType.BonusPack || value == MapType.StarterPack)
                 {
-                    Width = 33;
-                    Height = 10;
+                    Width = (value == MapType.Standard) ? 33 : 17;
+                    if (value == MapType.Standard || value == MapType.HalfBoard) Height = 10;
+                    else if (value == MapType.BonusPack) Height = 20;
+                    else if (value == MapType.StarterPack) Height = 22;
+
                     IsFirstColShiftedDown = true;
                     IsTopRowHalf = true;
                     IsBottomRowHalf = true;
@@ -114,12 +117,20 @@ public class BoardsViewModel : CrudViewModelBase<AslBoard>, IInitializeableFromR
     /// <summary>
     /// Gets a value indicating whether the dimensions are visible for the current board type.
     /// </summary>
-    public bool IsDimensionsVisible => Type != MapType.Standard;
+    public bool IsDimensionsVisible => Type == MapType.NonStandard || Type == MapType.StandAlone;
 
     /// <summary>
-    /// Gets the list of available board types.
+    /// Gets the list of available board types with display-friendly names.
     /// </summary>
-    public ObservableCollection<MapType> AvailableBoardTypes { get; } = new(Enum.GetValues<MapType>());
+    public ObservableCollection<BoardTypeDisplay> AvailableBoardTypes { get; } = new()
+    {
+        new BoardTypeDisplay(MapType.Standard, "Standard"),
+        new BoardTypeDisplay(MapType.HalfBoard, "Half Board"),
+        new BoardTypeDisplay(MapType.BonusPack, "Bonus Pack"),
+        new BoardTypeDisplay(MapType.StarterPack, "Starter Pack"),
+        new BoardTypeDisplay(MapType.NonStandard, "Non-Standard"),
+        new BoardTypeDisplay(MapType.StandAlone, "Stand Alone")
+    };
 
     /// <summary>
     /// Gets or sets the canvas width.
@@ -312,6 +323,10 @@ public class BoardsViewModel : CrudViewModelBase<AslBoard>, IInitializeableFromR
         CanvasWidth = item.CanvasWidth;
         CanvasHeight = item.CanvasHeight;
         IsFirstColShiftedDown = item.IsFirstColShiftedDown;
+        IsTopRowHalf = item.IsTopRowHalf;
+        IsBottomRowHalf = item.IsBottomRowHalf;
+        IsLeftEdgeHalf = item.IsLeftEdgeHalf;
+        IsRightEdgeHalf = item.IsRightEdgeHalf;
         Editor = null;
     }
 
@@ -376,4 +391,21 @@ public class BoardsViewModel : CrudViewModelBase<AslBoard>, IInitializeableFromR
 
     /// <inheritdoc />
     protected override void OnItemRemoved(AslBoard item) => _repository.Remove(item);
+}
+
+/// <summary>
+/// Helper class to display enum values with friendly names in the UI.
+/// </summary>
+public class BoardTypeDisplay
+{
+    public MapType Type { get; }
+    public string Name { get; }
+
+    public BoardTypeDisplay(MapType type, string name)
+    {
+        Type = type;
+        Name = name;
+    }
+
+    public override string ToString() => Name;
 }
