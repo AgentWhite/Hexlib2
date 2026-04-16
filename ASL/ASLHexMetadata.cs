@@ -13,6 +13,9 @@ public class ASLHexMetadata
     public int Elevation { get; set; } = 0; // Level 0, 1, 2...
     
     // Additional ASL features
-    /// <summary>Gets or sets a value indicating whether this hex contains a sewer connection.</summary>
-    public bool HasSewer { get; set; }
+    /// <summary>Gets or sets a value indicating whether this hex contains a manhole cover.</summary>
+    public bool HasManhole { get; set; }
+
+    /// <summary>Gets or sets a value indicating whether this hex contains a stairwell.</summary>
+    public bool HasStairwell { get; set; }
 }

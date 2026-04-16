@@ -109,6 +109,24 @@ public class HexViewModel : ViewModelBase
     public Action? OnTerrainChanged { get; set; }
 
     /// <summary>
+    /// Gets or sets a value indicating whether this hex has a manhole cover.
+    /// </summary>
+    public bool HasManhole
+    {
+        get => _metadata.HasManhole;
+        set { _metadata.HasManhole = value; OnPropertyChanged(); }
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether this hex has a stairwell.
+    /// </summary>
+    public bool HasStairwell
+    {
+        get => _metadata.HasStairwell;
+        set { _metadata.HasStairwell = value; OnPropertyChanged(); }
+    }
+
+    /// <summary>
     /// Gets or sets the terrain type for this hex.
     /// </summary>
     public TerrainType Terrain
@@ -119,6 +137,13 @@ public class HexViewModel : ViewModelBase
             if (_metadata.Terrain != value)
             {
                 _metadata.Terrain = value; 
+                
+                // Stairwells only exist in buildings
+                if (value != TerrainType.StoneBuilding && value != TerrainType.WoodenBuilding)
+                {
+                    HasStairwell = false;
+                }
+
                 OnPropertyChanged(); 
                 OnPropertyChanged(nameof(BuildingSquareVisibility));
                 OnPropertyChanged(nameof(BuildingSquareFill));

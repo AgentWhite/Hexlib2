@@ -13,7 +13,12 @@ namespace ASLInputTool.Converters
         {
             if (value is double coordinate)
             {
-                return coordinate - 20.0;
+                double offset = -20.0;
+                if (parameter != null && double.TryParse(parameter.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out double p))
+                {
+                    offset = p;
+                }
+                return coordinate + offset;
             }
             return value;
         }
