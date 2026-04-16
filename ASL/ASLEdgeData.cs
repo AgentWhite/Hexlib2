@@ -41,4 +41,7 @@ public class ASLEdgeData
 
     /// <summary>Gets or sets a value indicating whether there is a cliff on this hexside.</summary>
     public bool HasCliff { get; set; }
+
+    /// <summary>Gets or sets a value indicating whether there is a path crossing this hexside.</summary>
+    public bool HasPath { get; set; }
 }

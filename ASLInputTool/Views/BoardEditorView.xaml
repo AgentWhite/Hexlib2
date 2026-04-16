@@ -138,6 +138,27 @@
                                                    Stroke="Black" StrokeThickness="1"
                                                    Visibility="{Binding BuildingSquareVisibility}"
                                                    IsHitTestVisible="False" />
+
+                                        <!-- Graveyard Markers (Headstones) -->
+                                        <Canvas Width="{Binding HexSize}" Height="{Binding HexSize}" 
+                                                Canvas.Left="{Binding CenterX, Converter={StaticResource CenterOffsetConverter}, ConverterParameter=0.5}"
+                                                Canvas.Top="{Binding CenterY, Converter={StaticResource CenterOffsetConverter}, ConverterParameter=0.5}"
+                                                IsHitTestVisible="False">
+                                            <Canvas.Style>
+                                                <Style TargetType="Canvas">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsGraveyard}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Canvas.Style>
+                                            <Rectangle Width="6" Height="8" Fill="WhiteSmoke" Stroke="Gray" Canvas.Left="5" Canvas.Top="10"/>
+                                            <Rectangle Width="6" Height="8" Fill="WhiteSmoke" Stroke="Gray" Canvas.Left="20" Canvas.Top="5"/>
+                                            <Rectangle Width="6" Height="8" Fill="WhiteSmoke" Stroke="Gray" Canvas.Left="12" Canvas.Top="20"/>
+                                            <Rectangle Width="6" Height="8" Fill="WhiteSmoke" Stroke="Gray" Canvas.Left="26" Canvas.Top="15"/>
+                                        </Canvas>
                                         
                                         <!-- Hotspot for Drag-to-Paint -->
                                         <Border Width="{Binding HexSize}" Height="{Binding HexSize}" 
@@ -280,10 +301,29 @@
                                     <Path Data="{Binding Data}" Stroke="{Binding Stroke}" StrokeThickness="{Binding Thickness}"
                                           StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
                                 </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
 
-                        <!-- Road Visuals -->
+                            <!-- Hexside Terrain Layer (Walls, Hedges) -->
+                            <ItemsControl ItemsSource="{Binding HexsideTerrainVisuals}" Panel.ZIndex="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <Canvas IsHitTestVisible="False"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Line X1="{Binding P1.X}" Y1="{Binding P1.Y}" 
+                                              X2="{Binding P2.X}" Y2="{Binding P2.Y}" 
+                                              Stroke="{Binding Stroke}" 
+                                              StrokeThickness="{Binding Thickness}" 
+                                              StrokeDashArray="{Binding DashArray}"
+                                              StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <!-- Road Visuals -->
                         <ItemsControl ItemsSource="{Binding RoadVisuals}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -393,6 +433,7 @@
                         <CheckBox Content="Bocage" IsChecked="{Binding HasBocage}" Margin="0,5"/>
                         <CheckBox Content="Paved Road" IsChecked="{Binding HasPavedRoad}" Margin="0,5"/>
                         <CheckBox Content="Dirt Road" IsChecked="{Binding HasDirtRoad}" Margin="0,5"/>
+                        <CheckBox Content="Path" IsChecked="{Binding HasPath}" Margin="0,5"/>
                         <CheckBox Content="House" IsChecked="{Binding HasHouse}" IsEnabled="{Binding IsHouseConnectionAvailable}" Margin="0,5"/>
                         <CheckBox Content="Rowhouse" IsChecked="{Binding IsRowhouse}" IsEnabled="{Binding IsHouseConnectionAvailable}" Margin="0,5"/>
                         <Separator Margin="0,5"/>

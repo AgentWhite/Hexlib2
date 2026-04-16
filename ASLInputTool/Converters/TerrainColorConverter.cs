@@ -37,6 +37,8 @@ public class TerrainColorConverter : IValueConverter
                     return new SolidColorBrush(Color.FromRgb(70, 130, 180));    // Steel blue
                 case TerrainType.Marsh:
                     return new SolidColorBrush(Color.FromRgb(85, 107, 47));       // Dark olive green
+                case TerrainType.Graveyard:
+                    return new SolidColorBrush(Color.FromRgb(27, 58, 27));      // Dark Forest Green
                 default:
                     return Brushes.LightGray;
             }

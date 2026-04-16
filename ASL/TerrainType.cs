@@ -25,5 +25,7 @@ public enum TerrainType
     /// <summary>A body of water.</summary>
     Water,
     /// <summary>A swampy or marshy area.</summary>
-    Marsh
+    Marsh,
+    /// <summary>A place of burial.</summary>
+    Graveyard
 }

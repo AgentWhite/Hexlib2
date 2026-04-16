@@ -27,6 +27,7 @@ public partial class BoardEditorViewModel : ViewModelBase
     private ObservableCollection<RoadVisualViewModel> _waterVisuals = new();
     private ObservableCollection<BuildingVisualBase> _buildingVisuals = new();
     private ObservableCollection<CliffVisualViewModel> _cliffVisuals = new();
+    private ObservableCollection<HexsideTerrainVisualViewModel> _hexsideTerrainVisuals = new();
     private bool _isUpdatingVisuals = false;
 
     /// <summary>
@@ -41,6 +42,15 @@ public partial class BoardEditorViewModel : ViewModelBase
     {
         get => _buildingVisuals;
         set => SetProperty(ref _buildingVisuals, value);
+    }
+
+    /// <summary>
+    /// Gets the collection of hexside terrain visuals (walls, hedges).
+    /// </summary>
+    public ObservableCollection<HexsideTerrainVisualViewModel> HexsideTerrainVisuals
+    {
+        get => _hexsideTerrainVisuals;
+        set => SetProperty(ref _hexsideTerrainVisuals, value);
     }
 
     /// <summary>
@@ -286,6 +296,7 @@ public partial class BoardEditorViewModel : ViewModelBase
         UpdateRoadVisuals();
         UpdateBuildingVisuals();
         UpdateCliffVisuals();
+        UpdateHexsideTerrainVisuals();
     }
 
     private void SetEdgeVisualSelection(HexViewModel hex, int edgeIndex, bool isSelected)
@@ -500,6 +511,16 @@ public partial class BoardEditorViewModel : ViewModelBase
                         Thickness = 6.0
                     });
                 }
+                if (edgeData.HasPath)
+                {
+                    _roadVisuals.Add(new RoadVisualViewModel
+                    {
+                        X1 = hexVm.CenterX, Y1 = hexVm.CenterY,
+                        X2 = destPoint.X, Y2 = destPoint.Y,
+                        Stroke = new SolidColorBrush(Color.FromRgb(120, 80, 40)), // Darker brown for thin path
+                        Thickness = 2.0
+                    });
+                }
             }
         }
     }
@@ -675,19 +696,34 @@ public class HexsideViewModel : ViewModelBase
     public bool HasWall
     {
         get => _data.HasWall;
-        set { _data.HasWall = value; OnPropertyChanged(); }
+        set 
+        { 
+            _data.HasWall = value; 
+            OnPropertyChanged(); 
+            _onChanged?.Invoke();
+        }
     }
 
     public bool HasHedge
     {
         get => _data.HasHedge;
-        set { _data.HasHedge = value; OnPropertyChanged(); }
+        set 
+        { 
+            _data.HasHedge = value; 
+            OnPropertyChanged(); 
+            _onChanged?.Invoke();
+        }
     }
 
     public bool HasBocage
     {
         get => _data.HasBocage;
-        set { _data.HasBocage = value; OnPropertyChanged(); }
+        set 
+        { 
+            _data.HasBocage = value; 
+            OnPropertyChanged(); 
+            _onChanged?.Invoke();
+        }
     }
 
     public bool HasPavedRoad
@@ -707,6 +743,17 @@ public class HexsideViewModel : ViewModelBase
         set 
         { 
             _data.HasDirtRoad = value; 
+            OnPropertyChanged(); 
+            _onChanged?.Invoke();
+        }
+    }
+
+    public bool HasPath
+    {
+        get => _data.HasPath;
+        set 
+        { 
+            _data.HasPath = value; 
             OnPropertyChanged(); 
             _onChanged?.Invoke();
         }
@@ -853,5 +900,55 @@ public partial class BoardEditorViewModel
         }
         stream.Freeze();
         return stream;
+    }
+
+    private void UpdateHexsideTerrainVisuals()
+    {
+        var newList = new ObservableCollection<HexsideTerrainVisualViewModel>();
+        var processedEdges = new HashSet<(CubeCoordinate, CubeCoordinate)>();
+
+        foreach (var hexVm in _hexes)
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                var neighborLoc = hexVm.Location.GetNeighbor(i);
+                var edgeKey = NormalizeEdge(hexVm.Location, neighborLoc);
+                if (processedEdges.Contains(edgeKey)) continue;
+                processedEdges.Add(edgeKey);
+
+                var edgeData = _board.Board.GetEdgeData(hexVm.Location, neighborLoc);
+                if (edgeData != null)
+                {
+                    // Map direction index to visual hex corners
+                    int edgeIndex = i switch
+                    {
+                        0 => 0, // SE
+                        5 => 1, // S
+                        4 => 2, // SW
+                        3 => 3, // NW
+                        2 => 4, // N
+                        1 => 5, // NE
+                        _ => 0
+                    };
+
+                    var p1 = hexVm.HexCorners[edgeIndex];
+                    var p2 = hexVm.HexCorners[(edgeIndex + 1) % 6];
+
+                    if (edgeData.HasWall)
+                    {
+                        newList.Add(new HexsideTerrainVisualViewModel(p1, p2, Brushes.Gray, 5.0));
+                    }
+                    if (edgeData.HasHedge)
+                    {
+                        newList.Add(new HexsideTerrainVisualViewModel(p1, p2, Brushes.ForestGreen, 5.0));
+                    }
+                    if (edgeData.HasBocage)
+                    {
+                        newList.Add(new HexsideTerrainVisualViewModel(p1, p2, Brushes.DarkGreen, 8.0));
+                    }
+                }
+            }
+        }
+        HexsideTerrainVisuals = newList;
     }
 }

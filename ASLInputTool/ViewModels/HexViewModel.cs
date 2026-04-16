@@ -122,6 +122,7 @@ public class HexViewModel : ViewModelBase
                 OnPropertyChanged(); 
                 OnPropertyChanged(nameof(BuildingSquareVisibility));
                 OnPropertyChanged(nameof(BuildingSquareFill));
+                OnPropertyChanged(nameof(IsGraveyard));
                 OnTerrainChanged?.Invoke();
             }
         }
@@ -141,6 +142,11 @@ public class HexViewModel : ViewModelBase
     /// Gets the dimension of the building square.
     /// </summary>
     public double BuildingSquareSize => HexSize * 0.5;
+
+    /// <summary>
+    /// Gets a value indicating whether this hex is a graveyard.
+    /// </summary>
+    public bool IsGraveyard => Terrain == TerrainType.Graveyard;
 
     /// <summary>
     /// Gets the X coordinate of the top-left corner of the building square.
