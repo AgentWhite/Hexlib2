@@ -44,6 +44,16 @@ public class HexViewModel : ViewModelBase
     public string Id { get; set; } = string.Empty;
 
     /// <summary>
+    /// Gets the X coordinate of the hex center.
+    /// </summary>
+    public double CenterX { get; }
+
+    /// <summary>
+    /// Gets the Y coordinate of the hex center.
+    /// </summary>
+    public double CenterY { get; }
+
+    /// <summary>
     /// Gets or sets the X position for the coordinate label.
     /// </summary>
     public double LabelX { get; set; }
@@ -94,13 +104,53 @@ public class HexViewModel : ViewModelBase
     public bool IsEdge5Selected { get => _isEdge5Selected; set => SetProperty(ref _isEdge5Selected, value); }
 
     /// <summary>
+    /// Callback invoked when the terrain type changes.
+    /// </summary>
+    public Action? OnTerrainChanged { get; set; }
+
+    /// <summary>
     /// Gets or sets the terrain type for this hex.
     /// </summary>
     public TerrainType Terrain
     {
         get => _metadata.Terrain;
-        set { _metadata.Terrain = value; OnPropertyChanged(); }
+        set 
+        { 
+            if (_metadata.Terrain != value)
+            {
+                _metadata.Terrain = value; 
+                OnPropertyChanged(); 
+                OnPropertyChanged(nameof(BuildingSquareVisibility));
+                OnPropertyChanged(nameof(BuildingSquareFill));
+                OnTerrainChanged?.Invoke();
+            }
+        }
     }
+
+    /// <summary>
+    /// Gets the visibility of the building square for this hex.
+    /// </summary>
+    public Visibility BuildingSquareVisibility => (Terrain == TerrainType.StoneBuilding || Terrain == TerrainType.WoodenBuilding) ? Visibility.Visible : Visibility.Collapsed;
+
+    /// <summary>
+    /// Gets the brush for the building square for this hex.
+    /// </summary>
+    public Brush BuildingSquareFill => Terrain == TerrainType.StoneBuilding ? Brushes.DimGray : Brushes.SaddleBrown;
+
+    /// <summary>
+    /// Gets the dimension of the building square.
+    /// </summary>
+    public double BuildingSquareSize => HexSize * 0.5;
+
+    /// <summary>
+    /// Gets the X coordinate of the top-left corner of the building square.
+    /// </summary>
+    public double BuildingSquareX => CenterX - (BuildingSquareSize / 2.0);
+
+    /// <summary>
+    /// Gets the Y coordinate of the top-left corner of the building square.
+    /// </summary>
+    public double BuildingSquareY => CenterY - (BuildingSquareSize / 2.0);
 
     /// <summary>
     /// Gets or sets the elevation level for this hex.
@@ -119,7 +169,7 @@ public class HexViewModel : ViewModelBase
     /// <summary>
     /// Initializes a new instance of the <see cref="HexViewModel"/> class.
     /// </summary>
-    public HexViewModel(int col, int row, CubeCoordinate location, string points, Point[] corners, string id, double lx, double ly, double size, ASLHexMetadata metadata, Action<HexViewModel, int> onSelectEdge)
+    public HexViewModel(int col, int row, CubeCoordinate location, string points, Point[] corners, string id, double cx, double cy, double ly, double size, ASLHexMetadata metadata, Action<HexViewModel, int> onSelectEdge)
     {
         Column = col;
         Row = row;
@@ -127,7 +177,9 @@ public class HexViewModel : ViewModelBase
         Points = points;
         HexCorners = corners;
         Id = id;
-        LabelX = lx;
+        CenterX = cx;
+        CenterY = cy;
+        LabelX = cx; // Usually labels are centered on X
         LabelY = ly;
         HexSize = size;
         _metadata = metadata;

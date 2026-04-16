@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:c="clr-namespace:ASLInputTool.Converters"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:vms="clr-namespace:ASLInputTool.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="700" d:DesignWidth="1100">
     <UserControl.Resources>
@@ -12,6 +13,7 @@
         <c:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
         <c:CenterOffsetConverter x:Key="CenterOffsetConverter" />
         <c:TerrainColorConverter x:Key="TerrainColorConverter" />
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </UserControl.Resources>
     <Grid Background="{StaticResource WindowBackgroundBrush}">
         <Grid.RowDefinitions>
@@ -108,6 +110,14 @@
                                                 </ToolTip>
                                             </Path.ToolTip>
                                         </Path>
+
+                                        <!-- Integrated Building Square -->
+                                        <Rectangle Width="{Binding BuildingSquareSize}" Height="{Binding BuildingSquareSize}"
+                                                   Canvas.Left="{Binding BuildingSquareX}" Canvas.Top="{Binding BuildingSquareY}"
+                                                   Fill="{Binding BuildingSquareFill}"
+                                                   Stroke="Black" StrokeThickness="1"
+                                                   Visibility="{Binding BuildingSquareVisibility}"
+                                                   IsHitTestVisible="False" />
                                         
                                         <!-- Hotspot for Drag-to-Paint -->
                                         <Border Width="{Binding HexSize}" Height="{Binding HexSize}" 
@@ -220,8 +230,76 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                         
+                        <!-- Water Visuals (Streams, Gullies, Canals) -->
+                        <ItemsControl ItemsSource="{Binding WaterVisuals}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Canvas IsHitTestVisible="False"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Line X1="{Binding X1}" Y1="{Binding Y1}" 
+                                          X2="{Binding X2}" Y2="{Binding Y2}" 
+                                          Stroke="{Binding Stroke}" 
+                                          StrokeThickness="{Binding Thickness}" 
+                                          StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <!-- Road Visuals -->
+                        <ItemsControl ItemsSource="{Binding RoadVisuals}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Canvas IsHitTestVisible="False"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Line X1="{Binding X1}" Y1="{Binding Y1}" 
+                                          X2="{Binding X2}" Y2="{Binding Y2}" 
+                                          Stroke="{Binding Stroke}" 
+                                          StrokeThickness="{Binding Thickness}" 
+                                          StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        
                         <!-- Overlay background image -->
                         <Image Source="{Binding BackgroundImagePath}" Stretch="Fill" Opacity="0.4" IsHitTestVisible="False" />
+
+                        <!-- Building Visuals (Connectors only) -->
+                        <ItemsControl ItemsSource="{Binding BuildingVisuals}" Panel.ZIndex="10" 
+                                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <ItemsControl.Resources>
+                                <!-- Rectangle for House Hexside Connectors -->
+                                <DataTemplate DataType="{x:Type vms:BuildingConnectorViewModel}">
+                                    <Line X1="{Binding X1}" Y1="{Binding Y1}"
+                                          X2="{Binding X2}" Y2="{Binding Y2}"
+                                          Stroke="{Binding Fill}"
+                                          StrokeThickness="{Binding Thickness}"/>
+                                </DataTemplate>
+                                <!-- Black Divider line for Rowhouses -->
+                                <DataTemplate DataType="{x:Type vms:BuildingDividerViewModel}">
+                                    <Line X1="{Binding X1}" Y1="{Binding Y1}"
+                                          X2="{Binding X2}" Y2="{Binding Y2}"
+                                          Stroke="{Binding Fill}"
+                                          StrokeThickness="{Binding Thickness}"/>
+                                </DataTemplate>
+                            </ItemsControl.Resources>
+                            <ItemsControl.ItemContainerStyle>
+                                <Style TargetType="ContentPresenter">
+                                    <Setter Property="Canvas.Left" Value="{Binding CanvasX}"/>
+                                    <Setter Property="Canvas.Top" Value="{Binding CanvasY}"/>
+                                </Style>
+                            </ItemsControl.ItemContainerStyle>
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Canvas IsHitTestVisible="False"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
                     </Grid>
                 </Border>
             </Grid>
@@ -240,7 +318,7 @@
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <Rectangle Width="16" Height="16" Margin="0,0,5,0" Fill="{Binding Converter={StaticResource TerrainColorConverter}}" Stroke="Gray" StrokeThickness="1" />
+                                        <Rectangle Width="16" Height="16" Margin="0,0,5,0" Fill="{Binding Converter={StaticResource TerrainColorConverter}, ConverterParameter=Icon}" Stroke="Gray" StrokeThickness="1" />
                                         <TextBlock Text="{Binding}" VerticalAlignment="Center" />
                                     </StackPanel>
                                 </DataTemplate>
@@ -260,7 +338,7 @@
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
-                                        <Rectangle Width="16" Height="16" Margin="0,0,5,0" Fill="{Binding Converter={StaticResource TerrainColorConverter}}" Stroke="Gray" StrokeThickness="1" />
+                                        <Rectangle Width="16" Height="16" Margin="0,0,5,0" Fill="{Binding Converter={StaticResource TerrainColorConverter}, ConverterParameter=Icon}" Stroke="Gray" StrokeThickness="1" />
                                         <TextBlock Text="{Binding}" VerticalAlignment="Center" />
                                     </StackPanel>
                                 </DataTemplate>
@@ -278,7 +356,14 @@
                         <CheckBox Content="Wall" IsChecked="{Binding HasWall}" Margin="0,5"/>
                         <CheckBox Content="Hedge" IsChecked="{Binding HasHedge}" Margin="0,5"/>
                         <CheckBox Content="Bocage" IsChecked="{Binding HasBocage}" Margin="0,5"/>
-                        <CheckBox Content="Road" IsChecked="{Binding HasRoad}" Margin="0,5"/>
+                        <CheckBox Content="Paved Road" IsChecked="{Binding HasPavedRoad}" Margin="0,5"/>
+                        <CheckBox Content="Dirt Road" IsChecked="{Binding HasDirtRoad}" Margin="0,5"/>
+                        <CheckBox Content="House" IsChecked="{Binding HasHouse}" IsEnabled="{Binding IsHouseConnectionAvailable}" Margin="0,5"/>
+                        <CheckBox Content="Rowhouse" IsChecked="{Binding IsRowhouse}" IsEnabled="{Binding IsHouseConnectionAvailable}" Margin="0,5"/>
+                        <Separator Margin="0,5"/>
+                        <CheckBox Content="Stream" IsChecked="{Binding HasStream}" Margin="0,5"/>
+                        <CheckBox Content="Gully" IsChecked="{Binding HasGully}" Margin="0,5"/>
+                        <CheckBox Content="Canal" IsChecked="{Binding HasCanal}" Margin="0,5"/>
                     </StackPanel>
                 </GroupBox>
             </StackPanel>

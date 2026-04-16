@@ -15,21 +15,31 @@ public class TerrainColorConverter : IValueConverter
     {
         if (value is TerrainType terrain)
         {
-            return terrain switch
+            bool isIcon = parameter?.ToString() == "Icon";
+
+            switch (terrain)
             {
-                TerrainType.OpenGround => new SolidColorBrush(Color.FromRgb(200, 230, 200)), // Light green
-                TerrainType.Woods => new SolidColorBrush(Color.FromRgb(34, 139, 34)),       // Forest green
-                TerrainType.Orchard => new SolidColorBrush(Color.FromRgb(154, 205, 50)),    // Yellow green
-                TerrainType.Grain => new SolidColorBrush(Color.FromRgb(244, 164, 96)),      // Sandy brown / wheat
-                TerrainType.Brush => new SolidColorBrush(Color.FromRgb(143, 188, 143)),     // Dark sea green
-                TerrainType.Building => new SolidColorBrush(Color.FromRgb(139, 69, 19)),    // Saddle brown
-                TerrainType.StoneBuilding => new SolidColorBrush(Color.FromRgb(105, 105, 105)), // Dim gray
-                TerrainType.WoodenBuilding => new SolidColorBrush(Color.FromRgb(205, 133, 63)), // Peru
-                TerrainType.Road => new SolidColorBrush(Color.FromRgb(211, 211, 211)),      // Light gray
-                TerrainType.Water => new SolidColorBrush(Color.FromRgb(70, 130, 180)),      // Steel blue
-                TerrainType.Marsh => new SolidColorBrush(Color.FromRgb(85, 107, 47)),       // Dark olive green
-                _ => Brushes.Transparent,
-            };
+                case TerrainType.OpenGround:
+                    return new SolidColorBrush(Color.FromRgb(200, 230, 200));
+                case TerrainType.Woods:
+                    return new SolidColorBrush(Color.FromRgb(34, 139, 34));     // Forest green
+                case TerrainType.Orchard:
+                    return new SolidColorBrush(Color.FromRgb(154, 205, 50));    // Yellow green
+                case TerrainType.Grain:
+                    return new SolidColorBrush(Color.FromRgb(244, 164, 96));    // Sandy brown / wheat
+                case TerrainType.Brush:
+                    return new SolidColorBrush(Color.FromRgb(143, 188, 143));   // Dark sea green
+                case TerrainType.StoneBuilding:
+                    return isIcon ? Brushes.DimGray : new SolidColorBrush(Color.FromRgb(200, 230, 200)); 
+                case TerrainType.WoodenBuilding:
+                    return isIcon ? Brushes.SaddleBrown : new SolidColorBrush(Color.FromRgb(200, 230, 200)); 
+                case TerrainType.Water:
+                    return new SolidColorBrush(Color.FromRgb(70, 130, 180));    // Steel blue
+                case TerrainType.Marsh:
+                    return new SolidColorBrush(Color.FromRgb(85, 107, 47));       // Dark olive green
+                default:
+                    return Brushes.LightGray;
+            }
         }
         return Brushes.Transparent;
     }

@@ -29,79 +29,74 @@ public class ASLBoardTests
         var board = new Board<ASLHexMetadata, ASLEdgeData>(10, 10);
         var a = new CubeCoordinate(0, 0, 0);
         var b = new CubeCoordinate(1, -1, 0); // Neighbor
-
+ 
         // Put a wall between A and B
         board.SetEdgeData(a, b, new ASLEdgeData { HasWall = true });
-
+ 
         var edge = board.GetEdgeData(a, b);
         Assert.NotNull(edge);
         Assert.True(edge.HasWall);
-        Assert.False(edge.HasRoad);
+        Assert.False(edge.HasPavedRoad);
     }
     
     [Fact]
-    public void ASLBoard_RoadAlongHexsideAndThroughHex()
+    public void ASLBoard_RoadAlongHexside()
     {
         var board = new Board<ASLHexMetadata, ASLEdgeData>(10, 10);
         var a = new CubeCoordinate(0, 0, 0);
         var b = new CubeCoordinate(1, -1, 0);
-
-        // A road going from A center to B center crosses the hexside
-        // We can mark both the hexes as having road terrain AND the hexside as having a road
-        var metA = new ASLHexMetadata { Terrain = TerrainType.Road };
-        var metB = new ASLHexMetadata { Terrain = TerrainType.Road };
+ 
+        // A road connects two hexes via the hexside
+        board.AddHex(new Hex<ASLHexMetadata>(a) { Metadata = new ASLHexMetadata { Terrain = TerrainType.OpenGround } });
+        board.AddHex(new Hex<ASLHexMetadata>(b) { Metadata = new ASLHexMetadata { Terrain = TerrainType.OpenGround } });
         
-        board.AddHex(new Hex<ASLHexMetadata>(a) { Metadata = metA });
-        board.AddHex(new Hex<ASLHexMetadata>(b) { Metadata = metB });
-        
-        board.SetEdgeData(a, b, new ASLEdgeData { HasRoad = true });
-
+        board.SetEdgeData(a, b, new ASLEdgeData { HasPavedRoad = true });
+ 
         var edge = board.GetEdgeData(a, b);
-        Assert.True(edge!.HasRoad);
-        Assert.Equal(TerrainType.Road, board.GetHexAt(a)!.Metadata!.Terrain);
+        Assert.True(edge!.HasPavedRoad);
     }
-
+ 
     [Fact]
     public void Movement_WallPenalty_IncreasesCost()
     {
         var board = new Board<ASLHexMetadata, ASLEdgeData>(10, 10);
         var a = new CubeCoordinate(0, 0, 0);
         var b = new CubeCoordinate(1, -1, 0);
-
+ 
         var hexA = new Hex<ASLHexMetadata>(a) { Metadata = new ASLHexMetadata { Terrain = TerrainType.OpenGround } };
         var hexB = new Hex<ASLHexMetadata>(b) { Metadata = new ASLHexMetadata { Terrain = TerrainType.OpenGround } };
         
         // Wall between them
         var edge = new ASLEdgeData { HasWall = true };
         
-        int costWithWall = MovementCalculator.CalculateCost(hexA, hexB, edge);
-        int costWithoutWall = MovementCalculator.CalculateCost(hexA, hexB, new ASLEdgeData());
-
-        Assert.Equal(1, costWithoutWall);
-        Assert.Equal(2, costWithWall); // 1 (Open Ground) + 1 (Wall)
+        double costWithWall = MovementCalculator.CalculateCost(hexA, hexB, edge);
+        double costWithoutWall = MovementCalculator.CalculateCost(hexA, hexB, new ASLEdgeData());
+ 
+        Assert.Equal(1.0, costWithoutWall);
+        Assert.Equal(2.0, costWithWall); // 1.0 (Open Ground) + 1 (Wall)
     }
-
+ 
     [Fact]
     public void Movement_RoadBonus_IgnoresTerrain()
     {
         var a = new CubeCoordinate(0, 0, 0);
         var b = new CubeCoordinate(1, -1, 0);
+ 
+        // Woods (cost 3) but with a Paved Road (cost 0.5)
+        var hexA = new Hex<ASLHexMetadata>(a) { Metadata = new ASLHexMetadata { Terrain = TerrainType.Woods } };
+        var hexB = new Hex<ASLHexMetadata>(b) { Metadata = new ASLHexMetadata { Terrain = TerrainType.Woods } };
+        
+        var edgeWithPaved = new ASLEdgeData { HasPavedRoad = true };
+        var edgeWithDirt = new ASLEdgeData { HasDirtRoad = true };
+        
+        double costPaved = MovementCalculator.CalculateCost(hexA, hexB, edgeWithPaved);
+        Assert.Equal(0.5, costPaved);
 
-        // Woods (cost 3) but with a Road (cost 1)
-        var hexA = new Hex<ASLHexMetadata>(a) { Metadata = new ASLHexMetadata { Terrain = TerrainType.Road } };
-        var hexB = new Hex<ASLHexMetadata>(b) { Metadata = new ASLHexMetadata { Terrain = TerrainType.Road } };
+        double costDirt = MovementCalculator.CalculateCost(hexA, hexB, edgeWithDirt);
+        Assert.Equal(1.0, costDirt);
         
-        var edgeWithRoad = new ASLEdgeData { HasRoad = true };
-        var edgeNoRoad = new ASLEdgeData { HasRoad = false };
-
-        // Even if the base terrain for hexB was woods, if we move via road we get road cost
-        hexB.Metadata.Terrain = TerrainType.Road; 
-        
-        int cost = MovementCalculator.CalculateCost(hexA, hexB, edgeWithRoad);
-        Assert.Equal(1, cost);
-        
-        // If we don't follow the road hexside, it's not road movement (though ASL rules are more complex, this is a good test)
-        int costNoRoad = MovementCalculator.CalculateCost(hexA, hexB, edgeNoRoad);
-        Assert.Equal(1, costNoRoad); // Base cost of road hex is 1 anyway in my simplified logic
+        // If we don't follow the road hexside, it's woods movement
+        double costNoRoad = MovementCalculator.CalculateCost(hexA, hexB, new ASLEdgeData());
+        Assert.Equal(3.0, costNoRoad); 
     }
 }

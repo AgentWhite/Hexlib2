@@ -9,35 +9,38 @@ public static class MovementCalculator
 {
     /// <summary>
     /// Calculates the cost to move from hex 'from' to hex 'to'.
-    /// Accounts for road bonuses if both hexes and the connecting edge have roads.
+    /// Accounts for road bonuses if the connecting edge has a road.
     /// Accounts for wall/hedge penalties if the edge has them.
     /// </summary>
-    public static int CalculateCost(
+    public static double CalculateCost(
         Hex<ASLHexMetadata> from, 
         Hex<ASLHexMetadata> to, 
         ASLEdgeData? edge)
     {
         // 1. Initial cost based on target terrain
-        int cost = GetTerrainBaseCost(to.Metadata?.Terrain ?? TerrainType.OpenGround);
+        double cost = GetTerrainBaseCost(to.Metadata?.Terrain ?? TerrainType.OpenGround);
         
-        // 2. Elevation change penalty
+        // 2. Elevation change penalty (Standard ASL: +2 MF per level up)
         if (to.Metadata != null && from.Metadata != null)
         {
             if (to.Metadata.Elevation > from.Metadata.Elevation)
             {
-                cost += 2; // Extra cost to go uphill
+                cost += 2; 
             }
         }
 
         // 3. Road bonus
-        // In ASL, if you move from road hex to road hex through a road hexside, cost is usually 1/2 or 1.
-        bool isRoadMovement = from.Metadata?.Terrain == TerrainType.Road && 
-                              to.Metadata?.Terrain == TerrainType.Road && 
-                              (edge?.HasRoad ?? false);
-        
-        if (isRoadMovement)
+        // In ASL, if you move through a road hexside, you ignore the base terrain cost.
+        if (edge != null)
         {
-            return 1; // Simplified road movement cost
+            if (edge.HasPavedRoad)
+            {
+                return 0.5; // Paved road movement cost
+            }
+            if (edge.HasDirtRoad)
+            {
+                return 1.0; // Dirt road movement cost
+            }
         }
 
         // 4. Obstacle penalties (Walls/Hedges)
@@ -50,16 +53,16 @@ public static class MovementCalculator
         return cost;
     }
 
-    private static int GetTerrainBaseCost(TerrainType terrain)
+    private static double GetTerrainBaseCost(TerrainType terrain)
     {
         return terrain switch
         {
             TerrainType.Woods => 3,
-            TerrainType.Building => 2,
             TerrainType.StoneBuilding => 3,
+            TerrainType.WoodenBuilding => 2,
             TerrainType.Marsh => 5,
             TerrainType.Water => 99, // Impassable for infantry
-            _ => 1 // Open ground / Road
+            _ => 1 // Open ground
         };
     }
 }

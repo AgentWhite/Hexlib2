@@ -195,7 +195,7 @@ public class AslBoard
 
     private void AddHexIfMissing(int c, int r)
     {
-        var cube = HexMath.OffsetToCube(c, r, HexTopOrientation.FlatTopped);
+        var cube = HexMath.OffsetToCube(c, r, HexTopOrientation.FlatTopped, IsFirstColShiftedDown);
         if (_board.GetHexAt(cube) == null)
         {
             var hex = new Hex<ASLHexMetadata>(cube);

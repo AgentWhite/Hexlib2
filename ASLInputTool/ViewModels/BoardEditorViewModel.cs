@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Text;
 using System.Globalization;
 using System.Windows;
+using System.Windows.Media;
 using ASL;
 using HexLib;
 
@@ -22,6 +23,29 @@ public class BoardEditorViewModel : ViewModelBase
     private TerrainType _activeTerrain = TerrainType.OpenGround;
     private double _zoomLevel = 1.0;
     private ObservableCollection<HexViewModel> _hexes = new();
+    private ObservableCollection<RoadVisualViewModel> _roadVisuals = new();
+    private ObservableCollection<RoadVisualViewModel> _waterVisuals = new();
+    private ObservableCollection<BuildingVisualBase> _buildingVisuals = new();
+    private bool _isUpdatingVisuals = false;
+
+    /// <summary>
+    /// Gets the collection of water visuals (streams, gullies, canals).
+    /// </summary>
+    public ObservableCollection<RoadVisualViewModel> WaterVisuals => _waterVisuals;
+
+    /// <summary>
+    /// Gets the collection of building visual elements for rendering.
+    /// </summary>
+    public ObservableCollection<BuildingVisualBase> BuildingVisuals
+    {
+        get => _buildingVisuals;
+        set => SetProperty(ref _buildingVisuals, value);
+    }
+
+    /// <summary>
+    /// Gets the collection of road segments for rendering.
+    /// </summary>
+    public ObservableCollection<RoadVisualViewModel> RoadVisuals => _roadVisuals;
 
     /// <summary>
     /// Gets the underlying ASL board being edited.
@@ -159,6 +183,8 @@ public class BoardEditorViewModel : ViewModelBase
         
         RecalculateHexSize();
         GenerateHexGrid();
+        UpdateRoadVisuals();
+        UpdateBuildingVisuals();
     }
 
     private void OnSelectHex(HexViewModel? hex)
@@ -237,7 +263,18 @@ public class BoardEditorViewModel : ViewModelBase
             _board.Board.SetEdgeData(hex.Location, neighborLoc, data);
         }
 
-        SelectedEdge = new HexEdgeSelection(hex, edgeIndex, new HexsideViewModel(data));
+        var neighborHexVm = _hexes.FirstOrDefault(h => h.Location.Equals(neighborLoc));
+        var isHouseAvailable = IsBuildingTerrain(hex.Terrain) && 
+                              neighborHexVm != null && 
+                              IsBuildingTerrain(neighborHexVm.Terrain);
+
+        SelectedEdge = new HexEdgeSelection(hex, edgeIndex, new HexsideViewModel(data, RefreshAllVisuals, isHouseAvailable));
+    }
+
+    private void RefreshAllVisuals()
+    {
+        UpdateRoadVisuals();
+        UpdateBuildingVisuals();
     }
 
     private void SetEdgeVisualSelection(HexViewModel hex, int edgeIndex, bool isSelected)
@@ -270,6 +307,7 @@ public class BoardEditorViewModel : ViewModelBase
     public void PaintHex(HexViewModel hex)
     {
         hex.Terrain = ActiveTerrain;
+        UpdateBuildingVisuals();
     }
 
     private void OnSave(object? parameter)
@@ -334,9 +372,9 @@ public class BoardEditorViewModel : ViewModelBase
         
         foreach (var hex in _board.Board.Hexes.Values)
         {
-            var (col, row) = hex.Location.ToOffset(orientation);
+            var (col, row) = hex.Location.ToOffset(orientation, _board.IsFirstColShiftedDown);
             
-            // Calculate pixel center for FlatTopped (Odd-Q)
+            // Calculate pixel center for FlatTopped (Odd-Q or Even-Q)
             // Stagger: Determine which columns are shifted down by 0.5h
             bool isShiftedDown = _board.Board.ShiftingOddColumns ? (col % 2 == 1) : (col % 2 == 0);
             double x = _hexSize * 1.5 * col;
@@ -351,8 +389,209 @@ public class BoardEditorViewModel : ViewModelBase
 
             var (pointsString, corners) = GetHexPoints(x, y, _hexSize);
             double labelY = y - (_hexSize * Math.Sqrt(3) / 2.0) + (_hexSize * 0.1); 
-            _hexes.Add(new HexViewModel(col, row, hex.Location, pointsString, corners, hex.Id, x, labelY, _hexSize, hex.Metadata!, OnSelectEdge));
+            var hexVm = new HexViewModel(col, row, hex.Location, pointsString, corners, hex.Id, x, y, labelY, _hexSize, hex.Metadata!, OnSelectEdge);
+            hexVm.OnTerrainChanged = RefreshAllVisuals;
+            _hexes.Add(hexVm);
         }
+    }
+
+    private void UpdateRoadVisuals()
+    {
+        _roadVisuals.Clear();
+        _waterVisuals.Clear();
+        var processedEdges = new HashSet<(CubeCoordinate, CubeCoordinate)>();
+
+        foreach (var hexVm in _hexes)
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                var neighborLoc = hexVm.Location.GetNeighbor(i);
+                var edgeKey = NormalizeEdge(hexVm.Location, neighborLoc);
+                
+                if (processedEdges.Contains(edgeKey)) continue;
+                processedEdges.Add(edgeKey);
+
+                var neighborHexVm = _hexes.FirstOrDefault(h => h.Location.Equals(neighborLoc));
+                if (neighborHexVm == null) continue;
+
+                var edgeData = _board.Board.GetEdgeData(hexVm.Location, neighborLoc);
+                if (edgeData == null) continue;
+
+                // 1. Water features (drawn below roads)
+                if (edgeData.HasStream)
+                {
+                    _waterVisuals.Add(new RoadVisualViewModel
+                    {
+                        X1 = hexVm.CenterX, Y1 = hexVm.CenterY,
+                        X2 = neighborHexVm.CenterX, Y2 = neighborHexVm.CenterY,
+                        Stroke = Brushes.DodgerBlue, Thickness = 4.0
+                    });
+                }
+
+                if (edgeData.HasGully)
+                {
+                    _waterVisuals.Add(new RoadVisualViewModel
+                    {
+                        X1 = hexVm.CenterX, Y1 = hexVm.CenterY,
+                        X2 = neighborHexVm.CenterX, Y2 = neighborHexVm.CenterY,
+                        Stroke = Brushes.Tan, Thickness = 6.0
+                    });
+                }
+
+                if (edgeData.HasCanal)
+                {
+                    double squareSizeFactor = 0.5;
+                    double connectorThicknessFactor = 0.75;
+                    _waterVisuals.Add(new RoadVisualViewModel
+                    {
+                        X1 = hexVm.CenterX, Y1 = hexVm.CenterY,
+                        X2 = neighborHexVm.CenterX, Y2 = neighborHexVm.CenterY,
+                        Stroke = Brushes.DodgerBlue,
+                        Thickness = _hexSize * squareSizeFactor * connectorThicknessFactor
+                    });
+                }
+
+                // 2. Road features (drawn above water)
+                if (edgeData.HasPavedRoad)
+                {
+                    _roadVisuals.Add(new RoadVisualViewModel
+                    {
+                        X1 = hexVm.CenterX, Y1 = hexVm.CenterY,
+                        X2 = neighborHexVm.CenterX, Y2 = neighborHexVm.CenterY,
+                        Stroke = Brushes.Gray, Thickness = 4.0
+                    });
+                }
+                
+                if (edgeData.HasDirtRoad)
+                {
+                    _roadVisuals.Add(new RoadVisualViewModel
+                    {
+                        X1 = hexVm.CenterX, Y1 = hexVm.CenterY,
+                        X2 = neighborHexVm.CenterX, Y2 = neighborHexVm.CenterY,
+                        Stroke = Brushes.SaddleBrown, Thickness = 4.0
+                    });
+                }
+            }
+        }
+    }
+
+    private void UpdateBuildingVisuals()
+    {
+        if (_isUpdatingVisuals) return;
+        _isUpdatingVisuals = true;
+
+        try
+        {
+            var newList = new ObservableCollection<BuildingVisualBase>();
+            var processedEdges = new HashSet<(CubeCoordinate, CubeCoordinate)>();
+            double squareSizeFactor = 0.5; // 50% of hex size as requested
+            double connectorThicknessFactor = 0.75; // 75% of square size
+
+            foreach (var hexVm in _hexes)
+            {
+                for (int edgeIndex = 0; edgeIndex < 6; edgeIndex++)
+                {
+                    int dirIndex = edgeIndex switch
+                    {
+                        0 => 0, // SE
+                        1 => 5, // S
+                        2 => 4, // SW
+                        3 => 3, // NW
+                        4 => 2, // N
+                        5 => 1, // NE
+                        _ => 0
+                    };
+
+                    var neighborLoc = hexVm.Location.GetNeighbor(dirIndex);
+                    var edgeKey = NormalizeEdge(hexVm.Location, neighborLoc);
+                    if (processedEdges.Contains(edgeKey)) continue;
+                    processedEdges.Add(edgeKey);
+
+                    var neighborHexVm = _hexes.FirstOrDefault(h => h.Location.Equals(neighborLoc));
+                    if (neighborHexVm == null) continue;
+
+                    var edgeData = _board.Board.GetEdgeData(hexVm.Location, neighborLoc);
+                    if (edgeData != null && (edgeData.HasHouse || edgeData.IsRowhouse))
+                    {
+                        // Cleanup: If either hex is not a building, remove the house/rowhouse connection
+                        if (!IsBuildingTerrain(hexVm.Terrain) || !IsBuildingTerrain(neighborHexVm.Terrain))
+                        {
+                            edgeData.HasHouse = false;
+                            edgeData.IsRowhouse = false;
+                            continue;
+                        }
+
+                        newList.Add(new BuildingConnectorViewModel
+                        {
+                            CanvasX = 0,
+                            CanvasY = 0,
+                            X1 = hexVm.CenterX, Y1 = hexVm.CenterY,
+                            X2 = neighborHexVm.CenterX, Y2 = neighborHexVm.CenterY,
+                            Thickness = _hexSize * squareSizeFactor * connectorThicknessFactor,
+                            Fill = IsBuildingTerrain(hexVm.Terrain) ? GetBuildingBrush(hexVm.Terrain) : GetBuildingBrush(neighborHexVm.Terrain)
+                        });
+
+                        if (edgeData.IsRowhouse)
+                        {
+                            var p1 = hexVm.HexCorners[edgeIndex];
+                            var p2 = hexVm.HexCorners[(edgeIndex + 1) % 6];
+                            
+                            // Calculate midpoint and direction of the hexside
+                            double midX = (p1.X + p2.X) / 2.0;
+                            double midY = (p1.Y + p2.Y) / 2.0;
+                            double dx = p2.X - p1.X;
+                            double dy = p2.Y - p1.Y;
+                            double sideLen = Math.Sqrt(dx * dx + dy * dy);
+                            
+                            // Unit vector along the hexside
+                            double ux = dx / sideLen;
+                            double uy = dy / sideLen;
+                            
+                            // The line should be the width of the building connector
+                            double lineHalfLen = (_hexSize * squareSizeFactor * connectorThicknessFactor) / 2.0;
+
+                            newList.Add(new BuildingDividerViewModel
+                            {
+                                CanvasX = 0,
+                                CanvasY = 0,
+                                X1 = midX - ux * lineHalfLen, 
+                                Y1 = midY - uy * lineHalfLen,
+                                X2 = midX + ux * lineHalfLen, 
+                                Y2 = midY + uy * lineHalfLen,
+                                Thickness = 3.0 // Black divider line
+                            });
+                        }
+                    }
+                }
+            }
+
+            BuildingVisuals = newList;
+        }
+        finally
+        {
+            _isUpdatingVisuals = false;
+        }
+    }
+
+    private bool IsBuildingTerrain(TerrainType terrain)
+    {
+        return terrain == TerrainType.StoneBuilding || 
+               terrain == TerrainType.WoodenBuilding;
+    }
+
+    private Brush GetBuildingBrush(TerrainType terrain)
+    {
+        return terrain switch
+        {
+            TerrainType.StoneBuilding => Brushes.DimGray,
+            TerrainType.WoodenBuilding => Brushes.SaddleBrown,
+            _ => Brushes.Transparent
+        };
+    }
+
+    private (CubeCoordinate, CubeCoordinate) NormalizeEdge(CubeCoordinate a, CubeCoordinate b)
+    {
+        return (a.Q < b.Q || (a.Q == b.Q && a.R < b.R)) ? (a, b) : (b, a);
     }
 
     private (string pointsString, Point[] corners) GetHexPoints(double centerX, double centerY, double size)
@@ -393,11 +632,16 @@ public class HexEdgeSelection
 public class HexsideViewModel : ViewModelBase
 {
     private readonly ASLEdgeData _data;
+    private readonly Action _onChanged;
 
-    public HexsideViewModel(ASLEdgeData data)
+    public HexsideViewModel(ASLEdgeData data, Action onChanged, bool isHouseAvailable = true)
     {
         _data = data;
+        _onChanged = onChanged;
+        IsHouseConnectionAvailable = isHouseAvailable;
     }
+
+    public bool IsHouseConnectionAvailable { get; }
 
     public bool HasWall
     {
@@ -417,9 +661,81 @@ public class HexsideViewModel : ViewModelBase
         set { _data.HasBocage = value; OnPropertyChanged(); }
     }
 
-    public bool HasRoad
+    public bool HasPavedRoad
     {
-        get => _data.HasRoad;
-        set { _data.HasRoad = value; OnPropertyChanged(); }
+        get => _data.HasPavedRoad;
+        set 
+        { 
+            _data.HasPavedRoad = value; 
+            OnPropertyChanged(); 
+            _onChanged?.Invoke();
+        }
+    }
+
+    public bool HasDirtRoad
+    {
+        get => _data.HasDirtRoad;
+        set 
+        { 
+            _data.HasDirtRoad = value; 
+            OnPropertyChanged(); 
+            _onChanged?.Invoke();
+        }
+    }
+
+    public bool HasHouse
+    {
+        get => _data.HasHouse;
+        set 
+        { 
+            _data.HasHouse = value; 
+            OnPropertyChanged(); 
+            _onChanged?.Invoke();
+        }
+    }
+
+    public bool HasStream
+    {
+        get => _data.HasStream;
+        set 
+        { 
+            _data.HasStream = value; 
+            OnPropertyChanged(); 
+            _onChanged?.Invoke();
+        }
+    }
+
+    public bool HasGully
+    {
+        get => _data.HasGully;
+        set 
+        { 
+            _data.HasGully = value; 
+            OnPropertyChanged(); 
+            _onChanged?.Invoke();
+        }
+    }
+
+    public bool HasCanal
+    {
+        get => _data.HasCanal;
+        set 
+        { 
+            _data.HasCanal = value; 
+            OnPropertyChanged(); 
+            _onChanged?.Invoke();
+        }
+    }
+
+    public bool IsRowhouse
+    {
+        get => _data.IsRowhouse;
+        set 
+        { 
+            _data.IsRowhouse = value; 
+            if (value) HasHouse = true; // Rowhouse is a house connection
+            OnPropertyChanged(); 
+            _onChanged?.Invoke();
+        }
     }
 }

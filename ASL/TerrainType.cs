@@ -18,14 +18,10 @@ public enum TerrainType
     Grain,
     /// <summary>Low, scrubby vegetation.</summary>
     Brush,
-    /// <summary>A generic building.</summary>
-    Building,
     /// <summary>A sturdy stone structure.</summary>
     StoneBuilding,
     /// <summary>A lighter wooden structure.</summary>
     WoodenBuilding,
-    /// <summary>A primary or secondary road.</summary>
-    Road,
     /// <summary>A body of water.</summary>
     Water,
     /// <summary>A swampy or marshy area.</summary>

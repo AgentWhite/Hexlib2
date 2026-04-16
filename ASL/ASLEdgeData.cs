@@ -13,7 +13,29 @@ public class ASLEdgeData
     public bool HasBocage { get; set; }
     
     /// <summary>
-    /// If true, a road follows this hexside (connecting two hexes).
+    /// If true, a paved road follows this hexside.
     /// </summary>
-    public bool HasRoad { get; set; }
+    public bool HasPavedRoad { get; set; }
+
+    /// <summary>
+    /// If true, a dirt road follows this hexside.
+    /// </summary>
+    public bool HasDirtRoad { get; set; }
+
+    /// <summary>
+    /// If true, this hexside is part of a continuous building (house).
+    /// </summary>
+    public bool HasHouse { get; set; }
+
+    /// <summary>Gets or sets a value indicating whether there is a stream on this hexside.</summary>
+    public bool HasStream { get; set; }
+
+    /// <summary>Gets or sets a value indicating whether there is a gully on this hexside.</summary>
+    public bool HasGully { get; set; }
+
+    /// <summary>Gets or sets a value indicating whether there is a canal on this hexside.</summary>
+    public bool HasCanal { get; set; }
+
+    /// <summary>Gets or sets a value indicating whether this is a rowhouse hexside.</summary>
+    public bool IsRowhouse { get; set; }
 }
