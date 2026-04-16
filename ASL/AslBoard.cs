@@ -105,6 +105,7 @@ public class AslBoard
     /// </summary>
     /// <param name="col">0-based column index.</param>
     /// <param name="row">0-based row index.</param>
+    /// <param name="shiftingOddColumns">If true, rows are offset for hexagonal coordinate systems.</param>
     /// <returns>The ASL coordinate string.</returns>
     public static string GetAslCoordinate(int col, int row, bool shiftingOddColumns = true)
     {

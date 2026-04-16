@@ -11,6 +11,7 @@ namespace ASLInputTool.Converters
     /// </summary>
     public class NullToVisibilityConverter : IValueConverter
     {
+        /// <inheritdoc />
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             bool hasValue = value != null;
@@ -26,6 +27,7 @@ namespace ASLInputTool.Converters
             return hasValue ? Visibility.Collapsed : Visibility.Visible;
         }
 
+        /// <inheritdoc />
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();

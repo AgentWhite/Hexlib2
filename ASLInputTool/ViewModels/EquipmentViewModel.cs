@@ -7,15 +7,21 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Data;
 using ASLInputTool.Infrastructure;
-using ASLInputTool.Infrastructure;
 
 namespace ASLInputTool.ViewModels;
 
+/// <summary>
+/// Defines the categories of equipment.
+/// </summary>
 public enum EquipmentType
 {
+    /// <summary>Machine guns (LMG, MMG, HMG).</summary>
     MachineGun,
+    /// <summary>Radio sets.</summary>
     Radio,
+    /// <summary>Field telephones.</summary>
     Telephone,
+    /// <summary>Light Anti-Tank weapons (Bazooka, Panzerschreck, etc.).</summary>
     LightAntiTank
 }
 
@@ -24,6 +30,7 @@ public enum EquipmentType
 /// </summary>
 public class EquipmentViewModel : UnitViewModelBase
 {
+    /// <inheritdoc />
     protected override string UnitCategoryFilter => "Equipment";
     private string _name = string.Empty;
     private string _firepower = string.Empty;
@@ -55,9 +62,13 @@ public class EquipmentViewModel : UnitViewModelBase
     private bool _canEnableToHitTable;
     private System.Collections.ObjectModel.ObservableCollection<ToHitRowViewModel> _privateToHitTable = new();
 
+    /// <summary>Gets the available equipment types.</summary>
     public IEnumerable<EquipmentType> EquipmentTypes => Enum.GetValues(typeof(EquipmentType)).Cast<EquipmentType>();
+
+    /// <summary>Gets the available light anti-tank weapon types.</summary>
     public IEnumerable<LightAntiTankWeaponType> LightAntiTankWeaponTypes => Enum.GetValues(typeof(LightAntiTankWeaponType)).Cast<LightAntiTankWeaponType>();
 
+    /// <summary>Gets or sets the selected equipment type.</summary>
     public EquipmentType SelectedEquipmentType
     {
         get => _selectedEquipmentType;
@@ -74,18 +85,32 @@ public class EquipmentViewModel : UnitViewModelBase
         }
     }
 
+    /// <summary>Gets a value indicating whether the selected equipment is a machine gun.</summary>
     public bool IsMachineGun => SelectedEquipmentType == EquipmentType.MachineGun;
+
+    /// <summary>Gets a value indicating whether the selected equipment is a radio or telephone.</summary>
     public bool IsRadioOrPhone => SelectedEquipmentType == EquipmentType.Radio || SelectedEquipmentType == EquipmentType.Telephone;
+
+    /// <summary>Gets a value indicating whether the selected equipment is a light anti-tank weapon.</summary>
     public bool IsLightAntiTank => SelectedEquipmentType == EquipmentType.LightAntiTank;
+
+    /// <summary>Gets a value indicating whether portage costs should be shown.</summary>
     public bool ShowPortage => SelectedEquipmentType != EquipmentType.Telephone;
 
+    /// <summary>Gets or sets the contact number (for Radios/Phones).</summary>
     [Range(typeof(int), "1", "12", ErrorMessage = "Contact number must be between 1 and 12.")]
     public string ContactNumber { get => _contactNumber; set => SetProperty(ref _contactNumber, value); }
 
+    /// <summary>Gets or sets the selected LATW type.</summary>
     public LightAntiTankWeaponType SelectedLightAntiTankWeaponType { get => _selectedLightAntiTankWeaponType; set => SetProperty(ref _selectedLightAntiTankWeaponType, value); }
+
+    /// <summary>Gets or sets a value indicating whether the weapon uses a shaped charge.</summary>
     public bool IsShapedCharge { get => _isShapedCharge; set => SetProperty(ref _isShapedCharge, value); }
+
+    /// <summary>Gets or sets a value indicating whether the weapon has a backblast.</summary>
     public bool HasBackBlast { get => _hasBackBlast; set => SetProperty(ref _hasBackBlast, value); }
     
+    /// <summary>Gets or sets a value indicating whether a custom to-hit table is used.</summary>
     public bool HasToHitTable 
     { 
         get => _hasToHitTable; 
@@ -99,8 +124,10 @@ public class EquipmentViewModel : UnitViewModelBase
         }
     }
 
+    /// <summary>Gets or sets a value indicating whether a to-hit table can be enabled.</summary>
     public bool CanEnableToHitTable { get => _canEnableToHitTable; set => SetProperty(ref _canEnableToHitTable, value); }
 
+    /// <summary>Gets or sets the collection of to-hit values for each range.</summary>
     public System.Collections.ObjectModel.ObservableCollection<ToHitRowViewModel> PrivateToHitTable
     {
         get => _privateToHitTable;
@@ -540,6 +567,7 @@ public class EquipmentViewModel : UnitViewModelBase
         IsAdding = false;
     }
 
+    /// <inheritdoc />
     protected override bool ValidateAllProperties()
     {
         bool isValid = base.ValidateAllProperties();

@@ -1,9 +1,16 @@
 namespace ASL.Models;
 
+/// <summary>
+/// Defines the type of gun muzzle, affecting range and penetration.
+/// </summary>
 public enum MuzzleType
 {
-    ShortBarrel, // *
+    /// <summary>Short barrel (e.g., * weapons).</summary>
+    ShortBarrel,
+    /// <summary>Standard barrel.</summary>
     StandardBarrel,
-    LongBarrel, // L
-    ExtraLongBarrel, // LL
+    /// <summary>Long barrel (e.g., L weapons).</summary>
+    LongBarrel,
+    /// <summary>Extra long barrel (e.g., LL weapons).</summary>
+    ExtraLongBarrel,
 }

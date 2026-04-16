@@ -16,6 +16,7 @@ namespace ASLInputTool.ViewModels;
 /// </summary>
 public abstract class UnitViewModelBase : CrudViewModelBase<Unit>, IInitializeableFromRepository
 {
+    /// <summary>The unit repository.</summary>
     protected readonly IUnitRepository Repository;
     private Nationality? _selectedNationalityFilter;
     private string? _imagePathFront;

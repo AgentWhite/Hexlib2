@@ -7,7 +7,10 @@ namespace ASLInputTool.Views
     /// </summary>
     public partial class AslBoardsView : UserControl
     {
-        public AslBoardsView()
+        /// <summary>
+    /// Initializes a new instance of the <see cref="AslBoardsView"/> class.
+    /// </summary>
+    public AslBoardsView()
         {
             InitializeComponent();
         }

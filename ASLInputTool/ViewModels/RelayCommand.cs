@@ -31,9 +31,11 @@ public class RelayCommand : ICommand
     }
 
     /// <inheritdoc />
+    /// <param name="parameter">Data used by the command. If the command does not require data to be passed, this object can be set to null.</param>
     public bool CanExecute(object? parameter) => _canExecute == null || _canExecute(parameter);
 
     /// <inheritdoc />
+    /// <param name="parameter">Data used by the command. If the command does not require data to be passed, this object can be set to null.</param>
     public void Execute(object? parameter) => _execute(parameter);
 }
 
@@ -46,19 +48,29 @@ public class RelayCommand<T> : ICommand
     private readonly Action<T?> _execute;
     private readonly Predicate<T?>? _canExecute;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RelayCommand{T}"/> class.
+    /// </summary>
+    /// <param name="execute">The action to execute.</param>
+    /// <param name="canExecute">The predicate to determine if the command can execute.</param>
     public RelayCommand(Action<T?> execute, Predicate<T?>? canExecute = null)
     {
         _execute = execute ?? throw new ArgumentNullException(nameof(execute));
         _canExecute = canExecute;
     }
 
+    /// <inheritdoc />
     public event EventHandler? CanExecuteChanged
     {
         add => CommandManager.RequerySuggested += value;
         remove => CommandManager.RequerySuggested -= value;
     }
 
+    /// <inheritdoc />
+    /// <param name="parameter">Data used by the command. If the command does not require data to be passed, this object can be set to null.</param>
     public bool CanExecute(object? parameter) => _canExecute == null || _canExecute((T?)parameter);
 
+    /// <inheritdoc />
+    /// <param name="parameter">Data used by the command. If the command does not require data to be passed, this object can be set to null.</param>
     public void Execute(object? parameter) => _execute((T?)parameter);
 }

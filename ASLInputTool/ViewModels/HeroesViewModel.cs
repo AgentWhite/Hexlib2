@@ -14,6 +14,7 @@ namespace ASLInputTool.ViewModels;
 /// </summary>
 public class HeroesViewModel : UnitViewModelBase
 {
+    /// <inheritdoc />
     protected override string UnitCategoryFilter => "Hero";
     private string _name = string.Empty;
     private string _firepower = string.Empty;
@@ -93,6 +94,7 @@ public class HeroesViewModel : UnitViewModelBase
         DisplayName = "Heroes";
     }
 
+    /// <inheritdoc />
     protected override void ValidateProperty(object? value, string? propertyName)
     {
         base.ValidateProperty(value, propertyName);
@@ -106,6 +108,7 @@ public class HeroesViewModel : UnitViewModelBase
         }
     }
 
+    /// <inheritdoc />
     protected override bool ValidateAllProperties()
     {
         bool isValid = base.ValidateAllProperties();

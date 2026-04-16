@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace ASL.Models.Components;
 
 /// <summary>
@@ -8,7 +10,8 @@ public class SmokeProviderComponent : IUnitComponent
     /// <inheritdoc/>
     public string ComponentName => GetType().Name;
     /// <inheritdoc/>
-    public Unit Owner { get; set; } = null!;
+    [JsonIgnore]
+    public Unit? Owner { get; set; }
     /// <inheritdoc/>
     public void Initialize(Unit owner) => Owner = owner;
     

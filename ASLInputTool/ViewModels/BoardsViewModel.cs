@@ -398,14 +398,23 @@ public class BoardsViewModel : CrudViewModelBase<AslBoard>, IInitializeableFromR
 /// </summary>
 public class BoardTypeDisplay
 {
+    /// <summary>Gets the map type.</summary>
     public MapType Type { get; }
+    
+    /// <summary>Gets the display name.</summary>
     public string Name { get; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BoardTypeDisplay"/> class.
+    /// </summary>
+    /// <param name="type">The map type.</param>
+    /// <param name="name">The display name.</param>
     public BoardTypeDisplay(MapType type, string name)
     {
         Type = type;
         Name = name;
     }
 
+    /// <inheritdoc />
     public override string ToString() => Name;
 }

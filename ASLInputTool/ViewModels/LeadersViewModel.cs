@@ -14,6 +14,7 @@ namespace ASLInputTool.ViewModels;
 /// </summary>
 public class LeadersViewModel : UnitViewModelBase
 {
+    /// <inheritdoc />
     protected override string UnitCategoryFilter => "Leader";
     private string _name = string.Empty;
     private string _morale = string.Empty;
@@ -92,6 +93,7 @@ public class LeadersViewModel : UnitViewModelBase
         DisplayName = "Leaders";
     }
 
+    /// <inheritdoc />
     protected override bool ValidateAllProperties()
     {
         bool isValid = base.ValidateAllProperties();

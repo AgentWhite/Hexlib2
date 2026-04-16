@@ -15,7 +15,10 @@ namespace ASLInputTool.Views
         private Cursor? _zoomInCursor;
         private Cursor? _zoomOutCursor;
 
-        public BoardEditorView()
+        /// <summary>
+    /// Initializes a new instance of the <see cref="BoardEditorView"/> class.
+    /// </summary>
+    public BoardEditorView()
         {
             InitializeComponent();
             LoadCursors();

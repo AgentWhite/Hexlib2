@@ -9,11 +9,13 @@ namespace ASLInputTool.Converters
     /// </summary>
     public class EnumToBooleanConverter : IValueConverter
     {
+        /// <inheritdoc />
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return value?.ToString() == parameter?.ToString();
         }
 
+        /// <inheritdoc />
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is bool isChecked && isChecked && parameter != null)

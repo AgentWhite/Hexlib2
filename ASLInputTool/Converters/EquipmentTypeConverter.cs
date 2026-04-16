@@ -6,8 +6,12 @@ using System.Windows.Data;
 
 namespace ASLInputTool.Converters;
 
+/// <summary>
+/// Converts a unit to a string descriptive of its specific equipment type (MG type, Radio vs Telephone, etc.).
+/// </summary>
 public class EquipmentTypeConverter : IValueConverter
 {
+    /// <inheritdoc />
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         if (value is Unit unit)
@@ -27,6 +31,7 @@ public class EquipmentTypeConverter : IValueConverter
         return string.Empty;
     }
 
+    /// <inheritdoc />
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
         throw new NotImplementedException();

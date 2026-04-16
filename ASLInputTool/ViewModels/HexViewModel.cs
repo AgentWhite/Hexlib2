@@ -86,21 +86,27 @@ public class HexViewModel : ViewModelBase
     }
 
     private bool _isEdge0Selected;
+    /// <summary>Gets or sets a value indicating whether edge 0 is selected.</summary>
     public bool IsEdge0Selected { get => _isEdge0Selected; set => SetProperty(ref _isEdge0Selected, value); }
 
     private bool _isEdge1Selected;
+    /// <summary>Gets or sets a value indicating whether edge 1 is selected.</summary>
     public bool IsEdge1Selected { get => _isEdge1Selected; set => SetProperty(ref _isEdge1Selected, value); }
 
     private bool _isEdge2Selected;
+    /// <summary>Gets or sets a value indicating whether edge 2 is selected.</summary>
     public bool IsEdge2Selected { get => _isEdge2Selected; set => SetProperty(ref _isEdge2Selected, value); }
 
     private bool _isEdge3Selected;
+    /// <summary>Gets or sets a value indicating whether edge 3 is selected.</summary>
     public bool IsEdge3Selected { get => _isEdge3Selected; set => SetProperty(ref _isEdge3Selected, value); }
 
     private bool _isEdge4Selected;
+    /// <summary>Gets or sets a value indicating whether edge 4 is selected.</summary>
     public bool IsEdge4Selected { get => _isEdge4Selected; set => SetProperty(ref _isEdge4Selected, value); }
 
     private bool _isEdge5Selected;
+    /// <summary>Gets or sets a value indicating whether edge 5 is selected.</summary>
     public bool IsEdge5Selected { get => _isEdge5Selected; set => SetProperty(ref _isEdge5Selected, value); }
 
     /// <summary>

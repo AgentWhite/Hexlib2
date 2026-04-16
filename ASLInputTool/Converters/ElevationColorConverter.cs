@@ -10,6 +10,7 @@ namespace ASLInputTool.Converters;
 /// </summary>
 public class ElevationColorConverter : IValueConverter
 {
+    /// <inheritdoc />
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         if (value is int elevation)
@@ -31,6 +32,7 @@ public class ElevationColorConverter : IValueConverter
         return Brushes.Transparent;
     }
 
+    /// <inheritdoc />
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
         throw new NotSupportedException();
