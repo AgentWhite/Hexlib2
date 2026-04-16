@@ -161,6 +161,167 @@
                                             <Rectangle Width="6" Height="8" Fill="WhiteSmoke" Stroke="Gray" Canvas.Left="12" Canvas.Top="20"/>
                                             <Rectangle Width="6" Height="8" Fill="WhiteSmoke" Stroke="Gray" Canvas.Left="26" Canvas.Top="15"/>
                                         </Canvas>
+
+                                        <!-- Crag Markers (Rock Symbols) -->
+                                        <Canvas Width="{Binding HexSize}" Height="{Binding HexSize}" 
+                                                Canvas.Left="{Binding CenterX, Converter={StaticResource CenterOffsetConverter}, ConverterParameter=0.5}"
+                                                Canvas.Top="{Binding CenterY, Converter={StaticResource CenterOffsetConverter}, ConverterParameter=0.5}"
+                                                IsHitTestVisible="False">
+                                            <Canvas.Style>
+                                                <Style TargetType="Canvas">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsCrag}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Canvas.Style>
+                                            <!-- Four abstract rocky clusters -->
+                                            <Polygon Points="0,0 12,2 8,10 2,8" Fill="DimGray" Stroke="#444" StrokeThickness="0.5" Canvas.Left="-15" Canvas.Top="-15"/>
+                                            <Polygon Points="0,4 10,0 14,8 4,12" Fill="DarkGray" Stroke="#444" StrokeThickness="0.5" Canvas.Left="10" Canvas.Top="-10"/>
+                                            <Polygon Points="2,2 10,0 12,10 0,8" Fill="DimGray" Stroke="#444" StrokeThickness="0.5" Canvas.Left="-5" Canvas.Top="12"/>
+                                            <Polygon Points="0,0 8,0 6,10 0,6" Fill="SlateGray" Stroke="#444" StrokeThickness="0.5" Canvas.Left="15" Canvas.Top="5"/>
+                                        </Canvas>
+
+                                        <!-- Shellhole Markers (Craters) -->
+                                        <Canvas Width="{Binding HexSize}" Height="{Binding HexSize}" 
+                                                Canvas.Left="{Binding CenterX, Converter={StaticResource CenterOffsetConverter}, ConverterParameter=0.5}"
+                                                Canvas.Top="{Binding CenterY, Converter={StaticResource CenterOffsetConverter}, ConverterParameter=0.5}"
+                                                IsHitTestVisible="False">
+                                            <Canvas.Style>
+                                                <Style TargetType="Canvas">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding HasShellholes}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Canvas.Style>
+                                            <!-- Three abstract craters -->
+                                            <Ellipse Width="12" Height="10" Fill="SaddleBrown" Stroke="#442200" StrokeThickness="1" Canvas.Left="-8" Canvas.Top="-5">
+                                                <Ellipse.Clip>
+                                                    <EllipseGeometry RadiusX="5" RadiusY="4" Center="6,5"/>
+                                                </Ellipse.Clip>
+                                            </Ellipse>
+                                            <Polygon Points="0,2 6,0 10,4 8,10 2,8" Fill="#8B4513" Stroke="#442200" StrokeThickness="0.5" Canvas.Left="10" Canvas.Top="5"/>
+                                            <Polygon Points="2,0 8,2 10,8 4,10 0,6" Fill="#A0522D" Stroke="#442200" StrokeThickness="0.5" Canvas.Left="-15" Canvas.Top="10"/>
+                                        </Canvas>
+
+                                        <!-- Pond Marker (Circular Water Body) -->
+                                        <Canvas Canvas.Left="{Binding CenterX, Converter={StaticResource CenterOffsetConverter}, ConverterParameter=0.5}"
+                                                Canvas.Top="{Binding CenterY, Converter={StaticResource CenterOffsetConverter}, ConverterParameter=0.5}"
+                                                IsHitTestVisible="False">
+                                            <Canvas.Style>
+                                                <Style TargetType="Canvas">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsPond}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Canvas.Style>
+                                            <Ellipse Width="50" Height="40" Fill="{StaticResource WaterBrush}" Stroke="SteelBlue" StrokeThickness="1"
+                                                     Canvas.Left="-25" Canvas.Top="-20"/>
+                                        </Canvas>
+
+                                        <!-- Lumberyard Markers (Wood Stacks) -->
+                                        <Canvas Width="{Binding HexSize}" Height="{Binding HexSize}" 
+                                                Canvas.Left="{Binding CenterX, Converter={StaticResource CenterOffsetConverter}, ConverterParameter=0.5}"
+                                                Canvas.Top="{Binding CenterY, Converter={StaticResource CenterOffsetConverter}, ConverterParameter=0.5}"
+                                                IsHitTestVisible="False">
+                                            <Canvas.Style>
+                                                <Style TargetType="Canvas">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsLumberyard}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Canvas.Style>
+                                            <!-- Seveal rectangular stacks scattered across the hex -->
+                                            <Rectangle Width="14" Height="8" Fill="SaddleBrown" Stroke="#331100" StrokeThickness="0.5" Canvas.Left="-18" Canvas.Top="-12" RenderTransformOrigin="0.5,0.5">
+                                                <Rectangle.RenderTransform>
+                                                    <RotateTransform Angle="15"/>
+                                                </Rectangle.RenderTransform>
+                                            </Rectangle>
+                                            <Rectangle Width="12" Height="7" Fill="#8B4513" Stroke="#331100" StrokeThickness="0.5" Canvas.Left="4" Canvas.Top="-15" RenderTransformOrigin="0.5,0.5">
+                                                <Rectangle.RenderTransform>
+                                                    <RotateTransform Angle="-10"/>
+                                                </Rectangle.RenderTransform>
+                                            </Rectangle>
+                                            <Rectangle Width="15" Height="9" Fill="SaddleBrown" Stroke="#331100" StrokeThickness="0.5" Canvas.Left="-5" Canvas.Top="0" RenderTransformOrigin="0.5,0.5">
+                                                <Rectangle.RenderTransform>
+                                                    <RotateTransform Angle="5"/>
+                                                </Rectangle.RenderTransform>
+                                            </Rectangle>
+                                            <Rectangle Width="10" Height="6" Fill="#A0522D" Stroke="#331100" StrokeThickness="0.5" Canvas.Left="10" Canvas.Top="12" RenderTransformOrigin="0.5,0.5">
+                                                <Rectangle.RenderTransform>
+                                                    <RotateTransform Angle="45"/>
+                                                </Rectangle.RenderTransform>
+                                            </Rectangle>
+                                            <Rectangle Width="12" Height="7" Fill="SaddleBrown" Stroke="#331100" StrokeThickness="0.5" Canvas.Left="-12" Canvas.Top="15"/>
+                                        </Canvas>
+
+                                        <!-- Stone Rubble Layer (Blue-grey shard shards) -->
+                                        <Canvas Canvas.Left="{Binding CenterX, Converter={StaticResource CenterOffsetConverter}, ConverterParameter=0.5}"
+                                                Canvas.Top="{Binding CenterY, Converter={StaticResource CenterOffsetConverter}, ConverterParameter=0.5}"
+                                                IsHitTestVisible="False">
+                                            <Canvas.Style>
+                                                <Style TargetType="Canvas">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsStoneRubble}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Canvas.Style>
+                                            <!-- Abstract shards -->
+                                            <Polygon Points="0,0 6,2 4,8 0,6" Fill="SteelBlue" Opacity="0.8" Stroke="#223344" StrokeThickness="0.5" Canvas.Left="-15" Canvas.Top="-15"/>
+                                            <Polygon Points="0,2 8,0 10,6 2,8" Fill="LightSlateGray" Opacity="0.8" Stroke="#223344" StrokeThickness="0.5" Canvas.Left="5" Canvas.Top="-10"/>
+                                            <Polygon Points="2,0 10,2 8,10 0,6" Fill="CadetBlue" Opacity="0.8" Stroke="#223344" StrokeThickness="0.5" Canvas.Left="-8" Canvas.Top="2"/>
+                                            <Polygon Points="0,4 6,0 10,8 2,10" Fill="SteelBlue" Opacity="0.8" Stroke="#223344" StrokeThickness="0.5" Canvas.Left="10" Canvas.Top="10"/>
+                                            <Polygon Points="0,0 8,4 4,10" Fill="LightSlateGray" Opacity="0.8" Stroke="#223344" StrokeThickness="0.5" Canvas.Left="-22" Canvas.Top="5"/>
+                                        </Canvas>
+
+                                        <!-- Wooden Rubble Layer (Brown splinters) -->
+                                        <Canvas Canvas.Left="{Binding CenterX, Converter={StaticResource CenterOffsetConverter}, ConverterParameter=0.5}"
+                                                Canvas.Top="{Binding CenterY, Converter={StaticResource CenterOffsetConverter}, ConverterParameter=0.5}"
+                                                IsHitTestVisible="False">
+                                            <Canvas.Style>
+                                                <Style TargetType="Canvas">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsWoodenRubble}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Canvas.Style>
+                                            <!-- Abstract splinters/planks -->
+                                            <Rectangle Width="18" Height="3" Fill="SaddleBrown" Stroke="#331100" StrokeThickness="0.3" Canvas.Left="-20" Canvas.Top="-15" RenderTransformOrigin="0.5,0.5">
+                                                <Rectangle.RenderTransform><RotateTransform Angle="25"/></Rectangle.RenderTransform>
+                                            </Rectangle>
+                                            <Rectangle Width="15" Height="2.5" Fill="#8B4513" Stroke="#331100" StrokeThickness="0.3" Canvas.Left="2" Canvas.Top="-18" RenderTransformOrigin="0.5,0.5">
+                                                <Rectangle.RenderTransform><RotateTransform Angle="-15"/></Rectangle.RenderTransform>
+                                            </Rectangle>
+                                            <Rectangle Width="20" Height="4" Fill="#A0522D" Stroke="#331100" StrokeThickness="0.3" Canvas.Left="-5" Canvas.Top="0" RenderTransformOrigin="0.5,0.5">
+                                                <Rectangle.RenderTransform><RotateTransform Angle="10"/></Rectangle.RenderTransform>
+                                            </Rectangle>
+                                            <Rectangle Width="12" Height="2" Fill="SaddleBrown" Stroke="#331100" StrokeThickness="0.3" Canvas.Left="12" Canvas.Top="12" RenderTransformOrigin="0.5,0.5">
+                                                <Rectangle.RenderTransform><RotateTransform Angle="60"/></Rectangle.RenderTransform>
+                                            </Rectangle>
+                                            <Rectangle Width="16" Height="3" Fill="#5C4033" Stroke="#331100" StrokeThickness="0.3" Canvas.Left="-18" Canvas.Top="10" RenderTransformOrigin="0.5,0.5">
+                                                <Rectangle.RenderTransform><RotateTransform Angle="-40"/></Rectangle.RenderTransform>
+                                            </Rectangle>
+                                            <Rectangle Width="10" Height="2" Fill="#8B4513" Stroke="#331100" StrokeThickness="0.3" Canvas.Left="0" Canvas.Top="20" RenderTransformOrigin="0.5,0.5">
+                                                <Rectangle.RenderTransform><RotateTransform Angle="5"/></Rectangle.RenderTransform>
+                                            </Rectangle>
+                                        </Canvas>
                                         
                                         <!-- Hotspot for Drag-to-Paint -->
                                         <Border Width="{Binding HexSize}" Height="{Binding HexSize}" 
@@ -456,7 +617,12 @@
                         <Slider Minimum="0" Maximum="5" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding Elevation}" Margin="0,0,0,10"/>
 
                         <CheckBox Content="Manhole" IsChecked="{Binding HasManhole}" Margin="0,5"/>
+                        <CheckBox Content="Shellholes" IsChecked="{Binding HasShellholes}" Margin="0,5"/>
                         <CheckBox Content="Stairwell" IsChecked="{Binding HasStairwell}" Visibility="{Binding BuildingSquareVisibility}" Margin="0,5"/>
+
+                        <TextBlock Text="Rubble:" Margin="0,5,0,0"/>
+                        <ComboBox ItemsSource="{Binding DataContext.AvailableRubbleTypes, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                  SelectedItem="{Binding Rubble}" Margin="0,2,0,5"/>
                     </StackPanel>
                 </GroupBox>
 

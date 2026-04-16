@@ -18,4 +18,10 @@ public class ASLHexMetadata
 
     /// <summary>Gets or sets a value indicating whether this hex contains a stairwell.</summary>
     public bool HasStairwell { get; set; }
+
+    /// <summary>Gets or sets a value indicating whether this hex contains shellholes.</summary>
+    public bool HasShellholes { get; set; }
+
+    /// <summary>Gets or sets the type of rubble in this hex.</summary>
+    public RubbleType Rubble { get; set; } = RubbleType.None;
 }

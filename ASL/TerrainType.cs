@@ -27,5 +27,11 @@ public enum TerrainType
     /// <summary>A swampy or marshy area.</summary>
     Marsh,
     /// <summary>A place of burial.</summary>
-    Graveyard
+    Graveyard,
+    /// <summary>Rugged, rocky terrain with boulders.</summary>
+    Crag,
+    /// <summary>Small body of water within a hex.</summary>
+    Pond,
+    /// <summary>Area with stacks of processed timber.</summary>
+    Lumberyard
 }

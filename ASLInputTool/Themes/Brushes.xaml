@@ -10,6 +10,7 @@
 
     <!-- Brushes -->
     <SolidColorBrush x:Key="WindowBackgroundBrush" Color="{StaticResource PrimaryBackground}"/>
+    <SolidColorBrush x:Key="WaterBrush" Color="#4682B4"/> <!-- Steel Blue for Pond/Water -->
     <SolidColorBrush x:Key="ControlBorderBrush" Color="{StaticResource SecondaryBackground}"/>
     <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}"/>
     <SolidColorBrush x:Key="ValidationBackgroundBrush" Color="{StaticResource ValidationBackground}"/>

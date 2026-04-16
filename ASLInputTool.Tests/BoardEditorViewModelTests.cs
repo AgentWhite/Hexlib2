@@ -71,4 +71,58 @@ public class BoardEditorViewModelTests
         // Selection should persist or be handled based on UI requirements
         Assert.Equal(hexVm, vm.SelectedHex);
     }
+
+    [Fact]
+    public void HexViewModel_CragTerrain_SetsIsCrag()
+    {
+        var board = new Board<ASLHexMetadata, ASLEdgeData>(1, 1);
+        var origin = new CubeCoordinate(0, 0, 0);
+        board.AddHex(new Hex<ASLHexMetadata>(origin) { Metadata = new ASLHexMetadata() });
+        var aslBoard = new AslBoard("Test") { Board = board };
+        var vm = new BoardEditorViewModel(aslBoard);
+        
+        var hexVm = vm.Hexes.First();
+        
+        hexVm.Terrain = TerrainType.Crag;
+        Assert.True(hexVm.IsCrag);
+        
+        hexVm.Terrain = TerrainType.Woods;
+        Assert.False(hexVm.IsCrag);
+    }
+
+    [Fact]
+    public void HexViewModel_Shellholes_SetsProperty()
+    {
+        var board = new Board<ASLHexMetadata, ASLEdgeData>(1, 1);
+        var origin = new CubeCoordinate(0, 0, 0);
+        board.AddHex(new Hex<ASLHexMetadata>(origin) { Metadata = new ASLHexMetadata() });
+        var aslBoard = new AslBoard("Test") { Board = board };
+        var vm = new BoardEditorViewModel(aslBoard);
+        
+        var hexVm = vm.Hexes.First();
+        
+        hexVm.HasShellholes = true;
+        Assert.True(hexVm.HasShellholes);
+        
+        hexVm.HasShellholes = false;
+        Assert.False(hexVm.HasShellholes);
+    }
+
+    [Fact]
+    public void HexViewModel_PondTerrain_SetsIsPond()
+    {
+        var board = new Board<ASLHexMetadata, ASLEdgeData>(1, 1);
+        var origin = new CubeCoordinate(0, 0, 0);
+        board.AddHex(new Hex<ASLHexMetadata>(origin) { Metadata = new ASLHexMetadata() });
+        var aslBoard = new AslBoard("Test") { Board = board };
+        var vm = new BoardEditorViewModel(aslBoard);
+        
+        var hexVm = vm.Hexes.First();
+        
+        hexVm.Terrain = TerrainType.Pond;
+        Assert.True(hexVm.IsPond);
+        
+        hexVm.Terrain = TerrainType.Woods;
+        Assert.False(hexVm.IsPond);
+    }
 }

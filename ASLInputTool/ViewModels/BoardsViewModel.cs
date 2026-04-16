@@ -271,6 +271,12 @@ public class BoardsViewModel : CrudViewModelBase<AslBoard>, IInitializeableFromR
 
     private void OnGenerate(object? parameter)
     {
+        if (string.IsNullOrWhiteSpace(Name))
+        {
+            ShowToast("Please enter a board name before generating.");
+            return;
+        }
+
         var board = new AslBoard 
         { 
             Name = Name, 

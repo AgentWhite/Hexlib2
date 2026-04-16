@@ -154,6 +154,9 @@ public class HexViewModel : ViewModelBase
                 OnPropertyChanged(nameof(BuildingSquareVisibility));
                 OnPropertyChanged(nameof(BuildingSquareFill));
                 OnPropertyChanged(nameof(IsGraveyard));
+                OnPropertyChanged(nameof(IsCrag));
+                OnPropertyChanged(nameof(IsPond));
+                OnPropertyChanged(nameof(IsLumberyard));
                 OnTerrainChanged?.Invoke();
             }
         }
@@ -178,6 +181,27 @@ public class HexViewModel : ViewModelBase
     /// Gets a value indicating whether this hex is a graveyard.
     /// </summary>
     public bool IsGraveyard => Terrain == TerrainType.Graveyard;
+
+    /// <summary>
+    /// Gets a value indicating whether this hex is a crag.
+    /// </summary>
+    public bool IsCrag => Terrain == TerrainType.Crag;
+
+    /// <summary>
+    /// Gets a value indicating whether this hex is a pond.
+    /// </summary>
+    public bool IsPond => Terrain == TerrainType.Pond;
+
+    /// <summary>
+    /// Gets a value indicating whether this hex is a lumberyard.
+    /// </summary>
+    public bool IsLumberyard => Terrain == TerrainType.Lumberyard;
+
+    /// <summary>Gets a value indicating whether this hex is wooden rubble.</summary>
+    public bool IsWoodenRubble => Rubble == RubbleType.Wooden;
+
+    /// <summary>Gets a value indicating whether this hex is stone rubble.</summary>
+    public bool IsStoneRubble => Rubble == RubbleType.Stone;
 
     /// <summary>
     /// Gets the X coordinate of the top-left corner of the building square.
@@ -268,5 +292,33 @@ public class HexViewModel : ViewModelBase
                 onSelectEdge?.Invoke(this, edgeIndex);
             }
         });
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether this hex contains shellholes.
+    /// </summary>
+    public bool HasShellholes
+    {
+        get => _metadata.HasShellholes;
+        set { if (_metadata.HasShellholes != value) { _metadata.HasShellholes = value; OnPropertyChanged(); } }
+    }
+
+    /// <summary>
+    /// Gets or sets the type of rubble in this hex.
+    /// </summary>
+    public RubbleType Rubble
+    {
+        get => _metadata.Rubble;
+        set 
+        { 
+            if (_metadata.Rubble != value) 
+            { 
+                 _metadata.Rubble = value; 
+                 OnPropertyChanged(); 
+                 OnPropertyChanged(nameof(IsWoodenRubble));
+                 OnPropertyChanged(nameof(IsStoneRubble));
+                 OnTerrainChanged?.Invoke();
+            } 
+        }
     }
 }

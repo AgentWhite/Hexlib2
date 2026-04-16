@@ -99,4 +99,82 @@ public class ASLBoardTests
         double costNoRoad = MovementCalculator.CalculateCost(hexA, hexB, new ASLEdgeData());
         Assert.Equal(3.0, costNoRoad); 
     }
+
+    [Fact]
+    public void Movement_Crag_CostsTwo()
+    {
+        var a = new CubeCoordinate(0, 0, 0);
+        var b = new CubeCoordinate(1, -1, 0);
+
+        var hexA = new Hex<ASLHexMetadata>(a) { Metadata = new ASLHexMetadata { Terrain = TerrainType.OpenGround } };
+        var hexB = new Hex<ASLHexMetadata>(b) { Metadata = new ASLHexMetadata { Terrain = TerrainType.Crag } };
+        
+        double cost = MovementCalculator.CalculateCost(hexA, hexB, new ASLEdgeData());
+        Assert.Equal(2.0, cost);
+    }
+
+    [Fact]
+    public void Movement_Shellholes_CostsTwoOnOpenGround()
+    {
+        var a = new CubeCoordinate(0, 0, 0);
+        var b = new CubeCoordinate(1, -1, 0);
+
+        var hexA = new Hex<ASLHexMetadata>(a) { Metadata = new ASLHexMetadata { Terrain = TerrainType.OpenGround } };
+        var hexB = new Hex<ASLHexMetadata>(b) { Metadata = new ASLHexMetadata { Terrain = TerrainType.OpenGround, HasShellholes = true } };
+        
+        double cost = MovementCalculator.CalculateCost(hexA, hexB, new ASLEdgeData());
+        Assert.Equal(2.0, cost);
+    }
+
+    [Fact]
+    public void Movement_Pond_IsImpassable()
+    {
+        var a = new CubeCoordinate(0, 0, 0);
+        var b = new CubeCoordinate(1, -1, 0);
+
+        var hexA = new Hex<ASLHexMetadata>(a) { Metadata = new ASLHexMetadata { Terrain = TerrainType.OpenGround } };
+        var hexB = new Hex<ASLHexMetadata>(b) { Metadata = new ASLHexMetadata { Terrain = TerrainType.Pond } };
+        
+        double cost = MovementCalculator.CalculateCost(hexA, hexB, new ASLEdgeData());
+        Assert.Equal(99.0, cost);
+    }
+
+    [Fact]
+    public void Movement_Lumberyard_CostsTwo()
+    {
+        var a = new CubeCoordinate(0, 0, 0);
+        var b = new CubeCoordinate(1, -1, 0);
+
+        var hexA = new Hex<ASLHexMetadata>(a) { Metadata = new ASLHexMetadata { Terrain = TerrainType.OpenGround } };
+        var hexB = new Hex<ASLHexMetadata>(b) { Metadata = new ASLHexMetadata { Terrain = TerrainType.Lumberyard } };
+        
+        double cost = MovementCalculator.CalculateCost(hexA, hexB, new ASLEdgeData());
+        Assert.Equal(2.0, cost);
+    }
+
+    [Fact]
+    public void Movement_StoneRubble_CostsThree()
+    {
+        var a = new CubeCoordinate(0, 0, 0);
+        var b = new CubeCoordinate(1, -1, 0);
+
+        var hexA = new Hex<ASLHexMetadata>(a) { Metadata = new ASLHexMetadata { Terrain = TerrainType.OpenGround } };
+        var hexB = new Hex<ASLHexMetadata>(b) { Metadata = new ASLHexMetadata { Terrain = TerrainType.OpenGround, Rubble = RubbleType.Stone } };
+        
+        double cost = MovementCalculator.CalculateCost(hexA, hexB, new ASLEdgeData());
+        Assert.Equal(3.0, cost);
+    }
+
+    [Fact]
+    public void Movement_WoodenRubble_CostsThree()
+    {
+        var a = new CubeCoordinate(0, 0, 0);
+        var b = new CubeCoordinate(1, -1, 0);
+
+        var hexA = new Hex<ASLHexMetadata>(a) { Metadata = new ASLHexMetadata { Terrain = TerrainType.OpenGround } };
+        var hexB = new Hex<ASLHexMetadata>(b) { Metadata = new ASLHexMetadata { Terrain = TerrainType.OpenGround, Rubble = RubbleType.Wooden } };
+        
+        double cost = MovementCalculator.CalculateCost(hexA, hexB, new ASLEdgeData());
+        Assert.Equal(3.0, cost);
+    }
 }

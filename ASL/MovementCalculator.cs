@@ -19,6 +19,18 @@ public static class MovementCalculator
     {
         // 1. Initial cost based on target terrain
         double cost = GetTerrainBaseCost(to.Metadata?.Terrain ?? TerrainType.OpenGround);
+
+        // Shellholes in Open Ground cost 2 MF (In ASL, they are effectively a different base cost for Open Ground)
+        if (to.Metadata != null && to.Metadata.HasShellholes && to.Metadata.Terrain == TerrainType.OpenGround)
+        {
+            cost = 2.0;
+        }
+
+        // Rubble costs 3 MF
+        if (to.Metadata != null && to.Metadata.Rubble != RubbleType.None)
+        {
+            cost = 3.0;
+        }
         
         // 2. Elevation change penalty (Standard ASL: +2 MF per level up)
         if (to.Metadata != null && from.Metadata != null)
@@ -60,8 +72,11 @@ public static class MovementCalculator
             TerrainType.Woods => 3,
             TerrainType.StoneBuilding => 3,
             TerrainType.WoodenBuilding => 2,
+            TerrainType.Crag => 2,
             TerrainType.Marsh => 5,
-            TerrainType.Water => 99, // Impassable for infantry
+            TerrainType.Water => 99,
+            TerrainType.Pond => 99,
+            TerrainType.Lumberyard => 2,
             _ => 1 // Open ground
         };
     }

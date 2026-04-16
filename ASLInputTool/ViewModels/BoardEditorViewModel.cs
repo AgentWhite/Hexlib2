@@ -162,6 +162,11 @@ public partial class BoardEditorViewModel : ViewModelBase
     public Array AvailableTerrainTypes => Enum.GetValues(typeof(TerrainType));
 
     /// <summary>
+    /// Gets all available rubble types.
+    /// </summary>
+    public Array AvailableRubbleTypes => Enum.GetValues(typeof(RubbleType));
+
+    /// <summary>
     /// Gets the available elevation levels.
     /// </summary>
     public int[] AvailableElevations => new[] { 0, 1, 2, 3, 4, 5 };

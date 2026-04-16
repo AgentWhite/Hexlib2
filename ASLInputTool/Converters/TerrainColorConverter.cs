@@ -40,6 +40,12 @@ public class TerrainColorConverter : IValueConverter
                     return new SolidColorBrush(Color.FromRgb(85, 107, 47));       // Dark olive green
                 case TerrainType.Graveyard:
                     return new SolidColorBrush(Color.FromRgb(27, 58, 27));      // Dark Forest Green
+                case TerrainType.Crag:
+                    return new SolidColorBrush(Color.FromRgb(200, 190, 170));   // Greyish Tan (Distinct from Elevation 1)
+                case TerrainType.Pond:
+                    return isIcon ? new SolidColorBrush(Color.FromRgb(70, 130, 180)) : new SolidColorBrush(Color.FromRgb(200, 230, 200));
+                case TerrainType.Lumberyard:
+                    return isIcon ? Brushes.SaddleBrown : new SolidColorBrush(Color.FromRgb(200, 230, 200));
                 default:
                     return Brushes.LightGray;
             }
