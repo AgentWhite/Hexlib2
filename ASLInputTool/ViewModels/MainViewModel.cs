@@ -46,6 +46,11 @@ public class MainViewModel : ViewModelBase
     /// Command to load a project from a file.
     /// </summary>
     public RelayCommand LoadCommand { get; }
+
+    /// <summary>
+    /// Command to define the global boards folder.
+    /// </summary>
+    public RelayCommand DefineBoardsFolderCommand { get; }
     
     /// <summary>
     /// Initializes a new instance of the <see cref="MainViewModel"/> class.
@@ -60,6 +65,7 @@ public class MainViewModel : ViewModelBase
 
         SaveCommand = new RelayCommand(_ => ExecuteSave());
         LoadCommand = new RelayCommand(_ => ExecuteLoad());
+        DefineBoardsFolderCommand = new RelayCommand(_ => ExecuteDefineBoardsFolder());
     }
 
     private void ExecuteSave()
@@ -136,6 +142,22 @@ public class MainViewModel : ViewModelBase
             {
                 System.Windows.MessageBox.Show($"Failed to load project: {ex.Message}", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
             }
+        }
+    }
+
+    private void ExecuteDefineBoardsFolder()
+    {
+        var openFolderDialog = new OpenFolderDialog
+        {
+            Title = "Define Boards Folder",
+            InitialDirectory = SettingsManager.Instance.Settings.BoardsFolder
+        };
+
+        if (openFolderDialog.ShowDialog() == true)
+        {
+            SettingsManager.Instance.Settings.BoardsFolder = openFolderDialog.FolderName;
+            SettingsManager.Instance.Save();
+            System.Windows.MessageBox.Show($"Boards folder set to: {openFolderDialog.FolderName}", "Success", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
         }
     }
 }

@@ -3,34 +3,29 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ASLInputTool.Views"
+             xmlns:vm="clr-namespace:ASLInputTool.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="800" d:DesignWidth="100">
+             d:DesignHeight="700" d:DesignWidth="1000">
     <UserControl.Resources>
-        <Style TargetType="Button">
-            <Setter Property="BorderBrush" Value="{StaticResource ControlBorderBrush}"/>
-            <Setter Property="BorderThickness" Value="2"/>
-        </Style>
+        <!-- Application-wide converters (BoolToVis, InverseBoolToVis) are defined in App.xaml -->
     </UserControl.Resources>
     
-    <Grid Margin="20" Background="{StaticResource WindowBackgroundBrush}">
+    <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
- 
-        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="0,0,0,20">
-            <TextBlock Text="Boards" FontSize="24" FontWeight="Bold" VerticalAlignment="Center"/>
-            <Button Content="Add Board" Command="{Binding AddCommand}" 
-                    Visibility="{Binding IsAdding, Converter={StaticResource InverseBoolToVis}}"
-                    Margin="20,0,0,0" Padding="15,5" Background="{StaticResource ControlBorderBrush}" Foreground="White" FontWeight="Bold"/>
-            <Button Content="Delete Selected" Command="{Binding DeleteSelectedCommand}"
-                    Visibility="{Binding HasSelectedItems, Converter={StaticResource BoolToVis}}"
-                    Margin="10,0,0,0" Padding="15,5" Background="{StaticResource ValidationErrorBrush}" Foreground="White" FontWeight="Bold"/>
-            <Button Content="Back to List" Command="{Binding CancelCommand}" 
-                    Visibility="{Binding IsAdding, Converter={StaticResource BoolToVis}}"
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,20">
+            <TextBlock Text="Boards" FontSize="28" FontWeight="Bold" Foreground="{StaticResource AccentBrush}"/>
+            <Button Content="Add New Board" Command="{Binding AddCommand}" Visibility="{Binding IsAdding, Converter={StaticResource InverseBoolToVis}}"
+                    Margin="20,0,0,0" Padding="15,5"/>
+            <Button Content="Back to List" Command="{Binding CancelCommand}" Visibility="{Binding IsAdding, Converter={StaticResource BoolToVis}}"
                     Margin="20,0,0,0" Padding="15,5"/>
         </StackPanel>
- 
+
         <!-- List View -->
         <Grid Grid.Row="1" Visibility="{Binding IsAdding, Converter={StaticResource InverseBoolToVis}}">
             <DataGrid ItemsSource="{Binding Items}" AutoGenerateColumns="False" IsReadOnly="False" Background="{StaticResource WindowBackgroundBrush}">
@@ -41,12 +36,22 @@
                 </DataGrid.InputBindings>
                 <DataGrid.Columns>
                     <DataGridCheckBoxColumn Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" Width="30" IsReadOnly="False" CanUserSort="False" />
+                    <DataGridTemplateColumn Header="Thumbnail" Width="80">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image Source="{Binding Item.Thumbnail}" Height="40" Margin="5" RenderOptions.BitmapScalingMode="LowQuality"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTextColumn Header="Name" Binding="{Binding Item.Name}" Width="*" IsReadOnly="True" />
-                    <DataGridTextColumn Header="Type" Binding="{Binding Item.Type}" Width="200" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Type" Binding="{Binding Item.Type}" Width="120" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Dimensions" Binding="{Binding Item.DimensionsDisplay}" Width="100" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Canvas Width" Binding="{Binding Item.CanvasWidth}" Width="100" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Canvas Height" Binding="{Binding Item.CanvasHeight}" Width="100" IsReadOnly="True" />
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
- 
+
         <!-- Form View -->
         <Grid Grid.Row="1" Visibility="{Binding IsAdding, Converter={StaticResource BoolToVis}}" Background="{StaticResource WindowBackgroundBrush}">
             <Grid.RowDefinitions>
@@ -74,24 +79,23 @@
                         <StackPanel Grid.Column="1" Margin="10,0,10,0">
                             <Label Content="Board Type" FontWeight="SemiBold"/>
                             <ComboBox ItemsSource="{Binding AvailableBoardTypes}" 
-                                      SelectedValue="{Binding Type}" 
-                                      SelectedValuePath="Type" 
-                                      DisplayMemberPath="Name" 
-                                      Padding="5"/>
+                                      SelectedItem="{Binding Type}" 
+                                      IsEnabled="{Binding CanGenerate}"
+                                      VerticalAlignment="Center"/>
                         </StackPanel>
      
                         <StackPanel Grid.Column="2" Margin="10,0,10,0" Visibility="{Binding IsDimensionsVisible, Converter={StaticResource BoolToVis}}">
                             <Label Content="Width" FontWeight="SemiBold"/>
-                            <TextBox Text="{Binding Width, UpdateSourceTrigger=PropertyChanged}" Tag="Units"/>
+                            <TextBox Text="{Binding Width, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanGenerate}" Tag="Units"/>
                         </StackPanel>
      
                         <StackPanel Grid.Column="3" Margin="10,0,10,0" Visibility="{Binding IsDimensionsVisible, Converter={StaticResource BoolToVis}}">
                             <Label Content="Height" FontWeight="SemiBold"/>
-                            <TextBox Text="{Binding Height, UpdateSourceTrigger=PropertyChanged}" Tag="Units"/>
+                            <TextBox Text="{Binding Height, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CanGenerate}" Tag="Units"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="4" Margin="10,0,0,0" VerticalAlignment="Center" Visibility="{Binding IsDimensionsVisible, Converter={StaticResource BoolToVis}}">
-                            <UniformGrid Columns="2">
+                            <UniformGrid Columns="2" IsEnabled="{Binding CanGenerate}">
                                 <CheckBox Content="Shift Col A Down" IsChecked="{Binding IsFirstColShiftedDown}" Margin="0,5" FontWeight="SemiBold"/>
                                 <CheckBox Content="Top: Half" IsChecked="{Binding IsTopRowHalf}" Margin="0,5" FontWeight="SemiBold"/>
                                 <CheckBox Content="Left: Half" IsChecked="{Binding IsLeftEdgeHalf}" Margin="0,5" FontWeight="SemiBold"/>
@@ -132,11 +136,13 @@
                             </Border>
                         </Grid>
      
-                        <Button Grid.Column="3" Content="Generate" Command="{Binding GenerateCommand}" 
+                        <Button Grid.Column="3" Content="Generate Editor" Command="{Binding GenerateCommand}" 
+                                Visibility="{Binding CanGenerate, Converter={StaticResource BoolToVis}}"
                                 Margin="10,25,10,0" Padding="20,10" VerticalAlignment="Top"/>
-                                
-                        <Button Grid.Column="4" Content="Save Board" Command="{Binding SaveCommand}" 
-                                Margin="10,25,0,0" Padding="20,10" Background="{StaticResource AccentBrush}" Foreground="White" FontWeight="Bold" VerticalAlignment="Top"/>
+
+                        <Button Grid.Column="3" Content="Delete Board" Command="{Binding DeleteCommand}" 
+                                Visibility="{Binding IsEditMode, Converter={StaticResource BoolToVis}}"
+                                Margin="10,25,0,0" Padding="20,10" Background="{StaticResource ValidationErrorBrush}" Foreground="White" FontWeight="Bold" VerticalAlignment="Top"/>
                     </Grid>
                     
                     <Separator Margin="0,10" Background="{StaticResource ControlBorderBrush}" Height="2"/>

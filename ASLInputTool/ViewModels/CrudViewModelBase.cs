@@ -18,7 +18,7 @@ public abstract class CrudViewModelBase<T> : ViewModelBase
     /// <summary>Initializes a new instance of the class.</summary>
     protected CrudViewModelBase()
     {
-        AddCommand = new RelayCommand(_ => { EditingItem = default; ResetForm(); IsAdding = true; });
+        AddCommand = new RelayCommand(_ => { EditingItem = default; ResetForm(); IsAdding = true; }, _ => CanAdd);
         CancelCommand = new RelayCommand(_ => { EditingItem = default; IsAdding = false; });
         SaveCommand = new RelayCommand(p => OnSave(p));
         EditCommand = new RelayCommand(p => ExecuteEdit(p));
@@ -26,6 +26,12 @@ public abstract class CrudViewModelBase<T> : ViewModelBase
         
         Items.CollectionChanged += (s, e) => OnPropertyChanged(nameof(HasSelectedItems));
     }
+
+    /// <summary>
+    /// Gets a value indicating whether the "Add" operation is allowed.
+    /// Overridden in subclasses to provide specific logic.
+    /// </summary>
+    protected virtual bool CanAdd => true;
 
     /// <summary>
     /// Gets the collection of items wrapped for selection.

@@ -39,29 +39,48 @@ public class AslBoard
         set
         {
             _isFirstColShiftedDown = value;
-            if (_board != null) _board.ShiftingOddColumns = !value;
+            if (_board != null) 
+            {
+                _board.ShiftingOddColumns = !value;
+                RefreshIds();
+            }
         }
     }
 
     /// <summary>
     /// Gets or sets a value indicating whether the top edge contains half-hexes.
     /// </summary>
-    public bool IsTopRowHalf { get; set; } = true;
+    public bool IsTopRowHalf { get => _isTopRowHalf; set { _isTopRowHalf = value; SyncHalfHexSides(); RefreshIds(); } }
+    private bool _isTopRowHalf = true;
 
     /// <summary>
     /// Gets or sets a value indicating whether the bottom edge contains half-hexes.
     /// </summary>
-    public bool IsBottomRowHalf { get; set; } = true;
+    public bool IsBottomRowHalf { get => _isBottomRowHalf; set { _isBottomRowHalf = value; SyncHalfHexSides(); } }
+    private bool _isBottomRowHalf = true;
 
     /// <summary>
     /// Gets or sets a value indicating whether the left edge contains half-hexes.
     /// </summary>
-    public bool IsLeftEdgeHalf { get; set; } = true;
+    public bool IsLeftEdgeHalf { get => _isLeftEdgeHalf; set { _isLeftEdgeHalf = value; SyncHalfHexSides(); } }
+    private bool _isLeftEdgeHalf = true;
 
     /// <summary>
     /// Gets or sets a value indicating whether the right edge contains half-hexes.
     /// </summary>
-    public bool IsRightEdgeHalf { get; set; } = true;
+    public bool IsRightEdgeHalf { get => _isRightEdgeHalf; set { _isRightEdgeHalf = value; SyncHalfHexSides(); } }
+    private bool _isRightEdgeHalf = true;
+
+    private void SyncHalfHexSides()
+    {
+        if (_board == null) return;
+        _board.HalfHexSides = BoardEdge.None;
+        if (IsTopRowHalf) _board.HalfHexSides |= BoardEdge.Top;
+        if (IsBottomRowHalf) _board.HalfHexSides |= BoardEdge.Bottom;
+        if (IsLeftEdgeHalf) _board.HalfHexSides |= BoardEdge.Left;
+        if (IsRightEdgeHalf) _board.HalfHexSides |= BoardEdge.Right;
+    }
+    
 
     /// <summary>
     /// Gets or sets the hex width of the map.
@@ -106,17 +125,30 @@ public class AslBoard
     /// <param name="col">0-based column index.</param>
     /// <param name="row">0-based row index.</param>
     /// <param name="shiftingOddColumns">If true, rows are offset for hexagonal coordinate systems.</param>
+    /// <param name="isTopRowHalf">If true, the top row contains half-hexes (index 0 becomes 0 if high column).</param>
     /// <returns>The ASL coordinate string.</returns>
-    public static string GetAslCoordinate(int col, int row, bool shiftingOddColumns = true)
+    public static string GetAslCoordinate(int col, int row, bool shiftingOddColumns, bool isTopRowHalf)
     {
         int letterIndex = col % 26;
         int repeatCount = col / 26 + 1;
         char letter = (char)('A' + letterIndex);
         string colStr = new string(letter, repeatCount);
         
-        // ASL standard labeling simply uses row numbers 1..10
-        // regardless of staggering offset.
-        int rowLabel = row + 1;
+        // ASL standard labeling:
+        // If a column starts with a half-hex at top-center (a "High" column), that half-hex is labeled 0.
+        // Even columns (0, 2...) are "High" if shiftingOddColumns is true.
+        // Odd columns (1, 3...) are "High" if shiftingOddColumns is false.
+        bool isHighColumn = (col % 2 == (shiftingOddColumns ? 0 : 1));
+        
+        int rowLabel;
+        if (isTopRowHalf && isHighColumn)
+        {
+            rowLabel = row; // row 0 -> "0", row 1 -> "1"
+        }
+        else
+        {
+            rowLabel = row + 1; // row 0 -> "1" (Standard)
+        }
         
         return $"{colStr}{rowLabel}";
     }
@@ -126,36 +158,38 @@ public class AslBoard
     /// </summary>
     public void PopulateBoard()
     {
-        // Set Presets for Standard maps BEFORE re-initializing board.
-        // For HalfBoard, we allow user to override Width/Height, so we only set defaults in VM or if zero.
-        if (Type == MapType.Standard)
+        // Set Presets for Standard maps only if the board is not yet initialized or dimensions are zero.
+        // This avoids overwriting settings loaded from disk.
+        if (_board == null || Width == 0 || Height == 0)
         {
-            Width = 33;
-            Height = 10;
-            IsFirstColShiftedDown = true;
-            IsTopRowHalf = true;
-            IsBottomRowHalf = true;
-            IsLeftEdgeHalf = true;
-            IsRightEdgeHalf = true;
-        }
-        else if (Type == MapType.HalfBoard || Type == MapType.BonusPack || Type == MapType.StarterPack)
-        {
-            // Fix these categories as requested. Standard is already hardcoded above.
-            Width = 17; // All are 17 wide
-            
-            if (Type == MapType.HalfBoard) Height = 10;
-            else if (Type == MapType.BonusPack) Height = 20;
-            else if (Type == MapType.StarterPack) Height = 22;
+            if (Type == MapType.Standard)
+            {
+                Width = 33;
+                Height = 10;
+                IsFirstColShiftedDown = true; // Column A is Low, Column B is High/Halved
+                IsTopRowHalf = true;
+                IsBottomRowHalf = true;
+                IsLeftEdgeHalf = true;
+                IsRightEdgeHalf = true;
+            }
+            else if (Type == MapType.HalfBoard || Type == MapType.BonusPack || Type == MapType.StarterPack)
+            {
+                Width = 17;
+                if (Type == MapType.HalfBoard) Height = 10;
+                else if (Type == MapType.BonusPack) Height = 20;
+                else if (Type == MapType.StarterPack) Height = 22;
 
-            // Always default to halved edges as they are geomorphic
-            IsTopRowHalf = true;
-            IsBottomRowHalf = true;
-            IsLeftEdgeHalf = true;
-            IsRightEdgeHalf = true;
+                IsFirstColShiftedDown = true;
+                IsTopRowHalf = true;
+                IsBottomRowHalf = true;
+                IsLeftEdgeHalf = true;
+                IsRightEdgeHalf = true;
+            }
         }
 
-        // Re-initialize board if dimensions or properties have changed
-        if (_board == null || _board.Width != Width || _board.Height != Height || _board.TopOrientation != HexTopOrientation.FlatTopped)
+        // Re-initialize board if dimensions change. 
+        // Orientation is hardcoded to FlatTopped for ASL.
+        if (_board == null || _board.Width != Width || _board.Height != Height)
         {
             _board = new Board<ASLHexMetadata, ASLEdgeData>(Width, Height, HexTopOrientation.FlatTopped);
         }
@@ -197,24 +231,46 @@ public class AslBoard
     private void AddHexIfMissing(int c, int r)
     {
         var cube = HexMath.OffsetToCube(c, r, HexTopOrientation.FlatTopped, IsFirstColShiftedDown);
-        if (_board.GetHexAt(cube) == null)
+        var hex = _board.GetHexAt(cube);
+        if (hex == null)
         {
-            var hex = new Hex<ASLHexMetadata>(cube);
-            hex.Id = GetAslCoordinate(c, r, _board.ShiftingOddColumns);
+            hex = new Hex<ASLHexMetadata>(cube)
+            {
+                Id = GetAslCoordinate(c, r, _board.ShiftingOddColumns, IsTopRowHalf)
+            };
             _board.AddHex(hex);
         }
-
-        // Ensure metadata is ALWAYS initialized
-        var finalHex = _board.GetHexAt(cube);
-        if (finalHex != null)
+        else
         {
-            finalHex.Metadata ??= new ASLHexMetadata();
+            // Update or restore ID based on current structural rules
+            hex.Id = GetAslCoordinate(c, r, _board.ShiftingOddColumns, IsTopRowHalf);
+        }
+
+        if (hex.Metadata == null)
+        {
+            hex.Metadata = new ASLHexMetadata { Terrain = TerrainType.OpenGround };
         }
     }
+
+    /// <summary>
+    /// Re-calculates and applies ASL coordinate IDs to all hexes on the board.
+    /// Should be called after changing structural properties like IsTopRowHalf.
+    /// </summary>
+    public void RefreshIds()
+    {
+        if (_board == null) return;
+
+        var orientation = HexTopOrientation.FlatTopped;
+        foreach (var hex in _board.Hexes.Values)
+        {
+            var (col, row) = hex.Location.ToOffset(orientation, IsFirstColShiftedDown);
+            hex.Id = GetAslCoordinate(col, row, !IsFirstColShiftedDown, IsTopRowHalf);
+        }
+    }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="AslBoard"/> class with a name.
     /// </summary>
-    /// <param name="name">The name of the board.</param>
     public AslBoard(string name) : this()
     {
         Name = name;

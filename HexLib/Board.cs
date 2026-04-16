@@ -130,6 +130,11 @@ public class Board<THexMetadata, TEdgeData>
     public IReadOnlyDictionary<BoardEdge, Board<THexMetadata, TEdgeData>> Neighbors => _neighbors;
 
     /// <summary>
+    /// A read-only collection of all physical edges on this board that have associated metadata.
+    /// </summary>
+    public IReadOnlyDictionary<(CubeCoordinate, CubeCoordinate), TEdgeData> Edges => _edges;
+
+    /// <summary>
     /// Initializes a new, unlinked <see cref="Board{THexMetadata, TEdgeData}"/> with the specified physical width and height in hexes and physical orientation.
     /// </summary>
     /// <param name="width">The physical width of the board.</param>

@@ -8,7 +8,7 @@ namespace ASLInputTool.ViewModels;
 public class CliffVisualViewModel : ViewModelBase
 {
     /// <summary>Gets or sets the geometry data for the cliff.</summary>
-    public Geometry Data { get; set; }
+    public Geometry PathData { get; set; }
 
     /// <summary>Gets or sets the stroke brush for the cliff line.</summary>
     public Brush Stroke { get; set; } = new SolidColorBrush(Color.FromRgb(60, 40, 20)); // Dark Brown/Black
@@ -22,6 +22,6 @@ public class CliffVisualViewModel : ViewModelBase
     /// <param name="geometry">The geometry data.</param>
     public CliffVisualViewModel(Geometry geometry)
     {
-        Data = geometry;
+        PathData = geometry;
     }
 }

@@ -41,7 +41,8 @@
                 <RadioButton Content="Paint" IsChecked="{Binding CurrentTool, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Paint}" 
                              Style="{StaticResource {x:Type ToggleButton}}" Padding="10,5" Margin="0,0,10,0"/>
                 <Separator Margin="10,0"/>
-                <Button Content="Save Board" Command="{Binding SaveCommand}" Padding="10,5" FontWeight="Bold" Foreground="DarkGreen"/>
+                <Button Content="💾 Save Board" Command="{Binding SaveCommand}" 
+                        Background="{StaticResource AccentBrush}" Foreground="White" FontWeight="Bold" Padding="15,5"/>
             </StackPanel>
         </Border>
 
@@ -335,14 +336,6 @@
                                                 </i:EventTrigger>
                                             </i:Interaction.Triggers>
                                         </Border>
-                                        <TextBlock Text="{Binding Id}" 
-                                                   Canvas.Left="{Binding LabelLeft}" 
-                                                   Canvas.Top="{Binding LabelY}"
-                                                   Width="{Binding HexSize}"
-                                                   TextAlignment="Center"
-                                                   FontSize="10"
-                                                   Foreground="DarkGray"
-                                                   IsHitTestVisible="False" />
                                         
                                         <!-- Hex Edges for Selection -->
                                         <Line X1="{Binding HexCorners[0].X}" Y1="{Binding HexCorners[0].Y}" X2="{Binding HexCorners[1].X}" Y2="{Binding HexCorners[1].Y}" StrokeThickness="8">
@@ -461,8 +454,8 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Path Data="{Binding Data}" Stroke="{Binding Stroke}" StrokeThickness="{Binding Thickness}"
-                                          StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                                    <Path Data="{Binding PathData}" Stroke="{Binding Stroke}" StrokeThickness="{Binding Thickness}"
+                                          StrokeDashArray="3 1" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
                                 </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
@@ -505,7 +498,7 @@
                         </ItemsControl>
                         
                         <!-- Overlay background image -->
-                        <Image Source="{Binding BackgroundImagePath}" Stretch="Fill" Opacity="0.4" IsHitTestVisible="False" />
+                        <Image Source="{Binding BackgroundImage}" Stretch="Fill" Opacity="0.4" IsHitTestVisible="False" />
 
                         <!-- Building Visuals (Connectors only) -->
                         <ItemsControl ItemsSource="{Binding BuildingVisuals}" Panel.ZIndex="10" 
@@ -568,6 +561,31 @@
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
+
+                        <!-- Final Label Layer (Coordinates) - Always on Top -->
+                        <ItemsControl ItemsSource="{Binding Hexes}" Panel.ZIndex="100"
+                                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Canvas IsHitTestVisible="False"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Canvas IsHitTestVisible="False">
+                                        <TextBlock Text="{Binding Id}" 
+                                                   Canvas.Left="{Binding LabelLeft}" 
+                                                   Canvas.Top="{Binding LabelY}"
+                                                   Width="{Binding HexSize}"
+                                                   TextAlignment="Center"
+                                                   FontSize="10"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="Black"
+                                                   IsHitTestVisible="False" />
+                                    </Canvas>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </Grid>
                 </Border>
             </Grid>
@@ -575,76 +593,78 @@
 
         <!-- Sidebar / Tools Pane -->
         <Border Grid.Row="1" Grid.Column="1" Background="{StaticResource ControlBorderBrush}" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1,0,0,0" Padding="15">
-            <StackPanel>
-                <TextBlock Text="Properties" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
-                
-                <!-- Tool Options -->
-                <GroupBox Header="Brush Settings" Margin="0,0,0,15">
-                    <StackPanel Margin="5">
-                        <TextBlock Text="Active Terrain:"/>
-                        <ComboBox ItemsSource="{Binding AvailableTerrainTypes}" SelectedItem="{Binding ActiveTerrain}" Margin="0,5,0,0">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Rectangle Width="16" Height="16" Margin="0,0,5,0" Fill="{Binding Converter={StaticResource TerrainColorConverter}, ConverterParameter=Icon}" Stroke="Gray" StrokeThickness="1" />
-                                        <TextBlock Text="{Binding}" VerticalAlignment="Center" />
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                    </StackPanel>
-                </GroupBox>
-
-                <!-- Selected Hex Info -->
-                <GroupBox Header="Selected Hex" Visibility="{Binding SelectedHex, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=Inverse}">
-                    <StackPanel Margin="5" DataContext="{Binding SelectedHex}">
-                        <TextBlock Text="{Binding Id, StringFormat='ID: {0}'}" FontWeight="Bold" Margin="0,0,10,10"/>
-                        
-                        <TextBlock Text="Terrain:"/>
-                        <ComboBox ItemsSource="{Binding DataContext.AvailableTerrainTypes, RelativeSource={RelativeSource AncestorType=UserControl}}" 
-                                  SelectedItem="{Binding Terrain}" Margin="0,5,0,10">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Rectangle Width="16" Height="16" Margin="0,0,5,0" Fill="{Binding Converter={StaticResource TerrainColorConverter}, ConverterParameter=Icon}" Stroke="Gray" StrokeThickness="1" />
-                                        <TextBlock Text="{Binding}" VerticalAlignment="Center" />
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-
-                        <TextBlock Text="{Binding Elevation, StringFormat='Elevation: {0}'}"/>
-                        <Slider Minimum="0" Maximum="5" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding Elevation}" Margin="0,0,0,10"/>
-
-                        <CheckBox Content="Manhole" IsChecked="{Binding HasManhole}" Margin="0,5"/>
-                        <CheckBox Content="Shellholes" IsChecked="{Binding HasShellholes}" Margin="0,5"/>
-                        <CheckBox Content="Stairwell" IsChecked="{Binding HasStairwell}" Visibility="{Binding BuildingSquareVisibility}" Margin="0,5"/>
-
-                        <TextBlock Text="Rubble:" Margin="0,5,0,0"/>
-                        <ComboBox ItemsSource="{Binding DataContext.AvailableRubbleTypes, RelativeSource={RelativeSource AncestorType=UserControl}}" 
-                                  SelectedItem="{Binding Rubble}" Margin="0,2,0,5"/>
-                    </StackPanel>
-                </GroupBox>
-
-                <!-- Selected Hexside Info -->
-                <GroupBox Header="Selected Hexside" Visibility="{Binding SelectedEdge, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=Inverse}">
-                    <StackPanel Margin="5" DataContext="{Binding SelectedEdge.Data}">
-                        <CheckBox Content="Wall" IsChecked="{Binding HasWall}" Margin="0,5"/>
-                        <CheckBox Content="Hedge" IsChecked="{Binding HasHedge}" Margin="0,5"/>
-                        <CheckBox Content="Bocage" IsChecked="{Binding HasBocage}" Margin="0,5"/>
-                        <CheckBox Content="Paved Road" IsChecked="{Binding HasPavedRoad}" Margin="0,5"/>
-                        <CheckBox Content="Dirt Road" IsChecked="{Binding HasDirtRoad}" Margin="0,5"/>
-                        <CheckBox Content="Path" IsChecked="{Binding HasPath}" Margin="0,5"/>
-                        <CheckBox Content="House" IsChecked="{Binding HasHouse}" IsEnabled="{Binding IsHouseConnectionAvailable}" Margin="0,5"/>
-                        <CheckBox Content="Rowhouse" IsChecked="{Binding IsRowhouse}" IsEnabled="{Binding IsHouseConnectionAvailable}" Margin="0,5"/>
-                        <Separator Margin="0,5"/>
-                        <CheckBox Content="Stream" IsChecked="{Binding HasStream}" Margin="0,5"/>
-                        <CheckBox Content="Gully" IsChecked="{Binding HasGully}" Margin="0,5"/>
-                        <CheckBox Content="Canal" IsChecked="{Binding HasCanal}" Margin="0,5"/>
-                        <CheckBox Content="Cliff" IsChecked="{Binding HasCliff}" Margin="0,5"/>
-                    </StackPanel>
-                </GroupBox>
-            </StackPanel>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock Text="Properties" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+                    
+                    <!-- Tool Options -->
+                    <GroupBox Header="Brush Settings" Margin="0,0,0,15">
+                        <StackPanel Margin="5">
+                            <TextBlock Text="Active Terrain:"/>
+                            <ComboBox ItemsSource="{Binding AvailableTerrainTypes}" SelectedItem="{Binding ActiveTerrain}" Margin="0,5,0,0">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Rectangle Width="16" Height="16" Margin="0,0,5,0" Fill="{Binding Converter={StaticResource TerrainColorConverter}, ConverterParameter=Icon}" Stroke="Gray" StrokeThickness="1" />
+                                            <TextBlock Text="{Binding}" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </StackPanel>
+                    </GroupBox>
+    
+                    <!-- Selected Hex Info -->
+                    <GroupBox Header="Selected Hex" Visibility="{Binding SelectedHex, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=Inverse}">
+                        <StackPanel Margin="5" DataContext="{Binding SelectedHex}">
+                            <TextBlock Text="{Binding Id, StringFormat='ID: {0}'}" FontWeight="Bold" Margin="0,0,10,10"/>
+                            
+                            <TextBlock Text="Terrain:"/>
+                            <ComboBox ItemsSource="{Binding DataContext.AvailableTerrainTypes, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                      SelectedItem="{Binding Terrain}" Margin="0,5,0,10">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Rectangle Width="16" Height="16" Margin="0,0,5,0" Fill="{Binding Converter={StaticResource TerrainColorConverter}, ConverterParameter=Icon}" Stroke="Gray" StrokeThickness="1" />
+                                            <TextBlock Text="{Binding}" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+    
+                            <TextBlock Text="{Binding Elevation, StringFormat='Elevation: {0}'}"/>
+                            <Slider Minimum="0" Maximum="5" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding Elevation}" Margin="0,0,0,10"/>
+    
+                            <CheckBox Content="Manhole" IsChecked="{Binding HasManhole}" Margin="0,5"/>
+                            <CheckBox Content="Shellholes" IsChecked="{Binding HasShellholes}" Margin="0,5"/>
+                            <CheckBox Content="Stairwell" IsChecked="{Binding HasStairwell}" Visibility="{Binding BuildingSquareVisibility}" Margin="0,5"/>
+    
+                            <TextBlock Text="Rubble:" Margin="0,5,0,0"/>
+                            <ComboBox ItemsSource="{Binding DataContext.AvailableRubbleTypes, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                      SelectedItem="{Binding Rubble}" Margin="0,2,0,5"/>
+                        </StackPanel>
+                    </GroupBox>
+    
+                    <!-- Selected Hexside Info -->
+                    <GroupBox Header="Selected Hexside" Visibility="{Binding SelectedEdge, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=Inverse}">
+                        <StackPanel Margin="5" DataContext="{Binding SelectedEdge.Data}">
+                            <CheckBox Content="Wall" IsChecked="{Binding HasWall}" Margin="0,5"/>
+                            <CheckBox Content="Hedge" IsChecked="{Binding HasHedge}" Margin="0,5"/>
+                            <CheckBox Content="Bocage" IsChecked="{Binding HasBocage}" Margin="0,5"/>
+                            <CheckBox Content="Paved Road" IsChecked="{Binding HasPavedRoad}" Margin="0,5"/>
+                            <CheckBox Content="Dirt Road" IsChecked="{Binding HasDirtRoad}" Margin="0,5"/>
+                            <CheckBox Content="Path" IsChecked="{Binding HasPath}" Margin="0,5"/>
+                            <CheckBox Content="House" IsChecked="{Binding HasHouse}" IsEnabled="{Binding IsHouseConnectionAvailable}" Margin="0,5"/>
+                            <CheckBox Content="Rowhouse" IsChecked="{Binding IsRowhouse}" IsEnabled="{Binding IsHouseConnectionAvailable}" Margin="0,5"/>
+                            <Separator Margin="0,5"/>
+                            <CheckBox Content="Stream" IsChecked="{Binding HasStream}" Margin="0,5"/>
+                            <CheckBox Content="Gully" IsChecked="{Binding HasGully}" Margin="0,5"/>
+                            <CheckBox Content="Canal" IsChecked="{Binding HasCanal}" Margin="0,5"/>
+                            <CheckBox Content="Cliff" IsChecked="{Binding HasCliff}" Margin="0,5"/>
+                        </StackPanel>
+                    </GroupBox>
+                </StackPanel>
+            </ScrollViewer>
         </Border>
     </Grid>
 </UserControl>

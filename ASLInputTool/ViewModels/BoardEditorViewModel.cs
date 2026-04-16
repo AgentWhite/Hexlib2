@@ -7,6 +7,8 @@ using System.Windows;
 using System.Windows.Media;
 using ASL;
 using HexLib;
+using System.Windows.Media.Imaging;
+using ASLInputTool.Infrastructure;
 
 namespace ASLInputTool.ViewModels;
 
@@ -16,6 +18,7 @@ namespace ASLInputTool.ViewModels;
 public partial class BoardEditorViewModel : ViewModelBase
 {
     private readonly AslBoard _board;
+    private readonly IBoardRepository _repository;
     private double _hexSize = 40.0;
     private HexViewModel? _selectedHex;
     private HexEdgeSelection? _selectedEdge;
@@ -124,10 +127,12 @@ public partial class BoardEditorViewModel : ViewModelBase
         }
     }
 
+    private readonly string _backgroundImagePath;
+
     /// <summary>
-    /// Gets the absolute path of the background image to render behind the canvas.
+    /// Gets the background image to render behind the canvas.
     /// </summary>
-    public string BackgroundImagePath { get; }
+    public ImageSource? BackgroundImage { get; }
 
     /// <summary>
     /// Gets or sets the current editing tool.
@@ -136,6 +141,18 @@ public partial class BoardEditorViewModel : ViewModelBase
     {
         get => _currentTool;
         set => SetProperty(ref _currentTool, value);
+    }
+
+    /// <summary>
+    /// Synchronizes the board's internal structures and re-generates the hex grid.
+    /// Used when configuration settings like staggering or halving are changed.
+    /// </summary>
+    public void RefreshGrid()
+    {
+        _board.PopulateBoard();
+        RecalculateHexSize();
+        GenerateHexGrid();
+        RefreshAllVisuals();
     }
 
     /// <summary>
@@ -191,15 +208,36 @@ public partial class BoardEditorViewModel : ViewModelBase
     /// </summary>
     public ICommand ResetZoomCommand { get; }
 
+    private readonly string? _originalName;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="BoardEditorViewModel"/> class.
     /// </summary>
     /// <param name="board">The board to edit.</param>
+    /// <param name="repository">The board repository.</param>
     /// <param name="imageFullPath">The background image path.</param>
-    public BoardEditorViewModel(AslBoard board, string imageFullPath = "")
+    /// <param name="originalName">The name on disk before any renaming.</param>
+    public BoardEditorViewModel(AslBoard board, IBoardRepository repository, string imageFullPath = "", string? originalName = null)
     {
-        BackgroundImagePath = imageFullPath;
+        _backgroundImagePath = imageFullPath;
+        if (!string.IsNullOrEmpty(imageFullPath) && System.IO.File.Exists(imageFullPath))
+        {
+            try
+            {
+                var bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.UriSource = new Uri(imageFullPath);
+                bitmap.CacheOption = BitmapCacheOption.OnLoad; // This prevents file locking
+                bitmap.EndInit();
+                bitmap.Freeze(); // Optimize for cross-thread access
+                BackgroundImage = bitmap;
+            }
+            catch { /* Fallback to no image if load fails */ }
+        }
+
         _board = board;
+        _repository = repository;
+        _originalName = originalName ?? board.Name;
         DisplayName = "Board Editor";
         SelectHexCommand = new RelayCommand<HexViewModel>(OnSelectHex);
         PaintHexCommand = new RelayCommand<HexViewModel>(OnPaintHex);
@@ -208,8 +246,7 @@ public partial class BoardEditorViewModel : ViewModelBase
         
         RecalculateHexSize();
         GenerateHexGrid();
-        UpdateRoadVisuals();
-        UpdateBuildingVisuals();
+        RefreshAllVisuals();
     }
 
     private void OnSelectHex(HexViewModel? hex)
@@ -337,12 +374,17 @@ public partial class BoardEditorViewModel : ViewModelBase
         UpdateBuildingVisuals();
     }
 
-    private void OnSave(object? parameter)
+    private async void OnSave(object? parameter)
     {
-        // For now, we'll assume the Board Repository handles the actual file IO.
-        // We'll just confirm the Board is updated.
-        // In a real app, we'd call _repository.Save(_board);
-        MessageBox.Show($"Board '{_board.Name}' changes are kept in memory. Save to disk not yet implemented via Repository.", "Save");
+        try
+        {
+            await _repository.SaveToDiskAsync(_board, _backgroundImagePath, _originalName);
+            MessageBox.Show($"Board '{_board.Name}' saved successfully.", "Save Success", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Failed to save board: {ex.Message}", "Save Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     private void RecalculateHexSize()

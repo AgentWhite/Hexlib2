@@ -32,7 +32,8 @@ public class ASLSaveManager
             WriteIndented = true,
             PropertyNameCaseInsensitive = true,
             ReferenceHandler = ReferenceHandler.IgnoreCycles,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            Converters = { new JsonStringEnumConverter() }
         };
     }
 
@@ -297,69 +298,4 @@ public class ASLSaveManager
     /// </summary>
     /// <returns>A list of map names.</returns>
     public Task<IEnumerable<string>> ListMapsAsync() => _storage.ListKeysAsync("Maps");
-
-    private class BoardDto
-    {
-        public string Name { get; set; } = string.Empty;
-        public int Width { get; set; }
-        public int Height { get; set; }
-        public HexTopOrientation TopOrientation { get; set; }
-        public List<HexDto> Hexes { get; set; } = new();
-
-        public static BoardDto FromBoard(Board<ASLHexMetadata, ASLEdgeData> board)
-        {
-            var dto = new BoardDto
-            {
-                Name = board.Name,
-                Width = board.Width,
-                Height = board.Height,
-                TopOrientation = board.TopOrientation
-            };
-
-            foreach (var kvp in board.Hexes)
-            {
-                dto.Hexes.Add(new HexDto
-                {
-                    Q = kvp.Key.Q,
-                    R = kvp.Key.R,
-                    S = kvp.Key.S,
-                    Metadata = kvp.Value.Metadata ?? new ASLHexMetadata(),
-                    Counters = kvp.Value.Counters.OfType<Unit>().ToList()
-                });
-            }
-            return dto;
-        }
-
-        public Board<ASLHexMetadata, ASLEdgeData> ToBoard()
-        {
-            var board = new Board<ASLHexMetadata, ASLEdgeData>(Width, Height, TopOrientation)
-            {
-                Name = Name
-            };
-
-            foreach (var hexDto in Hexes)
-            {
-                var coord = new CubeCoordinate(hexDto.Q, hexDto.R, hexDto.S);
-                var hex = new Hex<ASLHexMetadata>(coord)
-                {
-                    Metadata = hexDto.Metadata
-                };
-                foreach (var counter in hexDto.Counters)
-                {
-                    hex.AddCounter(counter);
-                }
-                board.AddHex(hex);
-            }
-            return board;
-        }
-    }
-
-    private class HexDto
-    {
-        public int Q { get; set; }
-        public int R { get; set; }
-        public int S { get; set; }
-        public ASLHexMetadata Metadata { get; set; } = new();
-        public List<Unit> Counters { get; set; } = new();
-    }
 }

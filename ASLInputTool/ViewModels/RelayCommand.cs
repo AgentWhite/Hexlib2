@@ -37,6 +37,11 @@ public class RelayCommand : ICommand
     /// <inheritdoc />
     /// <param name="parameter">Data used by the command. If the command does not require data to be passed, this object can be set to null.</param>
     public void Execute(object? parameter) => _execute(parameter);
+
+    /// <summary>
+    /// Forces the <see cref="CommandManager"/> to re-evaluate the <see cref="CanExecute"/> status.
+    /// </summary>
+    public void RaiseCanExecuteChanged() => CommandManager.InvalidateRequerySuggested();
 }
 
 /// <summary>
