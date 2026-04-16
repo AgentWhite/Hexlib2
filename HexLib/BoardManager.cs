@@ -222,21 +222,28 @@ public class BoardManager<THexMetadata, TEdgeData>
     /// </summary>
     public CubeCoordinate ToGlobalCoordinate(Hex<THexMetadata> hex)
     {
-        // To find the global coordinate of a hex:
-        // 1. We must find its parent board. 
+        // Translation Pipeline:
+        // 1. Identify the Parent Board to get its physical position and orientation.
         var parentBoard = _boards.Values.FirstOrDefault(b => b.GetHexAt(hex.Location) == hex);
         if (parentBoard == null)
         {
             throw new InvalidOperationException("The provided hex does not belong to any board managed by this BoardManager.");
         }
 
+        // 2. Local-to-Physical: Apply the board's rotation (0, 90, 180, 270) to the logical coordinate
+        // to find where the hex sits relative to the board's physical top-left corner.
         var offset = _boardPositions[parentBoard.Name];
         var localPhysicalCube = GetPhysicalCubeFromLogical(hex.Location, parentBoard.Orientation);
+        
+        // 3. Physical-to-Offset: Convert the rotated cube coordinate to a simple (col, row) offset.
         var localPhysicalOffset = localPhysicalCube.ToOffset(parentBoard.TopOrientation);
 
+        // 4. Local-to-Global Offset: Translate the board-relative offset into the manager-relative global offset.
         int globalX = localPhysicalOffset.col + offset.GlobalOffsetX;
         int globalY = localPhysicalOffset.row + offset.GlobalOffsetY;
 
+        // 5. Global Offset-to-Cube: Convert the final combined offset back into a single unified CubeCoordinate.
+        // We use the Anchor board's orientation as the global ground-truth.
         var globalOrientation = AnchorBoard?.TopOrientation ?? parentBoard.TopOrientation;
         return HexMath.OffsetToCube(globalX, globalY, globalOrientation);
     }

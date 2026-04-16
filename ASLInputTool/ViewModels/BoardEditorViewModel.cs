@@ -344,23 +344,27 @@ public partial class BoardEditorViewModel : ViewModelBase
     {
         var halfSides = _board.Board.HalfHexSides;
         
-        // Horizontal span calculation:
-        // center-to-center steps are 1.5S each.
-        // Plus left overhang (S if full, 0 if halved) and right overhang (S if full, 0 if halved).
+        // Horizontal Span Calculation:
+        // In a Flat-Topped hex grid:
+        // - Each hex has a width of 2S (where S is the circumradius).
+        // - The horizontal distance between adjacent columns is exactly 1.5S.
+        // - The first and last hexes contribute an extra 0.5S to the total span.
+        // - If a board side is NOT halved, we add a full extra S to that side to ensure the hex isn't clipped.
         double multiplierW = 1.5 * (_board.Width - 1);
         if (!halfSides.HasFlag(BoardEdge.Left)) multiplierW += 1.0;
         if (!halfSides.HasFlag(BoardEdge.Right)) multiplierW += 1.0;
         
-        // Vertical span calculation:
-        // Distance between rows is sqrt(3)*S.
-        // For a board with N row positions, the total vertical units is exactly N * sqrt(3).
-        // This accounts for the staggering where high columns are halved at Top/Bottom
-        // and low columns are full height between those boundaries.
+        // Vertical Span Calculation:
+        // In a Flat-Topped hex grid:
+        // - Each hex has a height of sqrt(3) * S.
+        // - The vertical distance between adjacent rows in the same column is sqrt(3) * S.
+        // - Staggering shifts adjacent columns vertically by 0.5 * sqrt(3) * S.
+        // - Total vertical units = N * sqrt(3), accounting for the full height of the staggered grid.
         double h_unit = Math.Sqrt(3);
         double multiplierH = h_unit * _board.Height; 
         
-        // No extra padding needed for multiplierH if it's based on N * h_unit,
-        // as y=0 starts at the center of row 0 high columns.
+        // Final pixel dimensions = Multiplier * HexSize.
+        // The View background rectangle uses these values to perfectly frame the hex grid.
 
         // Safety check to avoid division by zero or negative multipliers
         if (multiplierW <= 0) multiplierW = 1.0;

@@ -242,17 +242,24 @@ public class HexViewModel : ViewModelBase
         // Calculate inner points (80% scale) for elevation framing
         var sbInner = new StringBuilder();
         double innerScale = 0.8;
+        // 1. Calculate the 6 absolute physical corners of the hex using trigonometry.
+        // Flat-topped hexes start with a corner at 0 degrees (due East).
+        // Each subsequent corner is found by rotating 60 degrees.
         for (int i = 0; i < 6; i++)
         {
             double angleDeg = 60 * i;
-            double angleRad = Math.PI / 180 * angleDeg;
+            double angleRad = Math.PI / 180 * angleDeg; // Convert to Radians for Math.Cos/Sin
+            
+            // X = center + radius * cos(angle)
+            // Y = center + radius * sin(angle)
             double px = cx + (size * innerScale) * Math.Cos(angleRad);
             double py = cy + (size * innerScale) * Math.Sin(angleRad);
             
+            // Generate the SVG Path Data (M = MoveTo, L = LineTo)
             if (i == 0) sbInner.Append("M "); else sbInner.Append("L ");
             sbInner.AppendFormat(CultureInfo.InvariantCulture, "{0:F2},{1:F2} ", px, py);
         }
-        sbInner.Append("Z");
+        sbInner.Append("Z"); // Z = ClosePath
         InnerPoints = sbInner.ToString();
 
         SelectEdgeCommand = new RelayCommand<string>(param => {

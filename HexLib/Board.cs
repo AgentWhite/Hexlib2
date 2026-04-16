@@ -215,25 +215,26 @@ public class Board<THexMetadata, TEdgeData>
     /// <returns>The neighboring hex if it exists, either natively or on a joined board, or <c>null</c>.</returns>
     public Hex<THexMetadata>? GetPhysicalNeighbor(CubeCoordinate physicalCoordinate, PhysicalDirection physicalDirection)
     {
-        // 1. Calculate the target physical coordinate assuming it's on the same infinite grid
+        // Boundary Crossing Logic:
+        // 1. Calculate the target physical coordinate assuming it's on the same infinite grid.
         var offset = GetPhysicalOffset_Internal(physicalDirection);
         var targetPhysical = physicalCoordinate + offset;
 
-        // 2. Check if the targetPhysical coordinate exists natively on THIS board
+        // 2. Local Check: If the target exists on THIS board, return it immediately.
+        // We must convert the physical target back to a logical coordinate (applying rotation)
+        // to check our internal dictionary.
         var logicalTarget = PhysicalToLogical(targetPhysical, _orientation);
         if (_hexes.TryGetValue(logicalTarget, out var hex))
         {
-            return hex; // It's on our board
+            return hex; 
         }
 
-        // 3. Coordinate is off the board. We need to determine WHICH edge we crossed.
-        // This requires determining the bounds. In a hex grid, width/height form a rectangle in offset coordinates.
-        // We'll delegate edge detection to a helper to see if a joined board holds the answer.
+        // 3. Neighbor Check: If the coordinate is off-board, identify which edge was crossed.
         var crossedEdge = DetectCrossedEdge(physicalCoordinate, targetPhysical);
         if (crossedEdge != BoardEdge.None && _neighbors.TryGetValue(crossedEdge, out var neighborBoard))
         {
-            // We crossed to a neighbor. We need to ask the neighbor what hex is on their side of the join line.
-            // Since they are mirrored on the opposite edge, we query the neighbor.
+            // Crossing a join line. We query the neighbor for the hex on THEIR side of the same physical line.
+            // Boards are joined such that their logical edges align (e.g., my Right is their Left).
             return neighborBoard.GetMirrorHexOnEdge(GetOppositeEdge(crossedEdge), targetPhysical, this);
         }
 

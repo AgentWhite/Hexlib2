@@ -47,19 +47,23 @@ public readonly struct CubeCoordinate : IEquatable<CubeCoordinate>
     public int DistanceTo(CubeCoordinate other) =>
         (Math.Abs(Q - other.Q) + Math.Abs(R - other.R) + Math.Abs(S - other.S)) / 2;
 
-    /// <summary>Rotates the coordinate 60 degrees around the origin.</summary>
+    /// <summary>Rotates the coordinate 60 degrees clockwise around the origin.</summary>
+    /// <remarks>
+    /// Swaps and negates axes: (q, r, s) becomes (-r, -s, -q).
+    /// This maintains the invariant q + r + s = 0.
+    /// </remarks>
     public CubeCoordinate Rotate60() => new CubeCoordinate(-R, -S, -Q);
     
-    /// <summary>Rotates the coordinate 120 degrees around the origin.</summary>
+    /// <summary>Rotates the coordinate 120 degrees clockwise around the origin.</summary>
     public CubeCoordinate Rotate120() => new CubeCoordinate(S, Q, R);
     
     /// <summary>Rotates the coordinate 180 degrees around the origin.</summary>
     public CubeCoordinate Rotate180() => new CubeCoordinate(-Q, -R, -S);
     
-    /// <summary>Rotates the coordinate 240 degrees around the origin.</summary>
+    /// <summary>Rotates the coordinate 240 degrees (120 deg counter-clockwise) around the origin.</summary>
     public CubeCoordinate Rotate240() => new CubeCoordinate(R, S, Q);
     
-    /// <summary>Rotates the coordinate 300 degrees around the origin.</summary>
+    /// <summary>Rotates the coordinate 300 degrees (60 deg counter-clockwise) around the origin.</summary>
     public CubeCoordinate Rotate300() => new CubeCoordinate(-S, -Q, -R);
 
     /// <inheritdoc />

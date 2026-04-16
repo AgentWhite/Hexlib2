@@ -16,12 +16,20 @@ public static class HexMath
     {
         if (orientation == HexTopOrientation.PointyTopped)
         {
+            // PointyTopped (Odd-R or Even-R):
+            // The row (R) is mapped directly. 
+            // The column is adjusted based on the row parity to account for the zig-zag offset.
+            // (cube.R & 1) extracts the parity (0 for even rows, 1 for odd).
             int col = cube.Q + (cube.R + (useEvenStagger ? (cube.R & 1) : -(cube.R & 1))) / 2;
             int row = cube.R;
             return (col, row);
         }
         else
         {
+            // FlatTopped (Odd-Q or Even-Q):
+            // The column (Q) is mapped directly.
+            // The row is adjusted based on the column parity.
+            // Staggering ensures that hex centers align on a grid while maintaining 6 neighbors.
             int col = cube.Q;
             int row = cube.R + (cube.Q + (useEvenStagger ? (cube.Q & 1) : -(cube.Q & 1))) / 2;
             return (col, row);
