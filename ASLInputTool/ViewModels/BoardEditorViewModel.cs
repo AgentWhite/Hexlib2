@@ -13,7 +13,7 @@ namespace ASLInputTool.ViewModels;
 /// <summary>
 /// ViewModel for the board editor canvas and toolbar.
 /// </summary>
-public class BoardEditorViewModel : ViewModelBase
+public partial class BoardEditorViewModel : ViewModelBase
 {
     private readonly AslBoard _board;
     private double _hexSize = 40.0;
@@ -26,6 +26,7 @@ public class BoardEditorViewModel : ViewModelBase
     private ObservableCollection<RoadVisualViewModel> _roadVisuals = new();
     private ObservableCollection<RoadVisualViewModel> _waterVisuals = new();
     private ObservableCollection<BuildingVisualBase> _buildingVisuals = new();
+    private ObservableCollection<CliffVisualViewModel> _cliffVisuals = new();
     private bool _isUpdatingVisuals = false;
 
     /// <summary>
@@ -46,6 +47,15 @@ public class BoardEditorViewModel : ViewModelBase
     /// Gets the collection of road segments for rendering.
     /// </summary>
     public ObservableCollection<RoadVisualViewModel> RoadVisuals => _roadVisuals;
+
+    /// <summary>
+    /// Gets the collection of cliff visuals for rendering.
+    /// </summary>
+    public ObservableCollection<CliffVisualViewModel> CliffVisuals
+    {
+        get => _cliffVisuals;
+        set => SetProperty(ref _cliffVisuals, value);
+    }
 
     /// <summary>
     /// Gets the underlying ASL board being edited.
@@ -275,6 +285,7 @@ public class BoardEditorViewModel : ViewModelBase
     {
         UpdateRoadVisuals();
         UpdateBuildingVisuals();
+        UpdateCliffVisuals();
     }
 
     private void SetEdgeVisualSelection(HexViewModel hex, int edgeIndex, bool isSelected)
@@ -411,11 +422,33 @@ public class BoardEditorViewModel : ViewModelBase
                 if (processedEdges.Contains(edgeKey)) continue;
                 processedEdges.Add(edgeKey);
 
-                var neighborHexVm = _hexes.FirstOrDefault(h => h.Location.Equals(neighborLoc));
-                if (neighborHexVm == null) continue;
-
                 var edgeData = _board.Board.GetEdgeData(hexVm.Location, neighborLoc);
                 if (edgeData == null) continue;
+
+                var neighborHexVm = _hexes.FirstOrDefault(h => h.Location.Equals(neighborLoc));
+                Point destPoint;
+
+                if (neighborHexVm != null)
+                {
+                    destPoint = new Point(neighborHexVm.CenterX, neighborHexVm.CenterY);
+                }
+                else
+                {
+                    // Boundary connection: use hexside midpoint
+                    int edgeIndex = i switch
+                    {
+                        0 => 0, // SE
+                        5 => 1, // S
+                        4 => 2, // SW
+                        3 => 3, // NW
+                        2 => 4, // N
+                        1 => 5, // NE
+                        _ => 0
+                    };
+                    var p1 = hexVm.HexCorners[edgeIndex];
+                    var p2 = hexVm.HexCorners[(edgeIndex + 1) % 6];
+                    destPoint = new Point((p1.X + p2.X) / 2.0, (p1.Y + p2.Y) / 2.0);
+                }
 
                 // 1. Water features (drawn below roads)
                 if (edgeData.HasStream)
@@ -423,52 +456,48 @@ public class BoardEditorViewModel : ViewModelBase
                     _waterVisuals.Add(new RoadVisualViewModel
                     {
                         X1 = hexVm.CenterX, Y1 = hexVm.CenterY,
-                        X2 = neighborHexVm.CenterX, Y2 = neighborHexVm.CenterY,
+                        X2 = destPoint.X, Y2 = destPoint.Y,
                         Stroke = Brushes.DodgerBlue, Thickness = 4.0
                     });
                 }
-
                 if (edgeData.HasGully)
                 {
                     _waterVisuals.Add(new RoadVisualViewModel
                     {
                         X1 = hexVm.CenterX, Y1 = hexVm.CenterY,
-                        X2 = neighborHexVm.CenterX, Y2 = neighborHexVm.CenterY,
-                        Stroke = Brushes.Tan, Thickness = 6.0
+                        X2 = destPoint.X, Y2 = destPoint.Y,
+                        Stroke = new SolidColorBrush(Color.FromRgb(210, 180, 140)), // Tan
+                        Thickness = 6.0
                     });
                 }
-
                 if (edgeData.HasCanal)
                 {
-                    double squareSizeFactor = 0.5;
-                    double connectorThicknessFactor = 0.75;
                     _waterVisuals.Add(new RoadVisualViewModel
                     {
                         X1 = hexVm.CenterX, Y1 = hexVm.CenterY,
-                        X2 = neighborHexVm.CenterX, Y2 = neighborHexVm.CenterY,
-                        Stroke = Brushes.DodgerBlue,
-                        Thickness = _hexSize * squareSizeFactor * connectorThicknessFactor
+                        X2 = destPoint.X, Y2 = destPoint.Y,
+                        Stroke = Brushes.DodgerBlue, Thickness = 20.0
                     });
                 }
 
-                // 2. Road features (drawn above water)
+                // 2. Roads
                 if (edgeData.HasPavedRoad)
                 {
                     _roadVisuals.Add(new RoadVisualViewModel
                     {
                         X1 = hexVm.CenterX, Y1 = hexVm.CenterY,
-                        X2 = neighborHexVm.CenterX, Y2 = neighborHexVm.CenterY,
-                        Stroke = Brushes.Gray, Thickness = 4.0
+                        X2 = destPoint.X, Y2 = destPoint.Y,
+                        Stroke = Brushes.LightGray, Thickness = 6.0
                     });
                 }
-                
                 if (edgeData.HasDirtRoad)
                 {
                     _roadVisuals.Add(new RoadVisualViewModel
                     {
                         X1 = hexVm.CenterX, Y1 = hexVm.CenterY,
-                        X2 = neighborHexVm.CenterX, Y2 = neighborHexVm.CenterY,
-                        Stroke = Brushes.SaddleBrown, Thickness = 4.0
+                        X2 = destPoint.X, Y2 = destPoint.Y,
+                        Stroke = new SolidColorBrush(Color.FromRgb(160, 110, 60)), // Lighter brown
+                        Thickness = 6.0
                     });
                 }
             }
@@ -737,5 +766,92 @@ public class HexsideViewModel : ViewModelBase
             OnPropertyChanged(); 
             _onChanged?.Invoke();
         }
+    }
+
+    public bool HasCliff
+    {
+        get => _data.HasCliff;
+        set 
+        { 
+            _data.HasCliff = value; 
+            OnPropertyChanged(); 
+            _onChanged?.Invoke();
+        }
+    }
+}
+
+// Extension to BoardEditorViewModel
+public partial class BoardEditorViewModel
+{
+    private void UpdateCliffVisuals()
+    {
+        var newList = new ObservableCollection<CliffVisualViewModel>();
+        var processedEdges = new HashSet<(CubeCoordinate, CubeCoordinate)>();
+
+        foreach (var hexVm in _hexes)
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                var neighborLoc = hexVm.Location.GetNeighbor(i);
+                var edgeKey = NormalizeEdge(hexVm.Location, neighborLoc);
+                if (processedEdges.Contains(edgeKey)) continue;
+                processedEdges.Add(edgeKey);
+
+                var edgeData = _board.Board.GetEdgeData(hexVm.Location, neighborLoc);
+                if (edgeData != null && edgeData.HasCliff)
+                {
+                    // Map direction index to visual hex corners
+                    int edgeIndex = i switch
+                    {
+                        0 => 0, // SE
+                        5 => 1, // S
+                        4 => 2, // SW
+                        3 => 3, // NW
+                        2 => 4, // N
+                        1 => 5, // NE
+                        _ => 0
+                    };
+
+                    var p1 = hexVm.HexCorners[edgeIndex];
+                    var p2 = hexVm.HexCorners[(edgeIndex + 1) % 6];
+
+                    newList.Add(new CliffVisualViewModel(CreateJaggedGeometry(p1, p2)));
+                }
+            }
+        }
+        CliffVisuals = newList;
+    }
+
+    private Geometry CreateJaggedGeometry(Point p1, Point p2)
+    {
+        var stream = new StreamGeometry();
+        using (var context = stream.Open())
+        {
+            context.BeginFigure(p1, true, false);
+
+            double dx = p2.X - p1.X;
+            double dy = p2.Y - p1.Y;
+            double len = Math.Sqrt(dx * dx + dy * dy);
+            
+            // Perpendicular vector
+            double nx = -dy / len;
+            double ny = dx / len;
+
+            int segments = 8;
+            double toothSize = 4.0;
+
+            for (int j = 1; j <= segments; j++)
+            {
+                double t = (double)j / segments;
+                var currentP = new Point(p1.X + dx * t, p1.Y + dy * t);
+                
+                // Add a "tooth" at each segment
+                var toothPoint = new Point(currentP.X + nx * toothSize, currentP.Y + ny * toothSize);
+                context.LineTo(toothPoint, true, false);
+                context.LineTo(currentP, true, false);
+            }
+        }
+        stream.Freeze();
+        return stream;
     }
 }

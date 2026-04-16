@@ -153,12 +153,30 @@ public class HexViewModel : ViewModelBase
     public double BuildingSquareY => CenterY - (BuildingSquareSize / 2.0);
 
     /// <summary>
+    /// Gets or sets the SVG path data for the inner hex (for elevation framing).
+    /// </summary>
+    public string InnerPoints { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets a value indicating whether this hex is above ground level.
+    /// </summary>
+    public bool IsElevated => Elevation > 0;
+
+    /// <summary>
     /// Gets or sets the elevation level for this hex.
     /// </summary>
     public int Elevation
     {
         get => _metadata.Elevation;
-        set { _metadata.Elevation = value; OnPropertyChanged(); }
+        set 
+        { 
+            if (_metadata.Elevation != value)
+            {
+                _metadata.Elevation = value; 
+                OnPropertyChanged(); 
+                OnPropertyChanged(nameof(IsElevated));
+            }
+        }
     }
 
     /// <summary>
@@ -183,6 +201,23 @@ public class HexViewModel : ViewModelBase
         LabelY = ly;
         HexSize = size;
         _metadata = metadata;
+
+        // Calculate inner points (80% scale) for elevation framing
+        var sbInner = new StringBuilder();
+        double innerScale = 0.8;
+        for (int i = 0; i < 6; i++)
+        {
+            double angleDeg = 60 * i;
+            double angleRad = Math.PI / 180 * angleDeg;
+            double px = cx + (size * innerScale) * Math.Cos(angleRad);
+            double py = cy + (size * innerScale) * Math.Sin(angleRad);
+            
+            if (i == 0) sbInner.Append("M "); else sbInner.Append("L ");
+            sbInner.AppendFormat(CultureInfo.InvariantCulture, "{0:F2},{1:F2} ", px, py);
+        }
+        sbInner.Append("Z");
+        InnerPoints = sbInner.ToString();
+
         SelectEdgeCommand = new RelayCommand<string>(param => {
             if (int.TryParse(param, out int edgeIndex))
             {

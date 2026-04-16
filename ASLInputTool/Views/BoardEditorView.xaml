@@ -13,6 +13,7 @@
         <c:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
         <c:CenterOffsetConverter x:Key="CenterOffsetConverter" />
         <c:TerrainColorConverter x:Key="TerrainColorConverter" />
+        <c:ElevationColorConverter x:Key="ElevationColorConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </UserControl.Resources>
     <Grid Background="{StaticResource WindowBackgroundBrush}">
@@ -78,21 +79,12 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Canvas>
-                                        <Path Data="{Binding Points}">
-                                            <Path.InputBindings>
-                                                <MouseBinding MouseAction="LeftClick" 
-                                                              Command="{Binding DataContext.SelectHexCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
-                                                              CommandParameter="{Binding}" />
-                                            </Path.InputBindings>
+                                        <!-- Base Layer (Elevation framing) -->
+                                        <Path Data="{Binding Points}" Stroke="Black" StrokeThickness="1"
+                                              Fill="{Binding Elevation, Converter={StaticResource ElevationColorConverter}}">
                                             <Path.Style>
                                                 <Style TargetType="Path">
-                                                    <Setter Property="Stroke" Value="Black"/>
-                                                    <Setter Property="StrokeThickness" Value="1"/>
-                                                    <Setter Property="Fill" Value="{Binding Terrain, Converter={StaticResource TerrainColorConverter}}"/>
                                                     <Style.Triggers>
-                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                            <Setter Property="Fill" Value="#33FF0000"/>
-                                                        </Trigger>
                                                         <DataTrigger Binding="{Binding IsSelected}" Value="True">
                                                             <Setter Property="Stroke" Value="#FFFF6666"/>
                                                             <Setter Property="StrokeThickness" Value="3"/>
@@ -100,6 +92,29 @@
                                                     </Style.Triggers>
                                                 </Style>
                                             </Path.Style>
+                                        </Path>
+
+                                        <!-- Terrain Layer (Inner Hex) -->
+                                        <Path Data="{Binding InnerPoints}" IsHitTestVisible="False"
+                                              Fill="{Binding Terrain, Converter={StaticResource TerrainColorConverter}}">
+                                            <Path.Style>
+                                                <Style TargetType="Path">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsElevated}" Value="False">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Path.Style>
+                                        </Path>
+
+                                        <!-- Transparent Hitbox Path (for selection and mouse interaction) -->
+                                        <Path Data="{Binding Points}" Fill="Transparent" Stroke="Transparent">
+                                            <Path.InputBindings>
+                                                <MouseBinding MouseAction="LeftClick" 
+                                                              Command="{Binding DataContext.SelectHexCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
+                                                              CommandParameter="{Binding}" />
+                                            </Path.InputBindings>
                                             <Path.ToolTip>
                                                 <ToolTip>
                                                     <StackPanel>
@@ -248,6 +263,21 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
+                        <!-- Cliff Visuals -->
+                        <ItemsControl ItemsSource="{Binding CliffVisuals}" Panel.ZIndex="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Canvas IsHitTestVisible="False"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Path Data="{Binding Data}" Stroke="{Binding Stroke}" StrokeThickness="{Binding Thickness}"
+                                          StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
                         <!-- Road Visuals -->
                         <ItemsControl ItemsSource="{Binding RoadVisuals}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                             <ItemsControl.ItemsPanel>
@@ -364,6 +394,7 @@
                         <CheckBox Content="Stream" IsChecked="{Binding HasStream}" Margin="0,5"/>
                         <CheckBox Content="Gully" IsChecked="{Binding HasGully}" Margin="0,5"/>
                         <CheckBox Content="Canal" IsChecked="{Binding HasCanal}" Margin="0,5"/>
+                        <CheckBox Content="Cliff" IsChecked="{Binding HasCliff}" Margin="0,5"/>
                     </StackPanel>
                 </GroupBox>
             </StackPanel>

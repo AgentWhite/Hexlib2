@@ -38,4 +38,7 @@ public class ASLEdgeData
 
     /// <summary>Gets or sets a value indicating whether this is a rowhouse hexside.</summary>
     public bool IsRowhouse { get; set; }
+
+    /// <summary>Gets or sets a value indicating whether there is a cliff on this hexside.</summary>
+    public bool HasCliff { get; set; }
 }
