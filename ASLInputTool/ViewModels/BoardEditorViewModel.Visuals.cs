@@ -367,4 +367,42 @@ public partial class BoardEditorViewModel
         }
         HexsideTerrainVisuals = newList;
     }
+
+    private void UpdateRoadPreview(HexViewModel target)
+    {
+        RoadPreviewVisuals.Clear();
+        if (RoadStartHex == null || RoadStartHex == target) return;
+
+        int edgeIndex = GetNeighborEdgeIndex(RoadStartHex, target);
+        if (edgeIndex != -1)
+        {
+            var p1 = new Point(RoadStartHex.CenterX, RoadStartHex.CenterY);
+            var p2 = new Point(target.CenterX, target.CenterY);
+
+            var visual = new RoadVisualViewModel
+            {
+                X1 = p1.X, Y1 = p1.Y,
+                X2 = p2.X, Y2 = p2.Y,
+                Stroke = GetActiveRoadBrush(),
+                Thickness = GetActiveRoadThickness()
+            };
+            RoadPreviewVisuals.Add(visual);
+        }
+    }
+
+    private Brush GetActiveRoadBrush()
+    {
+        return ActiveRoadType switch
+        {
+            RoadToolType.Paved => Brushes.DimGray,
+            RoadToolType.Dirt => new SolidColorBrush(Color.FromRgb(160, 110, 60)),
+            RoadToolType.Path => new SolidColorBrush(Color.FromRgb(120, 80, 40)),
+            _ => Brushes.Black
+        };
+    }
+
+    private double GetActiveRoadThickness()
+    {
+        return ActiveRoadType == RoadToolType.Path ? 2.0 : 6.0;
+    }
 }

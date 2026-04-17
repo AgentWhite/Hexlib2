@@ -39,7 +39,11 @@
                 <RadioButton Content="Select" IsChecked="{Binding CurrentTool, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Select}" 
                              Style="{StaticResource {x:Type ToggleButton}}" Padding="10,5" Margin="0,0,5,0"/>
                 <RadioButton Content="Paint" IsChecked="{Binding CurrentTool, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Paint}" 
+                             Style="{StaticResource {x:Type ToggleButton}}" Padding="10,5" Margin="0,0,5,0"/>
+                <RadioButton Content="Road" IsChecked="{Binding CurrentTool, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Road}" 
                              Style="{StaticResource {x:Type ToggleButton}}" Padding="10,5" Margin="0,0,10,0"/>
+                <Separator Margin="10,0"/>
+                <CheckBox Content="Dim Background" IsChecked="{Binding DimBackground}" VerticalAlignment="Center" Margin="0,0,10,0"/>
                 <Separator Margin="10,0"/>
                 <Button Content="💾 Save Board" Command="{Binding SaveCommand}" 
                         Background="{StaticResource AccentBrush}" Foreground="White" FontWeight="Bold" Padding="15,5"/>
@@ -60,6 +64,9 @@
                         <DropShadowEffect BlurRadius="15" Direction="-45" RenderingBias="Quality" ShadowDepth="5" Opacity="0.3"/>
                     </Border.Effect>
                     <Grid Width="{Binding ActualGridWidth}" Height="{Binding ActualGridHeight}">
+                        <Grid.InputBindings>
+                            <MouseBinding MouseAction="RightClick" Command="{Binding EndRoadCommand}" />
+                        </Grid.InputBindings>
                         <!-- The Canvas for SVG and Bitmap graphics -->
                         <ItemsControl ItemsSource="{Binding Hexes}">
                             <ItemsControl.ItemsPanel>
@@ -496,7 +503,18 @@
                         </ItemsControl>
                         
                         <!-- Overlay background image -->
-                        <Image Source="{Binding BackgroundImage}" Stretch="Fill" Opacity="0.4" IsHitTestVisible="False" />
+                        <Image Source="{Binding BackgroundImage}" Stretch="Fill" IsHitTestVisible="False">
+                            <Image.Style>
+                                <Style TargetType="Image">
+                                    <Setter Property="Opacity" Value="1.0" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding DimBackground}" Value="True">
+                                            <Setter Property="Opacity" Value="0.4" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
 
                         <!-- Building Visuals (Connectors only) -->
                         <ItemsControl ItemsSource="{Binding BuildingVisuals}" Panel.ZIndex="10" 
@@ -560,6 +578,22 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
 
+                        <!-- Road Preview Layer -->
+                        <ItemsControl ItemsSource="{Binding RoadPreviewVisuals}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <Canvas IsHitTestVisible="False"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Line X1="{Binding X1}" Y1="{Binding Y1}" X2="{Binding X2}" Y2="{Binding Y2}"
+                                          Stroke="{Binding Stroke}" StrokeThickness="{Binding Thickness}" StrokeDashArray="2 1" Opacity="0.5"
+                                          IsHitTestVisible="False"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
                         <!-- Final Label Layer (Coordinates) - Always on Top -->
                         <ItemsControl ItemsSource="{Binding Hexes}" Panel.ZIndex="100"
                                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsHitTestVisible="False">
@@ -619,6 +653,26 @@
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
+                        </StackPanel>
+                    </GroupBox>
+
+                    <GroupBox Header="Road Tool Settings" Margin="0,0,0,15">
+                        <GroupBox.Style>
+                            <Style TargetType="GroupBox">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding CurrentTool}" Value="Road">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </GroupBox.Style>
+                        <StackPanel Margin="5">
+                            <RadioButton Content="Paved Road" IsChecked="{Binding ActiveRoadType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Paved}" Margin="0,2"/>
+                            <RadioButton Content="Dirt Road" IsChecked="{Binding ActiveRoadType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dirt}" Margin="0,2"/>
+                            <RadioButton Content="Path" IsChecked="{Binding ActiveRoadType, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Path}" Margin="0,2"/>
+                            
+                            <Button Content="End Road (Right-Click)" Command="{Binding EndRoadCommand}" Margin="0,10,0,0" Padding="5"/>
                         </StackPanel>
                     </GroupBox>
     

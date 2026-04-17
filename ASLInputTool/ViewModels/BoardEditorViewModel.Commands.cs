@@ -21,6 +21,32 @@ public partial class BoardEditorViewModel
         {
             PaintHex(hex);
         }
+        else if (CurrentTool == ToolMode.Road)
+        {
+            HandleRoadToolClick(hex);
+        }
+    }
+
+    private void HandleRoadToolClick(HexViewModel hex)
+    {
+        if (RoadStartHex == null)
+        {
+            RoadStartHex = hex;
+            return;
+        }
+
+        int edgeIndex = GetNeighborEdgeIndex(RoadStartHex, hex);
+        if (edgeIndex != -1)
+        {
+            CommitRoadEdge(RoadStartHex, hex, edgeIndex);
+            RoadStartHex = hex;
+            RoadPreviewVisuals.Clear();
+        }
+        else
+        {
+            RoadStartHex = hex;
+            RoadPreviewVisuals.Clear();
+        }
     }
 
     private void ClearAllEdgeVisuals()
@@ -87,12 +113,19 @@ public partial class BoardEditorViewModel
 
     private void OnPaintHex(HexViewModel? hex)
     {
-        if (hex == null || CurrentTool != ToolMode.Paint) return;
+        if (hex == null) return;
         
-        // Only paint if the left mouse button is down (for MouseEnter case)
-        if (System.Windows.Input.Mouse.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
+        if (CurrentTool == ToolMode.Paint)
         {
-            PaintHex(hex);
+            // Only paint if the left mouse button is down (for MouseEnter case)
+            if (System.Windows.Input.Mouse.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
+            {
+                PaintHex(hex);
+            }
+        }
+        else if (CurrentTool == ToolMode.Road)
+        {
+            UpdateRoadPreview(hex);
         }
     }
 
@@ -104,6 +137,56 @@ public partial class BoardEditorViewModel
     {
         hex.Terrain = ActiveTerrain;
         UpdateBuildingVisuals();
+    }
+
+    private int GetNeighborEdgeIndex(HexViewModel from, HexViewModel target)
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            var neighborLoc = from.Location.GetNeighbor(i);
+            if (neighborLoc.Equals(target.Location))
+            {
+                // HexLib direction to Visual edge index mapping
+                return i switch
+                {
+                    0 => 0, // SE
+                    5 => 1, // S
+                    4 => 2, // SW
+                    3 => 3, // NW
+                    2 => 4, // N
+                    1 => 5, // NE
+                    _ => -1
+                };
+            }
+        }
+        return -1;
+    }
+
+    private void CommitRoadEdge(HexViewModel from, HexViewModel to, int edgeIndex)
+    {
+        // Get or create edge data
+        var edgeData = _board.Board.GetEdgeData(from.Location, to.Location);
+        if (edgeData == null)
+        {
+            edgeData = new ASLEdgeData();
+            _board.Board.SetEdgeData(from.Location, to.Location, edgeData);
+        }
+
+        // Apply selected road type
+        switch (ActiveRoadType)
+        {
+            case RoadToolType.Paved:
+                edgeData.HasPavedRoad = true;
+                break;
+            case RoadToolType.Dirt:
+                edgeData.HasDirtRoad = true;
+                break;
+            case RoadToolType.Path:
+                edgeData.HasPath = true;
+                break;
+        }
+
+        RefreshAllVisuals();
     }
 
     private async void OnSave(object? parameter)

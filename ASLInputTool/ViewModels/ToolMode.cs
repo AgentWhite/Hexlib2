@@ -12,5 +12,7 @@ public enum ToolMode
     /// <summary>Zoom in on the board (sticky tool).</summary>
     ZoomIn,
     /// <summary>Zoom out from the board (sticky tool).</summary>
-    ZoomOut
+    ZoomOut,
+    /// <summary>Create a string of road/path hexsides.</summary>
+    Road
 }

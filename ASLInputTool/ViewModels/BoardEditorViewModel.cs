@@ -29,6 +29,10 @@ public partial class BoardEditorViewModel : ViewModelBase
     private ObservableCollection<CliffVisualViewModel> _cliffVisuals = new();
     private ObservableCollection<HexsideTerrainVisualViewModel> _hexsideTerrainVisuals = new();
     private bool _isUpdatingVisuals = false;
+    private HexViewModel? _roadStartHex;
+    private RoadToolType _activeRoadType = RoadToolType.Paved;
+    private ObservableCollection<RoadVisualViewModel> _roadPreviewVisuals = new();
+    private bool _dimBackground = true;
 
     /// <summary>Gets the collection of water visuals (streams, gullies, canals).</summary>
     public ObservableCollection<RoadVisualViewModel> WaterVisuals => _waterVisuals;
@@ -122,10 +126,15 @@ public partial class BoardEditorViewModel : ViewModelBase
         {
             if (SetProperty(ref _currentTool, value))
             {
-                if (value == ToolMode.Paint)
+                if (value == ToolMode.Paint || value == ToolMode.Road)
                 {
                     SelectedHex = null;
                     SelectedEdge = null;
+                }
+                
+                if (value != ToolMode.Road)
+                {
+                    EndRoad();
                 }
             }
         }
@@ -157,6 +166,30 @@ public partial class BoardEditorViewModel : ViewModelBase
         set => SetProperty(ref _zoomLevel, Math.Max(0.1, Math.Min(10.0, value)));
     }
 
+    /// <summary>Gets the starting hex for the current road string tool.</summary>
+    public HexViewModel? RoadStartHex
+    {
+        get => _roadStartHex;
+        set => SetProperty(ref _roadStartHex, value);
+    }
+
+    /// <summary>Gets or sets the active road type to paint.</summary>
+    public RoadToolType ActiveRoadType
+    {
+        get => _activeRoadType;
+        set => SetProperty(ref _activeRoadType, value);
+    }
+
+    /// <summary>Gets or sets a value indicating whether the background image should be dimmed.</summary>
+    public bool DimBackground
+    {
+        get => _dimBackground;
+        set => SetProperty(ref _dimBackground, value);
+    }
+
+    /// <summary>Gets the collection of temporary road previews.</summary>
+    public ObservableCollection<RoadVisualViewModel> RoadPreviewVisuals => _roadPreviewVisuals;
+
     /// <summary>Gets all available terrain types for selection.</summary>
     public Array AvailableTerrainTypes => Enum.GetValues(typeof(TerrainType));
 
@@ -171,6 +204,9 @@ public partial class BoardEditorViewModel : ViewModelBase
 
     /// <summary>Command to paint a hex.</summary>
     public ICommand PaintHexCommand { get; }
+
+    /// <summary>Command to terminate the current road stringing.</summary>
+    public ICommand EndRoadCommand { get; }
 
     /// <summary>Command to save the modified board.</summary>
     public ICommand SaveCommand { get; }
@@ -213,9 +249,16 @@ public partial class BoardEditorViewModel : ViewModelBase
         PaintHexCommand = new RelayCommand<HexViewModel>(OnPaintHex);
         SaveCommand = new RelayCommand(OnSave);
         ResetZoomCommand = new RelayCommand(_ => ZoomLevel = 1.0);
+        EndRoadCommand = new RelayCommand(_ => EndRoad());
         
         RecalculateHexSize();
         GenerateHexGrid();
         RefreshAllVisuals();
+    }
+
+    private void EndRoad()
+    {
+        RoadStartHex = null;
+        RoadPreviewVisuals.Clear();
     }
 }
