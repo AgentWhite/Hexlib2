@@ -2,6 +2,11 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 using ASL.Models;
+using ASL.Models.Units;
+using ASL.Models.Board;
+using ASL.Models.Scenarios;
+using ASL.Models.Modules;
+using ASL.Models.Equipment;
 using ASL.Models.Components;
 
 namespace ASLInputTool.Converters;

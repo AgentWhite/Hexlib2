@@ -1,5 +1,5 @@
-using ASL.Models;
-using ASL.Models.Components;
+using ASL.Models.Units;
+using ASL.Models.Board;
 using HexLib;
 using System.Collections.Generic;
 using System.Linq;

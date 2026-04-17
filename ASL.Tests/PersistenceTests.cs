@@ -1,4 +1,9 @@
 using ASL.Models;
+using ASL.Models.Units;
+using ASL.Models.Board;
+using ASL.Models.Scenarios;
+using ASL.Models.Modules;
+using ASL.Models.Equipment;
 using ASL.Models.Components;
 using ASL.Persistence;
 using HexLib;

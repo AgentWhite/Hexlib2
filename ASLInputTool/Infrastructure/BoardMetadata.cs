@@ -1,4 +1,4 @@
-using ASL.Models.Maps;
+using ASL.Models.Board;
 
 namespace ASLInputTool.Infrastructure;
 

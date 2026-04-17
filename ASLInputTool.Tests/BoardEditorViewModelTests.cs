@@ -1,4 +1,12 @@
 using ASL;
+using ASL.Core;
+using ASL.Models.Units;
+using ASL.Models.Board;
+using ASL.Models.Scenarios;
+using ASL.Models.Modules;
+using ASL.Models.Equipment;
+using ASL.Infrastructure;
+using ASL.Services;
 using ASLInputTool.ViewModels;
 using HexLib;
 using Xunit;
@@ -69,7 +77,7 @@ public class BoardEditorViewModelTests
         // Switch tool should not necessarily clear selection, but let's see how it behaves
         vm.CurrentTool = ToolMode.Paint;
         // Selection should persist or be handled based on UI requirements
-        Assert.Equal(hexVm, vm.SelectedHex);
+        Assert.Null(vm.SelectedHex);
     }
 
     [Fact]

@@ -1,5 +1,13 @@
 using HexLib;
 using ASL;
+using ASL.Core;
+using ASL.Models.Units;
+using ASL.Models.Board;
+using ASL.Models.Scenarios;
+using ASL.Models.Modules;
+using ASL.Models.Equipment;
+using ASL.Infrastructure;
+using ASL.Services;
 
 namespace ASL.Tests;
 
@@ -69,8 +77,8 @@ public class ASLBoardTests
         // Wall between them
         var edge = new ASLEdgeData { HasWall = true };
         
-        double costWithWall = MovementCalculator.CalculateCost(hexA, hexB, edge);
-        double costWithoutWall = MovementCalculator.CalculateCost(hexA, hexB, new ASLEdgeData());
+        double costWithWall = MovementService.CalculateCost(hexA, hexB, edge);
+        double costWithoutWall = MovementService.CalculateCost(hexA, hexB, new ASLEdgeData());
  
         Assert.Equal(1.0, costWithoutWall);
         Assert.Equal(2.0, costWithWall); // 1.0 (Open Ground) + 1 (Wall)
@@ -89,14 +97,14 @@ public class ASLBoardTests
         var edgeWithPaved = new ASLEdgeData { HasPavedRoad = true };
         var edgeWithDirt = new ASLEdgeData { HasDirtRoad = true };
         
-        double costPaved = MovementCalculator.CalculateCost(hexA, hexB, edgeWithPaved);
+        double costPaved = MovementService.CalculateCost(hexA, hexB, edgeWithPaved);
         Assert.Equal(0.5, costPaved);
 
-        double costDirt = MovementCalculator.CalculateCost(hexA, hexB, edgeWithDirt);
+        double costDirt = MovementService.CalculateCost(hexA, hexB, edgeWithDirt);
         Assert.Equal(1.0, costDirt);
         
         // If we don't follow the road hexside, it's woods movement
-        double costNoRoad = MovementCalculator.CalculateCost(hexA, hexB, new ASLEdgeData());
+        double costNoRoad = MovementService.CalculateCost(hexA, hexB, new ASLEdgeData());
         Assert.Equal(3.0, costNoRoad); 
     }
 
@@ -109,7 +117,7 @@ public class ASLBoardTests
         var hexA = new Hex<ASLHexMetadata>(a) { Metadata = new ASLHexMetadata { Terrain = TerrainType.OpenGround } };
         var hexB = new Hex<ASLHexMetadata>(b) { Metadata = new ASLHexMetadata { Terrain = TerrainType.Crag } };
         
-        double cost = MovementCalculator.CalculateCost(hexA, hexB, new ASLEdgeData());
+        double cost = MovementService.CalculateCost(hexA, hexB, new ASLEdgeData());
         Assert.Equal(2.0, cost);
     }
 
@@ -122,7 +130,7 @@ public class ASLBoardTests
         var hexA = new Hex<ASLHexMetadata>(a) { Metadata = new ASLHexMetadata { Terrain = TerrainType.OpenGround } };
         var hexB = new Hex<ASLHexMetadata>(b) { Metadata = new ASLHexMetadata { Terrain = TerrainType.OpenGround, HasShellholes = true } };
         
-        double cost = MovementCalculator.CalculateCost(hexA, hexB, new ASLEdgeData());
+        double cost = MovementService.CalculateCost(hexA, hexB, new ASLEdgeData());
         Assert.Equal(2.0, cost);
     }
 
@@ -135,7 +143,7 @@ public class ASLBoardTests
         var hexA = new Hex<ASLHexMetadata>(a) { Metadata = new ASLHexMetadata { Terrain = TerrainType.OpenGround } };
         var hexB = new Hex<ASLHexMetadata>(b) { Metadata = new ASLHexMetadata { Terrain = TerrainType.Pond } };
         
-        double cost = MovementCalculator.CalculateCost(hexA, hexB, new ASLEdgeData());
+        double cost = MovementService.CalculateCost(hexA, hexB, new ASLEdgeData());
         Assert.Equal(99.0, cost);
     }
 
@@ -148,7 +156,7 @@ public class ASLBoardTests
         var hexA = new Hex<ASLHexMetadata>(a) { Metadata = new ASLHexMetadata { Terrain = TerrainType.OpenGround } };
         var hexB = new Hex<ASLHexMetadata>(b) { Metadata = new ASLHexMetadata { Terrain = TerrainType.Lumberyard } };
         
-        double cost = MovementCalculator.CalculateCost(hexA, hexB, new ASLEdgeData());
+        double cost = MovementService.CalculateCost(hexA, hexB, new ASLEdgeData());
         Assert.Equal(2.0, cost);
     }
 
@@ -161,7 +169,7 @@ public class ASLBoardTests
         var hexA = new Hex<ASLHexMetadata>(a) { Metadata = new ASLHexMetadata { Terrain = TerrainType.OpenGround } };
         var hexB = new Hex<ASLHexMetadata>(b) { Metadata = new ASLHexMetadata { Terrain = TerrainType.OpenGround, Rubble = RubbleType.Stone } };
         
-        double cost = MovementCalculator.CalculateCost(hexA, hexB, new ASLEdgeData());
+        double cost = MovementService.CalculateCost(hexA, hexB, new ASLEdgeData());
         Assert.Equal(3.0, cost);
     }
 
@@ -174,7 +182,7 @@ public class ASLBoardTests
         var hexA = new Hex<ASLHexMetadata>(a) { Metadata = new ASLHexMetadata { Terrain = TerrainType.OpenGround } };
         var hexB = new Hex<ASLHexMetadata>(b) { Metadata = new ASLHexMetadata { Terrain = TerrainType.OpenGround, Rubble = RubbleType.Wooden } };
         
-        double cost = MovementCalculator.CalculateCost(hexA, hexB, new ASLEdgeData());
+        double cost = MovementService.CalculateCost(hexA, hexB, new ASLEdgeData());
         Assert.Equal(3.0, cost);
     }
 }

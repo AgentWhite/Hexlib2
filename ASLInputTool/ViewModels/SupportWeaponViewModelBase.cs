@@ -1,6 +1,11 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using ASL.Models;
+using ASL.Models.Units;
+using ASL.Models.Board;
+using ASL.Models.Scenarios;
+using ASL.Models.Modules;
+using ASL.Models.Equipment;
 using ASLInputTool.Infrastructure;
 
 namespace ASLInputTool.ViewModels;

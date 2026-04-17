@@ -1,0 +1,24 @@
+using System.Text.Json.Serialization;
+
+namespace ASL.Models.Equipment;
+
+
+/// <summary>
+/// Represents the method by which smoke is delivered.
+/// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum SmokeDeliveryMethod
+{
+    /// <summary>
+    /// Smoke is placed by an infantry unit.
+    /// </summary>
+    Placement_dr,
+    /// <summary>
+    /// Smoke is delivered by ordnance.
+    /// </summary>
+    Ordnance_DR,
+    /// <summary>
+    /// Smoke is delivered by a dispenser.
+    /// </summary>
+    Dispenser_DR
+}
