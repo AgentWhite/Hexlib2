@@ -597,6 +597,16 @@
                     
                     <!-- Tool Options -->
                     <GroupBox Header="Brush Settings" Margin="0,0,0,15">
+                        <GroupBox.Style>
+                            <Style TargetType="GroupBox">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding CurrentTool}" Value="Paint">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </GroupBox.Style>
                         <StackPanel Margin="5">
                             <TextBlock Text="Active Terrain:"/>
                             <ComboBox ItemsSource="{Binding AvailableTerrainTypes}" SelectedItem="{Binding ActiveTerrain}" Margin="0,5,0,0">

@@ -5,7 +5,6 @@ using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Data;
 using ASLInputTool.Infrastructure;
 
 namespace ASLInputTool.ViewModels;
@@ -28,27 +27,12 @@ public enum EquipmentType
 /// <summary>
 /// ViewModel for managing Equipment (LMG, MMG, HMG, Radios, etc.) counters.
 /// </summary>
-public class EquipmentViewModel : UnitViewModelBase
+public class EquipmentViewModel : SupportWeaponViewModelBase
 {
-    /// <inheritdoc />
-    protected override string UnitCategoryFilter => "Equipment";
-    private string _name = string.Empty;
-    private string _firepower = string.Empty;
-    private string _range = string.Empty;
-    private string _rateOfFire = string.Empty;
-    private string _breakdownNumber = string.Empty;
-    private string _removalNumber = string.Empty;
-    private string _repairNumber = string.Empty;
-    private string _portageCost = string.Empty;
-    private string _dismantledCost = string.Empty;
     private bool _hasSmokeExponent;
     private string _smokePlacementExponent = string.Empty;
-    private Nationality _selectedNationality = Nationality.German;
     private MachineGunType _selectedMachineGunType = MachineGunType.LMG;
     private bool _hasSprayingFire;
-    private string? _dismantledImage;
-    private bool _showDismantledImage;
-    private System.Windows.Input.ICommand? _pickDismantledImageCommand;
     
     // New fields for multiple equipment types
     private EquipmentType _selectedEquipmentType = EquipmentType.MachineGun;
@@ -134,39 +118,13 @@ public class EquipmentViewModel : UnitViewModelBase
         set => SetProperty(ref _privateToHitTable, value);
     }
 
-    /// <summary>
-    /// Gets or sets the name/type of the support weapon.
-    /// </summary>
-    [Required(ErrorMessage = "Id is required.")]
-    public string Name { get => _name; set => SetProperty(ref _name, value); }
-
-    /// <summary>
-    /// Gets or sets the file path to the image representing the unit when dismantled.
-    /// </summary>
-    public string? DismantledImage { get => _dismantledImage; set => SetProperty(ref _dismantledImage, value); }
-
-    /// <summary>
-    /// Gets or sets a value indicating whether the dismantled image box should be shown.
-    /// </summary>
-    public bool ShowDismantledImage { get => _showDismantledImage; set => SetProperty(ref _showDismantledImage, value); }
-
-    /// <summary>
-    /// Gets or sets the firepower value as a string for UI binding.
-    /// </summary>
-    public string Firepower { get => _firepower; set => SetProperty(ref _firepower, value); }
-
-    /// <summary>
-    /// Gets or sets the range value as a string for UI binding.
-    /// </summary>
-    public string Range 
+    /// <summary>Overriding Range to trigger to-hit table updates.</summary>
+    public override string Range 
     { 
-        get => _range; 
+        get => base.Range; 
         set 
         {
-            if (SetProperty(ref _range, value))
-            {
-                UpdateToHitTableState();
-            }
+            if (SetProperty(ref _range, value, nameof(Range))) { UpdateToHitTableState(); }
         }
     }
 
@@ -177,10 +135,7 @@ public class EquipmentViewModel : UnitViewModelBase
         if (int.TryParse(Range, out int r) && r >= 0)
         {
             CanEnableToHitTable = true;
-            if (HasToHitTable)
-            {
-                RebuildToHitTable();
-            }
+            if (HasToHitTable) RebuildToHitTable();
         }
         else
         {
@@ -203,68 +158,7 @@ public class EquipmentViewModel : UnitViewModelBase
         }
     }
 
-    /// <summary>
-    /// Gets or sets the rate of fire (ROF) value as a string for UI binding.
-    /// </summary>
-    [Range(typeof(int), "1", "5", ErrorMessage = "ROF must be between 1 and 5.")]
-    public string RateOfFire { get => _rateOfFire; set => SetProperty(ref _rateOfFire, value); }
-
-    /// <summary>
-    /// Gets or sets the breakdown number as a string for UI binding.
-    /// </summary>
-    [Range(typeof(int), "0", "12", ErrorMessage = "Breakdown number must be between 0 and 12.")]
-    public string BreakdownNumber { get => _breakdownNumber; set => SetProperty(ref _breakdownNumber, value); }
-
-    /// <summary>
-    /// Gets or sets the removal number as a string for UI binding.
-    /// </summary>
-    [Range(typeof(int), "0", "12", ErrorMessage = "Removal number must be between 0 and 12.")]
-    public string RemovalNumber { get => _removalNumber; set => SetProperty(ref _removalNumber, value); }
-
-    /// <summary>
-    /// Gets or sets the repair number as a string for UI binding.
-    /// </summary>
-    [Range(typeof(int), "0", "12", ErrorMessage = "Repair number must be between 0 and 12.")]
-    public string RepairNumber { get => _repairNumber; set => SetProperty(ref _repairNumber, value); }
-
-    /// <summary>
-    /// Gets or sets the portage cost as a string for UI binding.
-    /// </summary>
-    public string PortageCost 
-    { 
-        get => _portageCost; 
-        set 
-        { 
-            if (SetProperty(ref _portageCost, value)) 
-                UpdateDismantledImageVisibility(); 
-        } 
-    }
-
-    /// <summary>
-    /// Gets or sets the portage cost when dismantled as a string for UI binding.
-    /// </summary>
-    [Range(typeof(int), "1", "10", ErrorMessage = "Dismantled cost must be between 1 and 10.")]
-    public string DismantledCost 
-    { 
-        get => _dismantledCost; 
-        set 
-        {
-            var previouslyHadDismantledCost = !string.IsNullOrWhiteSpace(_dismantledCost);
-            if (SetProperty(ref _dismantledCost, value))
-            {
-                var currentlyHasDismantledCost = !string.IsNullOrWhiteSpace(_dismantledCost);
-                if (currentlyHasDismantledCost && !previouslyHadDismantledCost)
-                {
-                    DismantledImage = string.Empty;
-                }
-                UpdateDismantledImageVisibility();
-            }
-        } 
-    }
-
-    /// <summary>
-    /// Gets or sets a value indicating whether the weapon has a smoke placement exponent.
-    /// </summary>
+    /// <summary>Gets or sets a value indicating whether the weapon has a smoke placement exponent.</summary>
     public bool HasSmokeExponent 
     { 
         get => _hasSmokeExponent; 
@@ -281,9 +175,7 @@ public class EquipmentViewModel : UnitViewModelBase
         } 
     }
 
-    /// <summary>
-    /// Gets or sets the smoke placement exponent as a string.
-    /// </summary>
+    /// <summary>Gets or sets the smoke placement exponent as a string.</summary>
     [Range(typeof(int), "1", "9", ErrorMessage = "Smoke exponent must be between 1 and 9.")]
     public string SmokePlacementExponent  
     { 
@@ -291,54 +183,23 @@ public class EquipmentViewModel : UnitViewModelBase
         set => SetProperty(ref _smokePlacementExponent, value);
     }
 
-    /// <summary>
-    /// Gets or sets the selected nationality for the weapon.
-    /// </summary>
-    public Nationality SelectedNationality 
-    { 
-        get => _selectedNationality; 
-        set => SetProperty(ref _selectedNationality, value);
-    }
-
-
-    /// <summary>
-    /// Gets the list of available machine gun types.
-    /// </summary>
+    /// <summary>Gets the list of available machine gun types.</summary>
     public IEnumerable<MachineGunType> MachineGunTypes => Enum.GetValues(typeof(MachineGunType)).Cast<MachineGunType>();
 
-    /// <summary>
-    /// Gets or sets the selected machine gun type.
-    /// </summary>
+    /// <summary>Gets or sets the selected machine gun type.</summary>
     public MachineGunType SelectedMachineGunType 
     { 
         get => _selectedMachineGunType; 
         set => SetProperty(ref _selectedMachineGunType, value);
     }
 
-    /// <summary>
-    /// Gets or sets a value indicating whether the machine gun has spraying fire.
-    /// </summary>
+    /// <summary>Gets or sets a value indicating whether the machine gun has spraying fire.</summary>
     public bool HasSprayingFire { get => _hasSprayingFire; set => SetProperty(ref _hasSprayingFire, value); }
 
-    /// <summary>
-    /// Gets the command for picking the dismantled unit image file.
-    /// </summary>
-    public System.Windows.Input.ICommand PickDismantledImageCommand { get => _pickDismantledImageCommand ??= new RelayCommand(_ => ExecutePickImage(2)); }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="EquipmentViewModel"/> class.
-    /// </summary>
+    /// <summary>Initializes a new instance of the <see cref="EquipmentViewModel"/> class.</summary>
     public EquipmentViewModel(IUnitRepository repository) : base(repository)
     {
         DisplayName = "Equipment";
-    }
-
-    /// <inheritdoc />
-    protected override void OnImagePicked(int imageType, string filePath)
-    {
-        if (imageType == 0) ImagePathFront = filePath;
-        else if (imageType == 1) ImagePathBack = filePath;
-        else if (imageType == 2) DismantledImage = filePath;
     }
 
     /// <inheritdoc />
@@ -486,7 +347,7 @@ public class EquipmentViewModel : UnitViewModelBase
             });
             if (HasSmokeExponent && int.TryParse(SmokePlacementExponent, out int se))
             {
-                unit.AddComponent(new SmokeProviderComponent { CapabilityNumber = se, SmokeType = SmokeType.White }); // Normal smoke? White smoke? Preserving previous logic.
+                unit.AddComponent(new SmokeProviderComponent { CapabilityNumber = se, SmokeType = SmokeType.White });
             }
         }
         else if (IsLightAntiTank)
@@ -520,10 +381,7 @@ public class EquipmentViewModel : UnitViewModelBase
         }
         else if (IsRadioOrPhone)
         {
-            unit.AddComponent(new RadioComponent
-            {
-                ContactNumber = int.Parse(ContactNumber)
-            });
+            unit.AddComponent(new RadioComponent { ContactNumber = int.Parse(ContactNumber) });
         }
 
         unit.AddComponent(new BreakdownComponent
@@ -632,10 +490,5 @@ public class EquipmentViewModel : UnitViewModelBase
         }
 
         return isValid;
-    }
-
-    private void UpdateDismantledImageVisibility()
-    {
-        ShowDismantledImage = !string.IsNullOrWhiteSpace(PortageCost) && !string.IsNullOrWhiteSpace(DismantledCost);
     }
 }
