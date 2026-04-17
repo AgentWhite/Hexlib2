@@ -58,6 +58,9 @@ public partial class BoardEditorViewModel
         
         _hexSize = Math.Min(sizeW, sizeH);
         
+        // CRITICAL: Update the Layout object to reflect the new Size
+        UpdateLayout();
+        
         // Final sanity check for size
         if (double.IsNaN(_hexSize) || double.IsInfinity(_hexSize) || _hexSize < 0.1)
             _hexSize = 40.0;
@@ -72,51 +75,35 @@ public partial class BoardEditorViewModel
     private void GenerateHexGrid()
     {
         _hexes.Clear();
-        var orientation = HexTopOrientation.FlatTopped;
-        var halfSides = _board.Board.HalfHexSides;
         
         foreach (var hex in _board.Board.Hexes.Values)
         {
+            // Use Layout to get the center point
+            var center = _layout.HexToPixel(hex.Location);
+            
+            // Use Layout to get the vertices (corners)
+            var corners = _layout.PolygonCorners(hex.Location);
+            
+            // Create SVG path string
+            var sb = new StringBuilder();
+            var wpfcorners = new Point[6];
+            for (int i = 0; i < 6; i++)
+            {
+                var p = corners[i];
+                wpfcorners[i] = new Point(p.X, p.Y);
+                if (i == 0) sb.Append("M "); else sb.Append("L ");
+                sb.AppendFormat(CultureInfo.InvariantCulture, "{0:F2},{1:F2} ", p.X, p.Y);
+            }
+            sb.Append("Z");
+
+            // For Labels, we need the column/row in offset space
+            var orientation = HexTopOrientation.FlatTopped;
             var (col, row) = hex.Location.ToOffset(orientation, _board.IsFirstColShiftedDown);
-            
-            // Calculate pixel center for FlatTopped (Odd-Q or Even-Q)
-            // Stagger: Determine which columns are shifted down by 0.5h
-            bool isShiftedDown = _board.Board.ShiftingOddColumns ? (col % 2 == 1) : (col % 2 == 0);
-            double x = _hexSize * 1.5 * col;
-            double y = _hexSize * Math.Sqrt(3) * (row + (isShiftedDown ? 0.5 : 0));
-            
-            // Adjust origin based on Half-Hex Sides
-            if (!halfSides.HasFlag(BoardEdge.Left))
-                x += _hexSize;
 
-            if (!halfSides.HasFlag(BoardEdge.Top))
-                y += _hexSize * Math.Sqrt(3) / 2;
-
-            var (pointsString, corners) = GetHexPoints(x, y, _hexSize);
-            double labelY = y - (_hexSize * Math.Sqrt(3) / 2.0) + (_hexSize * 0.1); 
-            var hexVm = new HexViewModel(col, row, hex.Location, pointsString, corners, hex.Id, x, y, labelY, _hexSize, hex.Metadata!, OnSelectEdge);
+            double labelY = center.Y - (_hexSize * Math.Sqrt(3) / 2.0) + (_hexSize * 0.1); 
+            var hexVm = new HexViewModel(col, row, hex.Location, sb.ToString(), wpfcorners, hex.Id, center.X, center.Y, labelY, _hexSize, hex.Metadata!, OnSelectEdge);
             hexVm.OnTerrainChanged = RefreshAllVisuals;
             _hexes.Add(hexVm);
         }
-    }
-
-    private (string pointsString, Point[] corners) GetHexPoints(double centerX, double centerY, double size)
-    {
-        var sb = new StringBuilder();
-        var corners = new Point[6];
-        for (int i = 0; i < 6; i++)
-        {
-            double angleDeg = 60 * i; // Flat topped starts at 0 deg
-            double angleRad = Math.PI / 180 * angleDeg;
-            double px = centerX + size * Math.Cos(angleRad);
-            double py = centerY + size * Math.Sin(angleRad);
-            
-            corners[i] = new Point(px, py);
-
-            if (i == 0) sb.Append("M "); else sb.Append("L ");
-            sb.AppendFormat(CultureInfo.InvariantCulture, "{0:F2},{1:F2} ", px, py);
-        }
-        sb.Append("Z");
-        return (sb.ToString(), corners);
     }
 }

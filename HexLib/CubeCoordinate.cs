@@ -15,6 +15,9 @@ public readonly struct CubeCoordinate : IEquatable<CubeCoordinate>
     /// <summary>The S axis of the cube coordinate, balancing the sum to zero.</summary>
     public int S { get; }
 
+    /// <summary>Gets a coordinate at (0,0,0).</summary>
+    public static CubeCoordinate Zero => new CubeCoordinate(0, 0, 0);
+
     /// <summary>
     /// Initializes a new cube coordinate. Throws if the sum of axes is not 0.
     /// </summary>
@@ -81,7 +84,11 @@ public readonly struct CubeCoordinate : IEquatable<CubeCoordinate>
     /// <summary>Determines if two cube coordinates are not equal.</summary>
     public static bool operator !=(CubeCoordinate left, CubeCoordinate right) => !left.Equals(right);
 
-    private static readonly CubeCoordinate[] Directions = new[]
+    /// <summary>
+    /// Static collection of unit vectors for the 6 neighbor directions.
+    /// Order is East, NorthEast, NorthWest, West, SouthWest, SouthEast (standard Red Blob mapping).
+    /// </summary>
+    public static readonly CubeCoordinate[] Directions = new[]
     {
         new CubeCoordinate(1, 0, -1), 
         new CubeCoordinate(1, -1, 0), 
@@ -98,8 +105,40 @@ public readonly struct CubeCoordinate : IEquatable<CubeCoordinate>
     /// <returns>The neighboring cube coordinate.</returns>
     public CubeCoordinate GetNeighbor(int direction)
     {
-        // Handle negative directions using modulo arithmetic
         var dir = (direction % 6 + 6) % 6;
         return this + Directions[dir];
+    }
+
+    /// <summary>
+    /// Gets the adjacent neighbor coordinate in the specified physical direction.
+    /// </summary>
+    public CubeCoordinate GetNeighbor(PhysicalDirection physicalDir, HexTopOrientation orientation = HexTopOrientation.PointyTopped)
+    {
+        if (orientation == HexTopOrientation.PointyTopped)
+        {
+            return physicalDir switch
+            {
+                PhysicalDirection.East => GetNeighbor(0),
+                PhysicalDirection.NorthEast => GetNeighbor(1),
+                PhysicalDirection.NorthWest => GetNeighbor(2),
+                PhysicalDirection.West => GetNeighbor(3),
+                PhysicalDirection.SouthWest => GetNeighbor(4),
+                PhysicalDirection.SouthEast => GetNeighbor(5),
+                _ => throw new ArgumentException($"Direction {physicalDir} is invalid for PointyTopped grid.")
+            };
+        }
+        else
+        {
+            return physicalDir switch
+            {
+                PhysicalDirection.NorthEast => GetNeighbor(0),
+                PhysicalDirection.North => GetNeighbor(1),
+                PhysicalDirection.NorthWest => GetNeighbor(2),
+                PhysicalDirection.SouthWest => GetNeighbor(3),
+                PhysicalDirection.South => GetNeighbor(4),
+                PhysicalDirection.SouthEast => GetNeighbor(5),
+                _ => throw new ArgumentException($"Direction {physicalDir} is invalid for FlatTopped grid.")
+            };
+        }
     }
 }

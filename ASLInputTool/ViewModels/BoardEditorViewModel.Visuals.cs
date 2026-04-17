@@ -55,20 +55,27 @@ public partial class BoardEditorViewModel
                 }
                 else
                 {
-                    // Boundary connection: use hexside midpoint
+                    // Boundary connection: use hexside midpoint from Layout
+                    // We need to map direction index 'i' to the corresponding Edge index in Layout
+                    // For Flat-Topped (Red Blob Mapping):
+                    // Dir 0 (1,0,-1) = SE => Edge 0
+                    // Dir 1 (1,-1,0) = NE => Edge 5
+                    // Dir 2 (0,-1,1) = N  => Edge 4
+                    // Dir 3 (-1,0,1) = NW => Edge 3
+                    // Dir 4 (-1,1,0) = SW => Edge 2
+                    // Dir 5 (0,1,-1) = S  => Edge 1
                     int edgeIndex = i switch
                     {
                         0 => 0, // SE
-                        5 => 1, // S
-                        4 => 2, // SW
-                        3 => 3, // NW
-                        2 => 4, // N
                         1 => 5, // NE
+                        2 => 4, // N
+                        3 => 3, // NW
+                        4 => 2, // SW
+                        5 => 1, // S
                         _ => 0
                     };
-                    var p1 = hexVm.HexCorners[edgeIndex];
-                    var p2 = hexVm.HexCorners[(edgeIndex + 1) % 6];
-                    destPoint = new Point((p1.X + p2.X) / 2.0, (p1.Y + p2.Y) / 2.0);
+                    var midpoint = _layout.HexEdgeMidpoint(hexVm.Location, edgeIndex);
+                    destPoint = new Point(midpoint.X, midpoint.Y);
                 }
 
                 // 1. Water features (drawn below roads)

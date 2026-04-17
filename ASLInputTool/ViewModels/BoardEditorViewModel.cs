@@ -24,6 +24,7 @@ public partial class BoardEditorViewModel : ViewModelBase
 {
     private readonly AslBoard _board;
     private readonly IBoardRepository? _repository;
+    private Layout _layout;
     private double _hexSize = 40.0;
     private HexViewModel? _selectedHex;
     private HexEdgeSelection? _selectedEdge;
@@ -75,11 +76,41 @@ public partial class BoardEditorViewModel : ViewModelBase
     /// <summary>Gets the collection of hexes for rendering.</summary>
     public ObservableCollection<HexViewModel> Hexes => _hexes;
 
-    /// <summary>Gets or sets the size of the hexes (radius).</summary>
     public double HexSize
     {
         get => _hexSize;
-        set { if (SetProperty(ref _hexSize, value)) GenerateHexGrid(); }
+        set 
+        { 
+            if (SetProperty(ref _hexSize, value)) 
+            {
+                UpdateLayout();
+                GenerateHexGrid(); 
+            }
+        }
+    }
+
+    private void UpdateLayout()
+    {
+        // Flat-topped hexes use the standard Flat orientation.
+        // Size is the circumradius (center-to-corner distance).
+        // Origin is adjusted in GenerateHexGrid based on board edges.
+        
+        var orientation = Orientation.Flat;
+        var halfSides = _board.Board.HalfHexSides;
+        
+        // Base origin starts at 0,0
+        double originX = 0;
+        double originY = 0;
+
+        // Adjust origin based on Half-Hex Sides to ensure hexes are not clipped
+        if (!halfSides.HasFlag(BoardEdge.Left))
+            originX += _hexSize;
+
+        if (!halfSides.HasFlag(BoardEdge.Top))
+            originY += _hexSize * Math.Sqrt(3) / 2;
+        if (_board.IsFirstColShiftedDown) { originY += _hexSize * Math.Sqrt(3) / 2; }
+
+        _layout = new Layout(orientation, new Point2D(_hexSize, _hexSize), new Point2D(originX, originY));
     }
 
     /// <summary>Gets or sets the currently selected hex.</summary>
@@ -155,6 +186,7 @@ public partial class BoardEditorViewModel : ViewModelBase
     public void RefreshGrid()
     {
         _board.PopulateBoard();
+        UpdateLayout();
         RecalculateHexSize();
         GenerateHexGrid();
         RefreshAllVisuals();
@@ -259,6 +291,7 @@ public partial class BoardEditorViewModel : ViewModelBase
         ResetZoomCommand = new RelayCommand(_ => ZoomLevel = 1.0);
         EndRoadCommand = new RelayCommand(_ => EndRoad());
         
+        UpdateLayout();
         RecalculateHexSize();
         GenerateHexGrid();
         RefreshAllVisuals();

@@ -135,6 +135,35 @@ public class Board<THexMetadata, TEdgeData>
     public IReadOnlyDictionary<(CubeCoordinate, CubeCoordinate), TEdgeData> Edges => _edges;
 
     /// <summary>
+    /// Gets the edge metadata for a specific hexside in a given physical direction.
+    /// </summary>
+    public TEdgeData? GetEdgeData(CubeCoordinate hex, PhysicalDirection direction)
+    {
+        var neighbor = hex.GetNeighbor(direction, TopOrientation);
+        var key = CreateEdgeKey(hex, neighbor);
+        _edges.TryGetValue(key, out var data);
+        return data;
+    }
+
+    /// <summary>
+    /// Sets the edge metadata for a specific hexside in a given physical direction.
+    /// </summary>
+    public void SetEdgeData(CubeCoordinate hex, PhysicalDirection direction, TEdgeData data)
+    {
+        var neighbor = hex.GetNeighbor(direction, TopOrientation);
+        var key = CreateEdgeKey(hex, neighbor);
+        _edges[key] = data;
+    }
+
+    private (CubeCoordinate, CubeCoordinate) CreateEdgeKey(CubeCoordinate a, CubeCoordinate b)
+    {
+        // Deterministic ordering for dictionary key
+        if (a.Q < b.Q || (a.Q == b.Q && a.R < b.R) || (a.Q == b.Q && a.R == b.R && a.S < b.S))
+            return (a, b);
+        return (b, a);
+    }
+
+    /// <summary>
     /// Initializes a new, unlinked <see cref="Board{THexMetadata, TEdgeData}"/> with the specified physical width and height in hexes and physical orientation.
     /// </summary>
     /// <param name="width">The physical width of the board.</param>
@@ -145,6 +174,24 @@ public class Board<THexMetadata, TEdgeData>
         _physicalWidth = width;
         _physicalHeight = height;
         TopOrientation = topOrientation;
+    }
+
+    /// <summary>
+    /// Populates the board with a rectangular grid of hexes based on its width and height.
+    /// Existing hexes are cleared.
+    /// </summary>
+    public void InitializeGrid()
+    {
+        _hexes.Clear();
+        for (int r = 0; r < _physicalHeight; r++)
+        {
+            for (int q = 0; q < _physicalWidth; q++)
+            {
+                var cube = HexMath.OffsetToCube(q, r, TopOrientation, ShiftingOddColumns);
+                var hex = new Hex<THexMetadata>(cube);
+                _hexes[cube] = hex;
+            }
+        }
     }
 
     /// <summary>
