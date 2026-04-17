@@ -551,7 +551,7 @@ public partial class BoardEditorViewModel : ViewModelBase
                     {
                         X1 = hexVm.CenterX, Y1 = hexVm.CenterY,
                         X2 = destPoint.X, Y2 = destPoint.Y,
-                        Stroke = Brushes.LightGray, Thickness = 6.0
+                        Stroke = Brushes.DimGray, Thickness = 6.0
                     });
                 }
                 if (edgeData.HasDirtRoad)

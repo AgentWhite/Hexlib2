@@ -98,6 +98,10 @@
                                                             <Setter Property="Stroke" Value="#FFFF6666"/>
                                                             <Setter Property="StrokeThickness" Value="3"/>
                                                         </DataTrigger>
+                                                        <!-- Hover Highlight -->
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter Property="Fill" Value="#33FF0000"/>
+                                                        </Trigger>
                                                     </Style.Triggers>
                                                 </Style>
                                             </Path.Style>
@@ -115,6 +119,12 @@
                                                     </StackPanel>
                                                 </ToolTip>
                                             </Path.ToolTip>
+                                            <i:Interaction.Triggers>
+                                                <i:EventTrigger EventName="MouseEnter">
+                                                    <i:InvokeCommandAction Command="{Binding DataContext.PaintHexCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
+                                                                           CommandParameter="{Binding}" />
+                                                </i:EventTrigger>
+                                            </i:Interaction.Triggers>
                                         </Path>
 
                                         <!-- Terrain Layer (Inner Hex) -->
@@ -324,18 +334,6 @@
                                             </Rectangle>
                                         </Canvas>
                                         
-                                        <!-- Hotspot for Drag-to-Paint -->
-                                        <Border Width="{Binding HexSize}" Height="{Binding HexSize}" 
-                                                Background="Transparent" 
-                                                Canvas.Left="{Binding LabelX, Converter={StaticResource CenterOffsetConverter}, ConverterParameter=0.5}"
-                                                Canvas.Top="{Binding LabelY, Converter={StaticResource CenterOffsetConverter}, ConverterParameter=0.5}">
-                                            <i:Interaction.Triggers>
-                                                <i:EventTrigger EventName="MouseEnter">
-                                                    <i:InvokeCommandAction Command="{Binding DataContext.PaintHexCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
-                                                                           CommandParameter="{Binding}" />
-                                                </i:EventTrigger>
-                                            </i:Interaction.Triggers>
-                                        </Border>
                                         
                                         <!-- Hex Edges for Selection -->
                                         <Line X1="{Binding HexCorners[0].X}" Y1="{Binding HexCorners[0].Y}" X2="{Binding HexCorners[1].X}" Y2="{Binding HexCorners[1].Y}" StrokeThickness="8">
@@ -428,7 +426,7 @@
                         </ItemsControl>
                         
                         <!-- Water Visuals (Streams, Gullies, Canals) -->
-                        <ItemsControl ItemsSource="{Binding WaterVisuals}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <ItemsControl ItemsSource="{Binding WaterVisuals}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsHitTestVisible="False">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <Canvas IsHitTestVisible="False"/>
@@ -446,7 +444,7 @@
                         </ItemsControl>
 
                         <!-- Cliff Visuals -->
-                        <ItemsControl ItemsSource="{Binding CliffVisuals}" Panel.ZIndex="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <ItemsControl ItemsSource="{Binding CliffVisuals}" Panel.ZIndex="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsHitTestVisible="False">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <Canvas IsHitTestVisible="False"/>
@@ -461,7 +459,7 @@
                             </ItemsControl>
 
                             <!-- Hexside Terrain Layer (Walls, Hedges) -->
-                            <ItemsControl ItemsSource="{Binding HexsideTerrainVisuals}" Panel.ZIndex="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <ItemsControl ItemsSource="{Binding HexsideTerrainVisuals}" Panel.ZIndex="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsHitTestVisible="False">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <Canvas IsHitTestVisible="False"/>
@@ -480,7 +478,7 @@
                             </ItemsControl>
 
                             <!-- Road Visuals -->
-                        <ItemsControl ItemsSource="{Binding RoadVisuals}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <ItemsControl ItemsSource="{Binding RoadVisuals}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsHitTestVisible="False">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <Canvas IsHitTestVisible="False"/>
@@ -502,7 +500,7 @@
 
                         <!-- Building Visuals (Connectors only) -->
                         <ItemsControl ItemsSource="{Binding BuildingVisuals}" Panel.ZIndex="10" 
-                                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsHitTestVisible="False">
                             <ItemsControl.Resources>
                                 <!-- Rectangle for House Hexside Connectors -->
                                 <DataTemplate DataType="{x:Type vms:BuildingConnectorViewModel}">
@@ -535,7 +533,7 @@
                         <!-- Top Decoration Layer (Manholes, Stairwells, etc.) -->
                         <!-- Sitting above Building Connectors to ensure visibility -->
                         <ItemsControl ItemsSource="{Binding Hexes}" Panel.ZIndex="20"
-                                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsHitTestVisible="False">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <Canvas IsHitTestVisible="False"/>
@@ -564,7 +562,7 @@
 
                         <!-- Final Label Layer (Coordinates) - Always on Top -->
                         <ItemsControl ItemsSource="{Binding Hexes}" Panel.ZIndex="100"
-                                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsHitTestVisible="False">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <Canvas IsHitTestVisible="False"/>
