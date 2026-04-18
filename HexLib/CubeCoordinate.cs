@@ -141,4 +141,17 @@ public readonly struct CubeCoordinate : IEquatable<CubeCoordinate>
             };
         }
     }
+
+    /// <summary>
+    /// Linearly interpolates between two coordinates. 
+    /// Used for finding points along a line between two hexes.
+    /// </summary>
+    public FractionalHex Lerp(CubeCoordinate target, double t)
+    {
+        return new FractionalHex(
+            Q + (target.Q - Q) * t,
+            R + (target.R - R) * t,
+            S + (target.S - S) * t
+        );
+    }
 }

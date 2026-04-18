@@ -12,6 +12,7 @@ using ASL.Infrastructure;
 using ASL.Services;
 using HexLib;
 using ASLInputTool.Infrastructure;
+using System.Windows.Input;
 
 namespace ASLInputTool.ViewModels;
 
@@ -33,6 +34,73 @@ public partial class BoardEditorViewModel
         {
             HandleRoadToolClick(hex);
         }
+        else if (CurrentTool == ToolMode.LosTest)
+        {
+            HandleLosToolClick(hex);
+        }
+    }
+
+    private void HandleLosToolClick(HexViewModel hex)
+    {
+        if (!_isLosPlacing)
+        {
+            // First click: Start placing
+            ClearLos();
+            _losStartHex = hex;
+            _isLosPlacing = true;
+            
+            // Set initial line state
+            LosLineX1 = hex.CenterX;
+            LosLineY1 = hex.CenterY;
+            LosLineX2 = hex.CenterX;
+            LosLineY2 = hex.CenterY;
+            IsLosLineVisible = true;
+            
+            // Highlight the start hex as feedback
+            hex.IsHighlightedForLos = true;
+            return;
+        }
+
+        // Second click: Finish placing
+        _losEndHex = hex;
+        _isLosPlacing = false;
+        
+        // Finalize LOS line
+        LosLineX2 = _losEndHex.CenterX;
+        LosLineY2 = _losEndHex.CenterY;
+
+        // Calculate traversed hexes
+        var path = HexMath.GetLine(_losStartHex.Location, _losEndHex.Location);
+        
+        // Highlight hexes
+        foreach (var h in _hexes)
+        {
+            h.IsHighlightedForLos = path.Any(p => p.Equals(h.Location));
+        }
+    }
+
+    private void OnHexHover(HexViewModel hex)
+    {
+        if (CurrentTool == ToolMode.LosTest && _isLosPlacing && _losStartHex != null)
+        {
+            // Update ghost line
+            LosLineX2 = hex.CenterX;
+            LosLineY2 = hex.CenterY;
+            
+            // Optional: Preview highlight? Might be too noisy.
+            // For now just the line.
+        }
+    }
+
+    private void ClearLos()
+    {
+        IsLosLineVisible = false;
+        foreach (var h in _hexes)
+        {
+            h.IsHighlightedForLos = false;
+        }
+        _losStartHex = null;
+        _losEndHex = null;
     }
 
     private void HandleRoadToolClick(HexViewModel hex)
@@ -210,4 +278,10 @@ public partial class BoardEditorViewModel
             MessageBox.Show($"Failed to save board: {ex.Message}", "Save Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
+
+    private ICommand? _clearLosCommand;
+    public ICommand ClearLosCommand => _clearLosCommand ??= new RelayCommand(_ => ClearLos());
+
+    private ICommand? _hoverHexCommand;
+    public ICommand HoverHexCommand => _hoverHexCommand ??= new RelayCommand<HexViewModel>(OnHexHover);
 }

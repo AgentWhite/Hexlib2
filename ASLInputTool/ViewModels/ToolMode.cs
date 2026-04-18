@@ -14,5 +14,7 @@ public enum ToolMode
     /// <summary>Zoom out from the board (sticky tool).</summary>
     ZoomOut,
     /// <summary>Create a string of road/path hexsides.</summary>
-    Road
+    Road,
+    /// <summary>Test Line of Sight between two coordinates.</summary>
+    LosTest
 }

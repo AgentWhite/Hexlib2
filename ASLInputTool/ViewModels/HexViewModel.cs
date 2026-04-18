@@ -117,6 +117,10 @@ public class HexViewModel : ViewModelBase
     /// <summary>Gets or sets a value indicating whether edge 5 is selected.</summary>
     public bool IsEdge5Selected { get => _isEdge5Selected; set => SetProperty(ref _isEdge5Selected, value); }
 
+    private bool _isHighlightedForLos;
+    /// <summary>Gets or sets a value indicating whether this hex is highlighted as part of an LOS path.</summary>
+    public bool IsHighlightedForLos { get => _isHighlightedForLos; set => SetProperty(ref _isHighlightedForLos, value); }
+
     /// <summary>
     /// Callback invoked when the terrain type changes.
     /// </summary>

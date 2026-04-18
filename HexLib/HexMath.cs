@@ -59,4 +59,55 @@ public static class HexMath
             return new CubeCoordinate(q, r, -q - r);
         }
     }
+
+    /// <summary>
+    /// Calculates all hexes that a line segment between two coordinates passes through.
+    /// This implementation uses high-density sampling to ensure that hexes "touched" 
+    /// by the line (even if just on an edge) are captured.
+    /// </summary>
+    public static List<CubeCoordinate> GetLine(CubeCoordinate a, CubeCoordinate b)
+    {
+        int dist = a.DistanceTo(b);
+        if (dist == 0) return new List<CubeCoordinate> { a };
+
+        var results = new HashSet<CubeCoordinate>();
+        
+        // Sample densely (3x per hex distance) to catch all hexes the line might "touch".
+        int samples = dist * 3;
+        for (int i = 0; i <= samples; i++)
+        {
+            double t = (double)i / samples;
+            var frac = a.Lerp(b, t);
+            
+            // Round to the nearest hex
+            results.Add(frac.Round());
+            
+            // Support showing "both" hexes if we are very close to an edge.
+            // We do this by slightly nudging the fractional coordinate and rounding again.
+            // This captures hexes "touched" by a zero-width line.
+            foreach (var nearHex in GetNearHexes(frac))
+            {
+                results.Add(nearHex);
+            }
+        }
+        
+        return results.ToList();
+    }
+
+    private static IEnumerable<CubeCoordinate> GetNearHexes(FractionalHex h)
+    {
+        // A very small epsilon 
+        const double eps = 1e-5;
+        
+        // Nudge in all 6 principal directions to see if we cross into a neighbor
+        // within the "touch" threshold.
+        double[] dq = { eps, -eps, 0, 0, eps, -eps };
+        double[] dr = { 0, 0, eps, -eps, -eps, eps };
+        
+        for (int i = 0; i < 6; i++)
+        {
+            var nudged = new FractionalHex(h.Q + dq[i], h.R + dr[i], h.S - dq[i] - dr[i]);
+            yield return nudged.Round();
+        }
+    }
 }

@@ -42,6 +42,12 @@ public partial class BoardEditorViewModel : ViewModelBase
     private RoadToolType _activeRoadType = RoadToolType.Paved;
     private ObservableCollection<RoadVisualViewModel> _roadPreviewVisuals = new();
     private bool _dimBackground = true;
+    private bool _hideDecorations = false;
+    private HexViewModel? _losStartHex;
+    private HexViewModel? _losEndHex;
+    private bool _isLosPlacing = false;
+    private bool _isLosLineVisible = false;
+    private double _losLineX1, _losLineY1, _losLineX2, _losLineY2;
 
     /// <summary>Gets the collection of water visuals (streams, gullies, canals).</summary>
     public ObservableCollection<RoadVisualViewModel> WaterVisuals => _waterVisuals;
@@ -59,6 +65,20 @@ public partial class BoardEditorViewModel : ViewModelBase
         get => _hexsideTerrainVisuals;
         set => SetProperty(ref _hexsideTerrainVisuals, value);
     }
+
+    /// <summary>Gets or sets a value indicating whether to hide all board drawings (except coordinates).</summary>
+    public bool HideDecorations
+    {
+        get => _hideDecorations;
+        set => SetProperty(ref _hideDecorations, value);
+    }
+
+    /// <summary>Gets a value indicating whether an LOS line is currently being tested.</summary>
+    public bool IsLosLineVisible { get => _isLosLineVisible; set => SetProperty(ref _isLosLineVisible, value); }
+    public double LosLineX1 { get => _losLineX1; set => SetProperty(ref _losLineX1, value); }
+    public double LosLineY1 { get => _losLineY1; set => SetProperty(ref _losLineY1, value); }
+    public double LosLineX2 { get => _losLineX2; set => SetProperty(ref _losLineX2, value); }
+    public double LosLineY2 { get => _losLineY2; set => SetProperty(ref _losLineY2, value); }
 
     /// <summary>Gets the collection of road segments for rendering.</summary>
     public ObservableCollection<RoadVisualViewModel> RoadVisuals => _roadVisuals;

@@ -15,19 +15,24 @@
         <c:TerrainColorConverter x:Key="TerrainColorConverter" />
         <c:ElevationColorConverter x:Key="ElevationColorConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <c:InverseBooleanToVisibilityConverter x:Key="InverseBooleanToVisibilityConverter" />
     </UserControl.Resources>
     <Grid Background="{StaticResource WindowBackgroundBrush}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="250" />
-        </Grid.ColumnDefinitions>
+        <TabControl BorderThickness="0" Background="Transparent">
+            <!-- Normal Editor Tab -->
+            <TabItem Header="Editor">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="250" />
+                    </Grid.ColumnDefinitions>
 
-        <!-- Toolbar -->
-        <Border Grid.Row="0" Grid.ColumnSpan="2" Background="{StaticResource ControlBorderBrush}" Padding="10">
+                    <!-- Toolbar -->
+                    <Border Grid.Row="0" Grid.ColumnSpan="2" Background="{StaticResource ControlBorderBrush}" Padding="10">
             <StackPanel Orientation="Horizontal">
                 <RadioButton Content="Zoom In" IsChecked="{Binding CurrentTool, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=ZoomIn}" 
                              Style="{StaticResource {x:Type ToggleButton}}" Padding="10,5" Margin="0,0,5,0"/>
@@ -67,11 +72,26 @@
                         <Grid.InputBindings>
                             <MouseBinding MouseAction="RightClick" Command="{Binding EndRoadCommand}" />
                         </Grid.InputBindings>
+                        
+                        <!-- Background map image (bottom layer) -->
+                        <Image Source="{Binding BackgroundImage}" Stretch="Fill" IsHitTestVisible="False">
+                            <Image.Style>
+                                <Style TargetType="Image">
+                                    <Setter Property="Opacity" Value="1.0" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding DimBackground}" Value="True">
+                                            <Setter Property="Opacity" Value="0.4" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+
                         <!-- The Canvas for SVG and Bitmap graphics -->
                         <ItemsControl ItemsSource="{Binding Hexes}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <Canvas x:Name="EditorCanvas" Width="{Binding ActualGridWidth}" Height="{Binding ActualGridHeight}" Background="White" ClipToBounds="True">
+                                    <Canvas x:Name="EditorCanvas" Width="{Binding ActualGridWidth}" Height="{Binding ActualGridHeight}" Background="Transparent" ClipToBounds="True">
                                     </Canvas>
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
@@ -89,7 +109,7 @@
                                     <Canvas>
                                         <!-- Base Layer (Full Hex) -->
                                         <!-- Shows Elevation frame if elevated, or Terrain color if at level 0 -->
-                                        <Path Data="{Binding Points}">
+                                        <Path Data="{Binding Points}" Opacity="0.4">
                                             <Path.Style>
                                                 <Style TargetType="Path">
                                                     <Setter Property="Stroke" Value="Black"/>
@@ -137,7 +157,7 @@
                                         <!-- Terrain Layer (Inner Hex) -->
                                         <!-- Only visible if elevated, to show terrain inside the elevation frame -->
                                         <Path Data="{Binding InnerPoints}" IsHitTestVisible="False"
-                                              Fill="{Binding Terrain, Converter={StaticResource TerrainColorConverter}}">
+                                              Fill="{Binding Terrain, Converter={StaticResource TerrainColorConverter}}" Opacity="0.4">
                                             <Path.Style>
                                                 <Style TargetType="Path">
                                                     <Style.Triggers>
@@ -502,20 +522,6 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                         
-                        <!-- Overlay background image -->
-                        <Image Source="{Binding BackgroundImage}" Stretch="Fill" IsHitTestVisible="False">
-                            <Image.Style>
-                                <Style TargetType="Image">
-                                    <Setter Property="Opacity" Value="1.0" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding DimBackground}" Value="True">
-                                            <Setter Property="Opacity" Value="0.4" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Image.Style>
-                        </Image>
-
                         <!-- Building Visuals (Connectors only) -->
                         <ItemsControl ItemsSource="{Binding BuildingVisuals}" Panel.ZIndex="10" 
                                       HorizontalAlignment="Stretch" VerticalAlignment="Stretch" IsHitTestVisible="False">
@@ -728,5 +734,226 @@
                 </StackPanel>
             </ScrollViewer>
         </Border>
+    </Grid>
+</TabItem>
+
+            <!-- Line of Sight Tab -->
+            <TabItem Header="Line of Sight">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="250" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- LOS Toolbar -->
+                    <Border Grid.Row="0" Grid.ColumnSpan="2" Background="{StaticResource ControlBorderBrush}" Padding="10">
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton Content="LOS Test" IsChecked="{Binding CurrentTool, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=LosTest}" 
+                                         Style="{StaticResource {x:Type ToggleButton}}" Padding="10,5" Margin="0,0,10,0"/>
+                            <Button Content="Clear LOS" Command="{Binding ClearLosCommand}" Margin="0,0,10,0" Padding="10,5"/>
+                            <Separator Margin="10,0"/>
+                            <CheckBox Content="Hide Decorations" IsChecked="{Binding HideDecorations}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- LOS Canvas -->
+                    <ScrollViewer Grid.Row="1" Grid.Column="0" Background="{StaticResource WindowBackgroundBrush}" 
+                                   HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
+                                   PreviewMouseDown="OnBoardMouseDown">
+                        <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Margin="50">
+                            <Grid.LayoutTransform>
+                                <ScaleTransform ScaleX="{Binding ZoomLevel}" ScaleY="{Binding ZoomLevel}" />
+                            </Grid.LayoutTransform>
+                            <!-- Shared Grid for LOS -->
+                            <Grid Width="{Binding ActualGridWidth}" Height="{Binding ActualGridHeight}">
+                                <!-- Background map image (bottom layer) -->
+                                <Image Source="{Binding BackgroundImage}" Stretch="Fill" IsHitTestVisible="False">
+                                    <Image.Style>
+                                        <Style TargetType="Image">
+                                            <Setter Property="Opacity" Value="1.0" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding DimBackground}" Value="True">
+                                                    <Setter Property="Opacity" Value="0.4" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
+
+                                <!-- Hexes Layer -->
+                                <ItemsControl ItemsSource="{Binding Hexes}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <Canvas Background="Transparent" ClipToBounds="True"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Canvas>
+                                                <!-- Base Hex Shape -->
+                                                <Path Data="{Binding Points}" Stroke="Black" StrokeThickness="1" Opacity="0.4">
+                                                    <Path.Style>
+                                                        <Style TargetType="Path">
+                                                            <Setter Property="Fill" Value="{Binding Elevation, Converter={StaticResource ElevationColorConverter}}"/>
+                                                            <Style.Triggers>
+                                                                <!-- If not elevated, show Terrain color -->
+                                                                <DataTrigger Binding="{Binding IsElevated}" Value="False">
+                                                                    <Setter Property="Fill" Value="{Binding Terrain, Converter={StaticResource TerrainColorConverter}}"/>
+                                                                </DataTrigger>
+                                                                
+                                                                <!-- If hiding decorations, make transparent to see background image -->
+                                                                <DataTrigger Binding="{Binding DataContext.HideDecorations, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                                                                     <Setter Property="Fill" Value="Transparent"/>
+                                                                </DataTrigger>
+
+                                                                <!-- LOS Highlight (Priority) -->
+                                                                <DataTrigger Binding="{Binding IsHighlightedForLos}" Value="True">
+                                                                    <Setter Property="Fill" Value="#44FF0000"/>
+                                                                    <Setter Property="Stroke" Value="Red"/>
+                                                                    <Setter Property="StrokeThickness" Value="2"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Path.Style>
+                                                    <Path.InputBindings>
+                                                        <MouseBinding MouseAction="LeftClick" 
+                                                                    Command="{Binding DataContext.SelectHexCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
+                                                                    CommandParameter="{Binding}" />
+                                                    </Path.InputBindings>
+                                                    <i:Interaction.Triggers>
+                                                        <i:EventTrigger EventName="MouseEnter">
+                                                            <i:InvokeCommandAction Command="{Binding DataContext.HoverHexCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
+                                                                                   CommandParameter="{Binding}" />
+                                                        </i:EventTrigger>
+                                                    </i:Interaction.Triggers>
+                                                </Path>
+                                                
+                                                <!-- Terrain Layer (Inner Hex) -->
+                                                <Path Data="{Binding InnerPoints}" IsHitTestVisible="False"
+                                                      Fill="{Binding Terrain, Converter={StaticResource TerrainColorConverter}}" Opacity="0.4">
+                                                    <Path.Style>
+                                                        <Style TargetType="Path">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsElevated}" Value="False">
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding DataContext.HideDecorations, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Path.Style>
+                                                </Path>
+
+                                                <!-- Integrated Building Square -->
+                                                <Rectangle Width="{Binding BuildingSquareSize}" Height="{Binding BuildingSquareSize}"
+                                                           Canvas.Left="{Binding BuildingSquareX}" Canvas.Top="{Binding BuildingSquareY}"
+                                                           Fill="{Binding BuildingSquareFill}" 
+                                                           HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False">
+                                                    <Rectangle.Style>
+                                                        <Style TargetType="Rectangle">
+                                                            <Setter Property="Visibility" Value="{Binding BuildingSquareVisibility}"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding DataContext.HideDecorations, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Rectangle.Style>
+                                                </Rectangle>
+                                            </Canvas>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                        <!-- Visual Decorations (Filtered) -->
+                        <ContentControl Visibility="{Binding HideDecorations, Converter={StaticResource InverseBooleanToVisibilityConverter}}">
+                            <Grid>
+                                <ItemsControl ItemsSource="{Binding WaterVisuals}" IsHitTestVisible="False">
+                                    <ItemsControl.ItemsPanel><ItemsPanelTemplate><Canvas/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Line X1="{Binding X1}" Y1="{Binding Y1}" X2="{Binding X2}" Y2="{Binding Y2}" Stroke="{Binding Stroke}" StrokeThickness="{Binding Thickness}" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                
+                                <ItemsControl ItemsSource="{Binding CliffVisuals}" Panel.ZIndex="5" IsHitTestVisible="False">
+                                    <ItemsControl.ItemsPanel><ItemsPanelTemplate><Canvas/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Path Data="{Binding PathData}" Stroke="{Binding Stroke}" StrokeThickness="{Binding Thickness}" StrokeDashArray="3 1" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <ItemsControl ItemsSource="{Binding HexsideTerrainVisuals}" Panel.ZIndex="3" IsHitTestVisible="False">
+                                    <ItemsControl.ItemsPanel><ItemsPanelTemplate><Canvas/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Line X1="{Binding P1.X}" Y1="{Binding P1.Y}" X2="{Binding P2.X}" Y2="{Binding P2.Y}" Stroke="{Binding Stroke}" StrokeThickness="{Binding Thickness}" StrokeDashArray="{Binding DashArray}" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <ItemsControl ItemsSource="{Binding RoadVisuals}" IsHitTestVisible="False">
+                                    <ItemsControl.ItemsPanel><ItemsPanelTemplate><Canvas/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Line X1="{Binding X1}" Y1="{Binding Y1}" X2="{Binding X2}" Y2="{Binding Y2}" Stroke="{Binding Stroke}" StrokeThickness="{Binding Thickness}" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <ItemsControl ItemsSource="{Binding BuildingVisuals}" Panel.ZIndex="10" IsHitTestVisible="False">
+                                    <ItemsControl.Resources>
+                                        <DataTemplate DataType="{x:Type vms:BuildingConnectorViewModel}">
+                                            <Line X1="{Binding X1}" Y1="{Binding Y1}" X2="{Binding X2}" Y2="{Binding Y2}" Stroke="{Binding Fill}" StrokeThickness="{Binding Thickness}"/>
+                                        </DataTemplate>
+                                        <DataTemplate DataType="{x:Type vms:BuildingDividerViewModel}">
+                                            <Line X1="{Binding X1}" Y1="{Binding Y1}" X2="{Binding X2}" Y2="{Binding Y2}" Stroke="{Binding Fill}" StrokeThickness="{Binding Thickness}"/>
+                                        </DataTemplate>
+                                    </ItemsControl.Resources>
+                                    <ItemsControl.ItemsPanel><ItemsPanelTemplate><Canvas IsHitTestVisible="False"/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                </ItemsControl>
+                            </Grid>
+                        </ContentControl>
+                        
+                        <!-- The actual LOS Line layer (always on top) -->
+                                <Canvas Visibility="{Binding IsLosLineVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <Line X1="{Binding LosLineX1}" Y1="{Binding LosLineY1}" 
+                                          X2="{Binding LosLineX2}" Y2="{Binding LosLineY2}" 
+                                          Stroke="Red" StrokeThickness="2" StrokeDashArray="2,2"/>
+                                </Canvas>
+
+                                <!-- Coordinate IDs Layer (Always visible) -->
+                                <ItemsControl ItemsSource="{Binding Hexes}" Panel.ZIndex="100" IsHitTestVisible="False">
+                                    <ItemsControl.ItemsPanel><ItemsPanelTemplate><Canvas/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Id}" Canvas.Left="{Binding LabelLeft}" Canvas.Top="{Binding LabelY}" Width="{Binding HexSize}" TextAlignment="Center" FontSize="10" FontWeight="SemiBold" Foreground="Gray" Opacity="0.5" IsHitTestVisible="False" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Grid>
+                        </Grid>
+                    </ScrollViewer>
+
+                    <!-- LOS Results Sidebar -->
+                    <Border Grid.Row="1" Grid.Column="1" Background="{StaticResource ControlBorderBrush}" Padding="15">
+                        <StackPanel>
+                            <TextBlock Text="LOS Results" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+                            <TextBlock Text="The LOS tool tests if a direct line touches hexes." TextWrapping="Wrap" Margin="0,0,0,15" Foreground="Gray"/>
+                            
+                            <!-- Display coordinates of Start/End if active? -->
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
 </UserControl>
