@@ -13,11 +13,203 @@ using ASL.Services;
 using HexLib;
 using ASLInputTool.Infrastructure;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace ASLInputTool.ViewModels;
 
 public partial class BoardEditorViewModel
 {
+    private Brush GetBrushForTerrain(TerrainType terrain)
+    {
+        switch (terrain)
+        {
+            case TerrainType.Woods:
+                return new SolidColorBrush(Color.FromRgb(34, 139, 34)); // Forest Green
+            case TerrainType.StoneBuilding:
+                return Brushes.DimGray;
+            default:
+                return Brushes.LightGray;
+        }
+    }
+
+    private void HandlePenRectClick(Point p)
+    {
+        if (!_isPenDrawing)
+        {
+            // First click: Start drawing
+            _penStartPoint = p;
+            IsPenDrawing = true;
+            PenGhostGeometry = null;
+            
+            // Clear selection when drawing starts
+            foreach (var d in _customTerrainDrawings) d.IsSelected = false;
+            return;
+        }
+
+        // Second click: Finalize
+        if (_penStartPoint.HasValue)
+        {
+            var rect = new Rect(_penStartPoint.Value, p);
+            var newGeometry = new RectangleGeometry(rect);
+
+            var existingDrawing = _customTerrainDrawings.FirstOrDefault(d => d.TerrainType == ActivePenTerrain);
+            if (existingDrawing != null)
+            {
+                // Union with existing
+                existingDrawing.Geometry = Geometry.Combine(existingDrawing.Geometry, newGeometry, GeometryCombineMode.Union, null);
+            }
+            else
+            {
+                // Create new
+                var drawing = new TerrainDrawingViewModel
+                {
+                    TerrainType = ActivePenTerrain,
+                    Geometry = newGeometry,
+                    Fill = GetBrushForTerrain(ActivePenTerrain)
+                };
+                _customTerrainDrawings.Add(drawing);
+            }
+        }
+
+        IsPenDrawing = false;
+        _penStartPoint = null;
+        PenGhostGeometry = null;
+    }
+
+    private void HandlePenRectHover(Point p)
+    {
+        if (IsPenDrawing && _penStartPoint.HasValue)
+        {
+            PenGhostGeometry = new RectangleGeometry(new Rect(_penStartPoint.Value, p));
+        }
+    }
+
+    private void HandlePolygonClick(Point p)
+    {
+        if (IsPolygonSnapped && _activePolygonPoints.Count >= 3)
+        {
+            ClosePolygon();
+            return;
+        }
+
+        _activePolygonPoints.Add(p);
+        
+        // Initial ghost
+        HandlePolygonHover(p);
+    }
+
+    private void HandlePolygonHover(Point p)
+    {
+        if (_activePolygonPoints.Count == 0)
+        {
+            PolygonGhostGeometry = null;
+            IsPolygonSnapped = false;
+            return;
+        }
+
+        Point startPoint = _activePolygonPoints[0];
+        Point lastPoint = _activePolygonPoints[^1];
+        
+        // Check for snapping (ignore if only 1 point to avoid instant close)
+        double distToStart = (p - startPoint).Length;
+        const double SnapThreshold = 15;
+        
+        if (distToStart < SnapThreshold && _activePolygonPoints.Count >= 2)
+        {
+            IsPolygonSnapped = true;
+            PolygonSnapPoint = startPoint;
+            p = startPoint; // Snap mouse point for ghosting
+        }
+        else
+        {
+            IsPolygonSnapped = false;
+        }
+
+        // Build preview geometry
+        // 1. Solid segments
+        var solidGeometry = new StreamGeometry();
+        using (var ctx = solidGeometry.Open())
+        {
+            ctx.BeginFigure(startPoint, false, false);
+            if (_activePolygonPoints.Count > 1)
+            {
+                ctx.PolyLineTo(_activePolygonPoints.Skip(1).ToList(), true, true);
+            }
+        }
+
+        // 2. Dashed current segment
+        var dashedGeometry = new LineGeometry(lastPoint, p);
+
+        // Combine for rendering (using a Group so they can have different stroke styles in XAML if needed, 
+        // but here we combine them into one for the simple property)
+        var group = new GeometryGroup();
+        group.Children.Add(solidGeometry);
+        group.Children.Add(dashedGeometry);
+        
+        PolygonGhostGeometry = group;
+    }
+
+    private void ClosePolygon()
+    {
+        if (_activePolygonPoints.Count < 3)
+        {
+            _activePolygonPoints.Clear();
+            PolygonGhostGeometry = null;
+            IsPolygonSnapped = false;
+            return;
+        }
+
+        // Create finalized geometry
+        var pathGeometry = new PathGeometry();
+        var figure = new PathFigure { StartPoint = _activePolygonPoints[0], IsClosed = true, IsFilled = true };
+        figure.Segments.Add(new PolyLineSegment(_activePolygonPoints.Skip(1), true));
+        pathGeometry.Figures.Add(figure);
+
+        // Merge with existing terrain
+        var existingDrawing = _customTerrainDrawings.FirstOrDefault(d => d.TerrainType == ActivePenTerrain);
+        if (existingDrawing != null)
+        {
+            var mode = CurrentTool == ToolMode.PenSubtract ? GeometryCombineMode.Exclude : GeometryCombineMode.Union;
+            existingDrawing.Geometry = Geometry.Combine(existingDrawing.Geometry, pathGeometry, mode, null);
+        }
+        else
+        {
+            var drawing = new TerrainDrawingViewModel
+            {
+                TerrainType = ActivePenTerrain,
+                Geometry = pathGeometry,
+                Fill = GetBrushForTerrain(ActivePenTerrain)
+            };
+            _customTerrainDrawings.Add(drawing);
+        }
+
+        // Cleanup
+        _activePolygonPoints.Clear();
+        PolygonGhostGeometry = null;
+        IsPolygonSnapped = false;
+    }
+
+    private void OnSelectDrawing(TerrainDrawingViewModel drawing)
+    {
+        if (CurrentTool != ToolMode.PenSelect) return;
+
+        bool wasSelected = drawing.IsSelected;
+        
+        // Exclusive selection
+        foreach (var d in _customTerrainDrawings) d.IsSelected = false;
+        
+        drawing.IsSelected = !wasSelected;
+    }
+
+    private void OnDeleteSelectedDrawing()
+    {
+        var toRemove = _customTerrainDrawings.Where(d => d.IsSelected).ToList();
+        foreach (var d in toRemove)
+        {
+            _customTerrainDrawings.Remove(d);
+        }
+    }
+
     private void OnSelectHex(HexViewModel? hex)
     {
         if (hex == null) return;
@@ -271,11 +463,63 @@ public partial class BoardEditorViewModel
         try
         {
             await _repository.SaveToDiskAsync(_board, _backgroundImagePath, _originalName);
+            await SaveLosData();
             MessageBox.Show($"Board '{_board.Name}' saved successfully.", "Save Success", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         catch (Exception ex)
         {
             MessageBox.Show($"Failed to save board: {ex.Message}", "Save Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private async System.Threading.Tasks.Task SaveLosData()
+    {
+        try
+        {
+            string baseFolder = ASLInputTool.Infrastructure.SettingsManager.Instance.Settings.BoardsFolder;
+            string boardFolder = System.IO.Path.Combine(baseFolder, _board.Name);
+            string losFilePath = System.IO.Path.Combine(boardFolder, $"{_board.Name}.los.json");
+
+            var dto = new ASL.Persistence.LosDataDto
+            {
+                Drawings = _customTerrainDrawings.Select(d => d.ToDto()).ToList()
+            };
+
+            var options = new System.Text.Json.JsonSerializerOptions { WriteIndented = true };
+            string json = System.Text.Json.JsonSerializer.Serialize(dto, options);
+            await System.IO.File.WriteAllTextAsync(losFilePath, json);
+        }
+        catch { /* Ignore non-critical save failures */ }
+    }
+
+    private async System.Threading.Tasks.Task LoadLosData()
+    {
+        try
+        {
+            _customTerrainDrawings.Clear();
+            string baseFolder = ASLInputTool.Infrastructure.SettingsManager.Instance.Settings.BoardsFolder;
+            string boardFolder = System.IO.Path.Combine(baseFolder, _board.Name);
+            string losFilePath = System.IO.Path.Combine(boardFolder, $"{_board.Name}.los.json");
+
+            if (System.IO.File.Exists(losFilePath))
+            {
+                string json = await System.IO.File.ReadAllTextAsync(losFilePath);
+                var dto = System.Text.Json.JsonSerializer.Deserialize<ASL.Persistence.LosDataDto>(json);
+                if (dto != null)
+                {
+                    foreach (var drawingDto in dto.Drawings)
+                    {
+                        var vm = TerrainDrawingViewModel.FromDto(drawingDto, GetBrushForTerrain(drawingDto.TerrainType));
+                        _customTerrainDrawings.Add(vm);
+                    }
+                    // Notify that the collection has been populated
+                    OnPropertyChanged(nameof(CustomTerrainDrawings));
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to load LOS data: {ex.Message}");
         }
     }
 

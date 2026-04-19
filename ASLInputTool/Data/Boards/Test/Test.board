@@ -1,0 +1,5201 @@
+{
+  "Name": "Test",
+  "Width": 33,
+  "Height": 10,
+  "TopOrientation": "FlatTopped",
+  "ShiftingOddColumns": false,
+  "HalfHexSides": "Top, Right, Bottom, Left",
+  "Hexes": [
+    {
+      "Q": 0,
+      "R": 0,
+      "S": 0,
+      "Id": "A1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 1,
+      "R": -1,
+      "S": 0,
+      "Id": "B0",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 2,
+      "R": -1,
+      "S": -1,
+      "Id": "C1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 3,
+      "R": -2,
+      "S": -1,
+      "Id": "D0",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 4,
+      "R": -2,
+      "S": -2,
+      "Id": "E1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 5,
+      "R": -3,
+      "S": -2,
+      "Id": "F0",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 6,
+      "R": -3,
+      "S": -3,
+      "Id": "G1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 7,
+      "R": -4,
+      "S": -3,
+      "Id": "H0",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 8,
+      "R": -4,
+      "S": -4,
+      "Id": "I1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 9,
+      "R": -5,
+      "S": -4,
+      "Id": "J0",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 10,
+      "R": -5,
+      "S": -5,
+      "Id": "K1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 11,
+      "R": -6,
+      "S": -5,
+      "Id": "L0",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 12,
+      "R": -6,
+      "S": -6,
+      "Id": "M1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 13,
+      "R": -7,
+      "S": -6,
+      "Id": "N0",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 14,
+      "R": -7,
+      "S": -7,
+      "Id": "O1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 15,
+      "R": -8,
+      "S": -7,
+      "Id": "P0",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 16,
+      "R": -8,
+      "S": -8,
+      "Id": "Q1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 17,
+      "R": -9,
+      "S": -8,
+      "Id": "R0",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 18,
+      "R": -9,
+      "S": -9,
+      "Id": "S1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 19,
+      "R": -10,
+      "S": -9,
+      "Id": "T0",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 20,
+      "R": -10,
+      "S": -10,
+      "Id": "U1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 21,
+      "R": -11,
+      "S": -10,
+      "Id": "V0",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 22,
+      "R": -11,
+      "S": -11,
+      "Id": "W1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 23,
+      "R": -12,
+      "S": -11,
+      "Id": "X0",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 24,
+      "R": -12,
+      "S": -12,
+      "Id": "Y1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 25,
+      "R": -13,
+      "S": -12,
+      "Id": "Z0",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 26,
+      "R": -13,
+      "S": -13,
+      "Id": "AA1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 27,
+      "R": -14,
+      "S": -13,
+      "Id": "BB0",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 28,
+      "R": -14,
+      "S": -14,
+      "Id": "CC1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 29,
+      "R": -15,
+      "S": -14,
+      "Id": "DD0",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 30,
+      "R": -15,
+      "S": -15,
+      "Id": "EE1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 31,
+      "R": -16,
+      "S": -15,
+      "Id": "FF0",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 32,
+      "R": -16,
+      "S": -16,
+      "Id": "GG1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 0,
+      "R": 1,
+      "S": -1,
+      "Id": "A2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 1,
+      "R": 0,
+      "S": -1,
+      "Id": "B1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 2,
+      "R": 0,
+      "S": -2,
+      "Id": "C2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 3,
+      "R": -1,
+      "S": -2,
+      "Id": "D1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 4,
+      "R": -1,
+      "S": -3,
+      "Id": "E2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 5,
+      "R": -2,
+      "S": -3,
+      "Id": "F1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 6,
+      "R": -2,
+      "S": -4,
+      "Id": "G2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 7,
+      "R": -3,
+      "S": -4,
+      "Id": "H1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 8,
+      "R": -3,
+      "S": -5,
+      "Id": "I2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 9,
+      "R": -4,
+      "S": -5,
+      "Id": "J1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 10,
+      "R": -4,
+      "S": -6,
+      "Id": "K2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 11,
+      "R": -5,
+      "S": -6,
+      "Id": "L1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 12,
+      "R": -5,
+      "S": -7,
+      "Id": "M2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 13,
+      "R": -6,
+      "S": -7,
+      "Id": "N1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 14,
+      "R": -6,
+      "S": -8,
+      "Id": "O2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 15,
+      "R": -7,
+      "S": -8,
+      "Id": "P1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 16,
+      "R": -7,
+      "S": -9,
+      "Id": "Q2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 17,
+      "R": -8,
+      "S": -9,
+      "Id": "R1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 18,
+      "R": -8,
+      "S": -10,
+      "Id": "S2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 19,
+      "R": -9,
+      "S": -10,
+      "Id": "T1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 20,
+      "R": -9,
+      "S": -11,
+      "Id": "U2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 21,
+      "R": -10,
+      "S": -11,
+      "Id": "V1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 22,
+      "R": -10,
+      "S": -12,
+      "Id": "W2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 23,
+      "R": -11,
+      "S": -12,
+      "Id": "X1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 24,
+      "R": -11,
+      "S": -13,
+      "Id": "Y2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 25,
+      "R": -12,
+      "S": -13,
+      "Id": "Z1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 26,
+      "R": -12,
+      "S": -14,
+      "Id": "AA2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 27,
+      "R": -13,
+      "S": -14,
+      "Id": "BB1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 28,
+      "R": -13,
+      "S": -15,
+      "Id": "CC2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 29,
+      "R": -14,
+      "S": -15,
+      "Id": "DD1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 30,
+      "R": -14,
+      "S": -16,
+      "Id": "EE2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 31,
+      "R": -15,
+      "S": -16,
+      "Id": "FF1",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 32,
+      "R": -15,
+      "S": -17,
+      "Id": "GG2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 0,
+      "R": 2,
+      "S": -2,
+      "Id": "A3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 1,
+      "R": 1,
+      "S": -2,
+      "Id": "B2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 2,
+      "R": 1,
+      "S": -3,
+      "Id": "C3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 3,
+      "R": 0,
+      "S": -3,
+      "Id": "D2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 4,
+      "R": 0,
+      "S": -4,
+      "Id": "E3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 5,
+      "R": -1,
+      "S": -4,
+      "Id": "F2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 6,
+      "R": -1,
+      "S": -5,
+      "Id": "G3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 7,
+      "R": -2,
+      "S": -5,
+      "Id": "H2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 8,
+      "R": -2,
+      "S": -6,
+      "Id": "I3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 9,
+      "R": -3,
+      "S": -6,
+      "Id": "J2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 10,
+      "R": -3,
+      "S": -7,
+      "Id": "K3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 11,
+      "R": -4,
+      "S": -7,
+      "Id": "L2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 12,
+      "R": -4,
+      "S": -8,
+      "Id": "M3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 13,
+      "R": -5,
+      "S": -8,
+      "Id": "N2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 14,
+      "R": -5,
+      "S": -9,
+      "Id": "O3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 15,
+      "R": -6,
+      "S": -9,
+      "Id": "P2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 16,
+      "R": -6,
+      "S": -10,
+      "Id": "Q3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 17,
+      "R": -7,
+      "S": -10,
+      "Id": "R2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 18,
+      "R": -7,
+      "S": -11,
+      "Id": "S3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 19,
+      "R": -8,
+      "S": -11,
+      "Id": "T2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 20,
+      "R": -8,
+      "S": -12,
+      "Id": "U3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 21,
+      "R": -9,
+      "S": -12,
+      "Id": "V2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 22,
+      "R": -9,
+      "S": -13,
+      "Id": "W3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 23,
+      "R": -10,
+      "S": -13,
+      "Id": "X2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 24,
+      "R": -10,
+      "S": -14,
+      "Id": "Y3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 25,
+      "R": -11,
+      "S": -14,
+      "Id": "Z2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 26,
+      "R": -11,
+      "S": -15,
+      "Id": "AA3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 27,
+      "R": -12,
+      "S": -15,
+      "Id": "BB2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 28,
+      "R": -12,
+      "S": -16,
+      "Id": "CC3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 29,
+      "R": -13,
+      "S": -16,
+      "Id": "DD2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 30,
+      "R": -13,
+      "S": -17,
+      "Id": "EE3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 31,
+      "R": -14,
+      "S": -17,
+      "Id": "FF2",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 32,
+      "R": -14,
+      "S": -18,
+      "Id": "GG3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 0,
+      "R": 3,
+      "S": -3,
+      "Id": "A4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 1,
+      "R": 2,
+      "S": -3,
+      "Id": "B3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 2,
+      "R": 2,
+      "S": -4,
+      "Id": "C4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 3,
+      "R": 1,
+      "S": -4,
+      "Id": "D3",
+      "Metadata": {
+        "Terrain": "Marsh",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 4,
+      "R": 1,
+      "S": -5,
+      "Id": "E4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 5,
+      "R": 0,
+      "S": -5,
+      "Id": "F3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 6,
+      "R": 0,
+      "S": -6,
+      "Id": "G4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 7,
+      "R": -1,
+      "S": -6,
+      "Id": "H3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 8,
+      "R": -1,
+      "S": -7,
+      "Id": "I4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 9,
+      "R": -2,
+      "S": -7,
+      "Id": "J3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 10,
+      "R": -2,
+      "S": -8,
+      "Id": "K4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 11,
+      "R": -3,
+      "S": -8,
+      "Id": "L3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 12,
+      "R": -3,
+      "S": -9,
+      "Id": "M4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 13,
+      "R": -4,
+      "S": -9,
+      "Id": "N3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 14,
+      "R": -4,
+      "S": -10,
+      "Id": "O4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 15,
+      "R": -5,
+      "S": -10,
+      "Id": "P3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 16,
+      "R": -5,
+      "S": -11,
+      "Id": "Q4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 17,
+      "R": -6,
+      "S": -11,
+      "Id": "R3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 18,
+      "R": -6,
+      "S": -12,
+      "Id": "S4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 19,
+      "R": -7,
+      "S": -12,
+      "Id": "T3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 20,
+      "R": -7,
+      "S": -13,
+      "Id": "U4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 21,
+      "R": -8,
+      "S": -13,
+      "Id": "V3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 22,
+      "R": -8,
+      "S": -14,
+      "Id": "W4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 23,
+      "R": -9,
+      "S": -14,
+      "Id": "X3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 24,
+      "R": -9,
+      "S": -15,
+      "Id": "Y4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 25,
+      "R": -10,
+      "S": -15,
+      "Id": "Z3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 26,
+      "R": -10,
+      "S": -16,
+      "Id": "AA4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 27,
+      "R": -11,
+      "S": -16,
+      "Id": "BB3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 28,
+      "R": -11,
+      "S": -17,
+      "Id": "CC4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 29,
+      "R": -12,
+      "S": -17,
+      "Id": "DD3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 30,
+      "R": -12,
+      "S": -18,
+      "Id": "EE4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 31,
+      "R": -13,
+      "S": -18,
+      "Id": "FF3",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 32,
+      "R": -13,
+      "S": -19,
+      "Id": "GG4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 0,
+      "R": 4,
+      "S": -4,
+      "Id": "A5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 1,
+      "R": 3,
+      "S": -4,
+      "Id": "B4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 2,
+      "R": 3,
+      "S": -5,
+      "Id": "C5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 3,
+      "R": 2,
+      "S": -5,
+      "Id": "D4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 4,
+      "R": 2,
+      "S": -6,
+      "Id": "E5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 5,
+      "R": 1,
+      "S": -6,
+      "Id": "F4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 6,
+      "R": 1,
+      "S": -7,
+      "Id": "G5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 7,
+      "R": 0,
+      "S": -7,
+      "Id": "H4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 8,
+      "R": 0,
+      "S": -8,
+      "Id": "I5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 9,
+      "R": -1,
+      "S": -8,
+      "Id": "J4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 10,
+      "R": -1,
+      "S": -9,
+      "Id": "K5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 11,
+      "R": -2,
+      "S": -9,
+      "Id": "L4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 12,
+      "R": -2,
+      "S": -10,
+      "Id": "M5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 13,
+      "R": -3,
+      "S": -10,
+      "Id": "N4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 14,
+      "R": -3,
+      "S": -11,
+      "Id": "O5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 15,
+      "R": -4,
+      "S": -11,
+      "Id": "P4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 16,
+      "R": -4,
+      "S": -12,
+      "Id": "Q5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 17,
+      "R": -5,
+      "S": -12,
+      "Id": "R4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 18,
+      "R": -5,
+      "S": -13,
+      "Id": "S5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 19,
+      "R": -6,
+      "S": -13,
+      "Id": "T4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 20,
+      "R": -6,
+      "S": -14,
+      "Id": "U5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 21,
+      "R": -7,
+      "S": -14,
+      "Id": "V4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 22,
+      "R": -7,
+      "S": -15,
+      "Id": "W5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 23,
+      "R": -8,
+      "S": -15,
+      "Id": "X4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 24,
+      "R": -8,
+      "S": -16,
+      "Id": "Y5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 25,
+      "R": -9,
+      "S": -16,
+      "Id": "Z4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 26,
+      "R": -9,
+      "S": -17,
+      "Id": "AA5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 27,
+      "R": -10,
+      "S": -17,
+      "Id": "BB4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 28,
+      "R": -10,
+      "S": -18,
+      "Id": "CC5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 29,
+      "R": -11,
+      "S": -18,
+      "Id": "DD4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 30,
+      "R": -11,
+      "S": -19,
+      "Id": "EE5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 31,
+      "R": -12,
+      "S": -19,
+      "Id": "FF4",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 32,
+      "R": -12,
+      "S": -20,
+      "Id": "GG5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 0,
+      "R": 5,
+      "S": -5,
+      "Id": "A6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 1,
+      "R": 4,
+      "S": -5,
+      "Id": "B5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 2,
+      "R": 4,
+      "S": -6,
+      "Id": "C6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 3,
+      "R": 3,
+      "S": -6,
+      "Id": "D5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 4,
+      "R": 3,
+      "S": -7,
+      "Id": "E6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 5,
+      "R": 2,
+      "S": -7,
+      "Id": "F5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 6,
+      "R": 2,
+      "S": -8,
+      "Id": "G6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 7,
+      "R": 1,
+      "S": -8,
+      "Id": "H5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 8,
+      "R": 1,
+      "S": -9,
+      "Id": "I6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 9,
+      "R": 0,
+      "S": -9,
+      "Id": "J5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 10,
+      "R": 0,
+      "S": -10,
+      "Id": "K6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 11,
+      "R": -1,
+      "S": -10,
+      "Id": "L5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 12,
+      "R": -1,
+      "S": -11,
+      "Id": "M6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 13,
+      "R": -2,
+      "S": -11,
+      "Id": "N5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 14,
+      "R": -2,
+      "S": -12,
+      "Id": "O6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 15,
+      "R": -3,
+      "S": -12,
+      "Id": "P5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 16,
+      "R": -3,
+      "S": -13,
+      "Id": "Q6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 17,
+      "R": -4,
+      "S": -13,
+      "Id": "R5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 18,
+      "R": -4,
+      "S": -14,
+      "Id": "S6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 19,
+      "R": -5,
+      "S": -14,
+      "Id": "T5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 20,
+      "R": -5,
+      "S": -15,
+      "Id": "U6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 21,
+      "R": -6,
+      "S": -15,
+      "Id": "V5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 22,
+      "R": -6,
+      "S": -16,
+      "Id": "W6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 23,
+      "R": -7,
+      "S": -16,
+      "Id": "X5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 24,
+      "R": -7,
+      "S": -17,
+      "Id": "Y6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 25,
+      "R": -8,
+      "S": -17,
+      "Id": "Z5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 26,
+      "R": -8,
+      "S": -18,
+      "Id": "AA6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 27,
+      "R": -9,
+      "S": -18,
+      "Id": "BB5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 28,
+      "R": -9,
+      "S": -19,
+      "Id": "CC6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 29,
+      "R": -10,
+      "S": -19,
+      "Id": "DD5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 30,
+      "R": -10,
+      "S": -20,
+      "Id": "EE6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 31,
+      "R": -11,
+      "S": -20,
+      "Id": "FF5",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 32,
+      "R": -11,
+      "S": -21,
+      "Id": "GG6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 0,
+      "R": 6,
+      "S": -6,
+      "Id": "A7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 1,
+      "R": 5,
+      "S": -6,
+      "Id": "B6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 2,
+      "R": 5,
+      "S": -7,
+      "Id": "C7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 3,
+      "R": 4,
+      "S": -7,
+      "Id": "D6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 4,
+      "R": 4,
+      "S": -8,
+      "Id": "E7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 5,
+      "R": 3,
+      "S": -8,
+      "Id": "F6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 6,
+      "R": 3,
+      "S": -9,
+      "Id": "G7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 7,
+      "R": 2,
+      "S": -9,
+      "Id": "H6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 8,
+      "R": 2,
+      "S": -10,
+      "Id": "I7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 9,
+      "R": 1,
+      "S": -10,
+      "Id": "J6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 10,
+      "R": 1,
+      "S": -11,
+      "Id": "K7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 11,
+      "R": 0,
+      "S": -11,
+      "Id": "L6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 12,
+      "R": 0,
+      "S": -12,
+      "Id": "M7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 13,
+      "R": -1,
+      "S": -12,
+      "Id": "N6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 14,
+      "R": -1,
+      "S": -13,
+      "Id": "O7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 15,
+      "R": -2,
+      "S": -13,
+      "Id": "P6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 16,
+      "R": -2,
+      "S": -14,
+      "Id": "Q7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 17,
+      "R": -3,
+      "S": -14,
+      "Id": "R6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 18,
+      "R": -3,
+      "S": -15,
+      "Id": "S7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 19,
+      "R": -4,
+      "S": -15,
+      "Id": "T6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 20,
+      "R": -4,
+      "S": -16,
+      "Id": "U7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 21,
+      "R": -5,
+      "S": -16,
+      "Id": "V6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 22,
+      "R": -5,
+      "S": -17,
+      "Id": "W7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 23,
+      "R": -6,
+      "S": -17,
+      "Id": "X6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 24,
+      "R": -6,
+      "S": -18,
+      "Id": "Y7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 25,
+      "R": -7,
+      "S": -18,
+      "Id": "Z6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 26,
+      "R": -7,
+      "S": -19,
+      "Id": "AA7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 27,
+      "R": -8,
+      "S": -19,
+      "Id": "BB6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 28,
+      "R": -8,
+      "S": -20,
+      "Id": "CC7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 29,
+      "R": -9,
+      "S": -20,
+      "Id": "DD6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 30,
+      "R": -9,
+      "S": -21,
+      "Id": "EE7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 31,
+      "R": -10,
+      "S": -21,
+      "Id": "FF6",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 32,
+      "R": -10,
+      "S": -22,
+      "Id": "GG7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 0,
+      "R": 7,
+      "S": -7,
+      "Id": "A8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 1,
+      "R": 6,
+      "S": -7,
+      "Id": "B7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 2,
+      "R": 6,
+      "S": -8,
+      "Id": "C8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 3,
+      "R": 5,
+      "S": -8,
+      "Id": "D7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 4,
+      "R": 5,
+      "S": -9,
+      "Id": "E8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 5,
+      "R": 4,
+      "S": -9,
+      "Id": "F7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 6,
+      "R": 4,
+      "S": -10,
+      "Id": "G8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 7,
+      "R": 3,
+      "S": -10,
+      "Id": "H7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 8,
+      "R": 3,
+      "S": -11,
+      "Id": "I8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 9,
+      "R": 2,
+      "S": -11,
+      "Id": "J7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 10,
+      "R": 2,
+      "S": -12,
+      "Id": "K8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 11,
+      "R": 1,
+      "S": -12,
+      "Id": "L7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 12,
+      "R": 1,
+      "S": -13,
+      "Id": "M8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 13,
+      "R": 0,
+      "S": -13,
+      "Id": "N7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 14,
+      "R": 0,
+      "S": -14,
+      "Id": "O8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 15,
+      "R": -1,
+      "S": -14,
+      "Id": "P7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 16,
+      "R": -1,
+      "S": -15,
+      "Id": "Q8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 17,
+      "R": -2,
+      "S": -15,
+      "Id": "R7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 18,
+      "R": -2,
+      "S": -16,
+      "Id": "S8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 19,
+      "R": -3,
+      "S": -16,
+      "Id": "T7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 20,
+      "R": -3,
+      "S": -17,
+      "Id": "U8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 21,
+      "R": -4,
+      "S": -17,
+      "Id": "V7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 22,
+      "R": -4,
+      "S": -18,
+      "Id": "W8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 23,
+      "R": -5,
+      "S": -18,
+      "Id": "X7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 24,
+      "R": -5,
+      "S": -19,
+      "Id": "Y8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 25,
+      "R": -6,
+      "S": -19,
+      "Id": "Z7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 26,
+      "R": -6,
+      "S": -20,
+      "Id": "AA8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 27,
+      "R": -7,
+      "S": -20,
+      "Id": "BB7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 28,
+      "R": -7,
+      "S": -21,
+      "Id": "CC8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 29,
+      "R": -8,
+      "S": -21,
+      "Id": "DD7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 30,
+      "R": -8,
+      "S": -22,
+      "Id": "EE8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 31,
+      "R": -9,
+      "S": -22,
+      "Id": "FF7",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 32,
+      "R": -9,
+      "S": -23,
+      "Id": "GG8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 0,
+      "R": 8,
+      "S": -8,
+      "Id": "A9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 1,
+      "R": 7,
+      "S": -8,
+      "Id": "B8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 2,
+      "R": 7,
+      "S": -9,
+      "Id": "C9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 3,
+      "R": 6,
+      "S": -9,
+      "Id": "D8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 4,
+      "R": 6,
+      "S": -10,
+      "Id": "E9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 5,
+      "R": 5,
+      "S": -10,
+      "Id": "F8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 6,
+      "R": 5,
+      "S": -11,
+      "Id": "G9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 7,
+      "R": 4,
+      "S": -11,
+      "Id": "H8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 8,
+      "R": 4,
+      "S": -12,
+      "Id": "I9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 9,
+      "R": 3,
+      "S": -12,
+      "Id": "J8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 10,
+      "R": 3,
+      "S": -13,
+      "Id": "K9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 11,
+      "R": 2,
+      "S": -13,
+      "Id": "L8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 12,
+      "R": 2,
+      "S": -14,
+      "Id": "M9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 13,
+      "R": 1,
+      "S": -14,
+      "Id": "N8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 14,
+      "R": 1,
+      "S": -15,
+      "Id": "O9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 15,
+      "R": 0,
+      "S": -15,
+      "Id": "P8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 16,
+      "R": 0,
+      "S": -16,
+      "Id": "Q9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 17,
+      "R": -1,
+      "S": -16,
+      "Id": "R8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 18,
+      "R": -1,
+      "S": -17,
+      "Id": "S9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 19,
+      "R": -2,
+      "S": -17,
+      "Id": "T8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 20,
+      "R": -2,
+      "S": -18,
+      "Id": "U9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 21,
+      "R": -3,
+      "S": -18,
+      "Id": "V8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 22,
+      "R": -3,
+      "S": -19,
+      "Id": "W9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 23,
+      "R": -4,
+      "S": -19,
+      "Id": "X8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 24,
+      "R": -4,
+      "S": -20,
+      "Id": "Y9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 25,
+      "R": -5,
+      "S": -20,
+      "Id": "Z8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 26,
+      "R": -5,
+      "S": -21,
+      "Id": "AA9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 27,
+      "R": -6,
+      "S": -21,
+      "Id": "BB8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 28,
+      "R": -6,
+      "S": -22,
+      "Id": "CC9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 29,
+      "R": -7,
+      "S": -22,
+      "Id": "DD8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 30,
+      "R": -7,
+      "S": -23,
+      "Id": "EE9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 31,
+      "R": -8,
+      "S": -23,
+      "Id": "FF8",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 32,
+      "R": -8,
+      "S": -24,
+      "Id": "GG9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 0,
+      "R": 9,
+      "S": -9,
+      "Id": "A10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 1,
+      "R": 8,
+      "S": -9,
+      "Id": "B9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 2,
+      "R": 8,
+      "S": -10,
+      "Id": "C10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 3,
+      "R": 7,
+      "S": -10,
+      "Id": "D9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 4,
+      "R": 7,
+      "S": -11,
+      "Id": "E10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 5,
+      "R": 6,
+      "S": -11,
+      "Id": "F9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 6,
+      "R": 6,
+      "S": -12,
+      "Id": "G10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 7,
+      "R": 5,
+      "S": -12,
+      "Id": "H9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 8,
+      "R": 5,
+      "S": -13,
+      "Id": "I10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 9,
+      "R": 4,
+      "S": -13,
+      "Id": "J9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 10,
+      "R": 4,
+      "S": -14,
+      "Id": "K10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 11,
+      "R": 3,
+      "S": -14,
+      "Id": "L9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 12,
+      "R": 3,
+      "S": -15,
+      "Id": "M10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 13,
+      "R": 2,
+      "S": -15,
+      "Id": "N9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 14,
+      "R": 2,
+      "S": -16,
+      "Id": "O10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 15,
+      "R": 1,
+      "S": -16,
+      "Id": "P9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 16,
+      "R": 1,
+      "S": -17,
+      "Id": "Q10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 17,
+      "R": 0,
+      "S": -17,
+      "Id": "R9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 18,
+      "R": 0,
+      "S": -18,
+      "Id": "S10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 19,
+      "R": -1,
+      "S": -18,
+      "Id": "T9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 20,
+      "R": -1,
+      "S": -19,
+      "Id": "U10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 21,
+      "R": -2,
+      "S": -19,
+      "Id": "V9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 22,
+      "R": -2,
+      "S": -20,
+      "Id": "W10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 23,
+      "R": -3,
+      "S": -20,
+      "Id": "X9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 24,
+      "R": -3,
+      "S": -21,
+      "Id": "Y10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 25,
+      "R": -4,
+      "S": -21,
+      "Id": "Z9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 26,
+      "R": -4,
+      "S": -22,
+      "Id": "AA10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 27,
+      "R": -5,
+      "S": -22,
+      "Id": "BB9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 28,
+      "R": -5,
+      "S": -23,
+      "Id": "CC10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 29,
+      "R": -6,
+      "S": -23,
+      "Id": "DD9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 30,
+      "R": -6,
+      "S": -24,
+      "Id": "EE10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 31,
+      "R": -7,
+      "S": -24,
+      "Id": "FF9",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 32,
+      "R": -7,
+      "S": -25,
+      "Id": "GG10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 1,
+      "R": 9,
+      "S": -10,
+      "Id": "B10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 3,
+      "R": 8,
+      "S": -11,
+      "Id": "D10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 5,
+      "R": 7,
+      "S": -12,
+      "Id": "F10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 7,
+      "R": 6,
+      "S": -13,
+      "Id": "H10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 9,
+      "R": 5,
+      "S": -14,
+      "Id": "J10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 11,
+      "R": 4,
+      "S": -15,
+      "Id": "L10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 13,
+      "R": 3,
+      "S": -16,
+      "Id": "N10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 15,
+      "R": 2,
+      "S": -17,
+      "Id": "P10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 17,
+      "R": 1,
+      "S": -18,
+      "Id": "R10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 19,
+      "R": 0,
+      "S": -19,
+      "Id": "T10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 21,
+      "R": -1,
+      "S": -20,
+      "Id": "V10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 23,
+      "R": -2,
+      "S": -21,
+      "Id": "X10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 25,
+      "R": -3,
+      "S": -22,
+      "Id": "Z10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 27,
+      "R": -4,
+      "S": -23,
+      "Id": "BB10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 29,
+      "R": -5,
+      "S": -24,
+      "Id": "DD10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    },
+    {
+      "Q": 31,
+      "R": -6,
+      "S": -25,
+      "Id": "FF10",
+      "Metadata": {
+        "Terrain": "OpenGround",
+        "Elevation": 0,
+        "HasManhole": false,
+        "HasStairwell": false,
+        "HasShellholes": false,
+        "Rubble": "None"
+      },
+      "Counters": []
+    }
+  ],
+  "Edges": []
+}

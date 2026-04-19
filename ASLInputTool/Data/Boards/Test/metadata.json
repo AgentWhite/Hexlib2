@@ -1,0 +1,14 @@
+{
+  "Name": "Test",
+  "Type": "Standard",
+  "Width": 33,
+  "Height": 10,
+  "ImageFileName": "bd07.gif",
+  "CanvasWidth": 1800,
+  "CanvasHeight": 645,
+  "IsFirstColShiftedDown": true,
+  "IsTopRowHalf": true,
+  "IsBottomRowHalf": true,
+  "IsLeftEdgeHalf": true,
+  "IsRightEdgeHalf": true
+}

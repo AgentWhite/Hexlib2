@@ -48,6 +48,15 @@ public partial class BoardEditorViewModel : ViewModelBase
     private bool _isLosPlacing = false;
     private bool _isLosLineVisible = false;
     private double _losLineX1, _losLineY1, _losLineX2, _losLineY2;
+    private bool _isPenDrawing = false;
+    private System.Windows.Point? _penStartPoint;
+    private Geometry _penGhostGeometry;
+    private TerrainType _activePenTerrain = TerrainType.Woods;
+    private ObservableCollection<TerrainDrawingViewModel> _customTerrainDrawings = new();
+    private ObservableCollection<System.Windows.Point> _activePolygonPoints = new();
+    private Geometry _polygonGhostGeometry;
+    private bool _isPolygonSnapped = false;
+    private System.Windows.Point _polygonSnapPoint;
 
     /// <summary>Gets the collection of water visuals (streams, gullies, canals).</summary>
     public ObservableCollection<RoadVisualViewModel> WaterVisuals => _waterVisuals;
@@ -79,6 +88,33 @@ public partial class BoardEditorViewModel : ViewModelBase
     public double LosLineY1 { get => _losLineY1; set => SetProperty(ref _losLineY1, value); }
     public double LosLineX2 { get => _losLineX2; set => SetProperty(ref _losLineX2, value); }
     public double LosLineY2 { get => _losLineY2; set => SetProperty(ref _losLineY2, value); }
+
+    /// <summary>Gets a value indicating whether a pen drawing is in progress.</summary>
+    public bool IsPenDrawing { get => _isPenDrawing; set => SetProperty(ref _isPenDrawing, value); }
+
+    /// <summary>Gets or sets the ghost geometry for the pen tool preview.</summary>
+    public Geometry PenGhostGeometry { get => _penGhostGeometry; set => SetProperty(ref _penGhostGeometry, value); }
+
+    /// <summary>Gets or sets the active terrain type for the pen tool.</summary>
+    public TerrainType ActivePenTerrain { get => _activePenTerrain; set => SetProperty(ref _activePenTerrain, value); }
+
+    /// <summary>Gets the collection of available terrain types for the pen tool.</summary>
+    public ObservableCollection<TerrainType> AvailablePenTerrains { get; } = new() { TerrainType.Woods, TerrainType.StoneBuilding };
+
+    /// <summary>Gets the collection of finalized custom terrain drawings.</summary>
+    public ObservableCollection<TerrainDrawingViewModel> CustomTerrainDrawings => _customTerrainDrawings;
+
+    /// <summary>Gets the collection of points for the polygon currently being drawn.</summary>
+    public ObservableCollection<System.Windows.Point> ActivePolygonPoints => _activePolygonPoints;
+
+    /// <summary>Gets or sets the ghost geometry for the polygon tool preview.</summary>
+    public Geometry PolygonGhostGeometry { get => _polygonGhostGeometry; set => SetProperty(ref _polygonGhostGeometry, value); }
+
+    /// <summary>Gets or sets a value indicating whether the polygon tool is currently snapped to the start point.</summary>
+    public bool IsPolygonSnapped { get => _isPolygonSnapped; set => SetProperty(ref _isPolygonSnapped, value); }
+
+    /// <summary>Gets or sets the point where the polygon tool is currently snapped.</summary>
+    public System.Windows.Point PolygonSnapPoint { get => _polygonSnapPoint; set => SetProperty(ref _polygonSnapPoint, value); }
 
     /// <summary>Gets the collection of road segments for rendering.</summary>
     public ObservableCollection<RoadVisualViewModel> RoadVisuals => _roadVisuals;
@@ -185,6 +221,8 @@ public partial class BoardEditorViewModel : ViewModelBase
         {
             if (SetProperty(ref _currentTool, value))
             {
+                ClearDrawingState();
+
                 if (value == ToolMode.Paint || value == ToolMode.Road)
                 {
                     SelectedHex = null;
@@ -197,6 +235,16 @@ public partial class BoardEditorViewModel : ViewModelBase
                 }
             }
         }
+    }
+
+    private void ClearDrawingState()
+    {
+        IsPenDrawing = false;
+        _penStartPoint = null;
+        PenGhostGeometry = null;
+        _activePolygonPoints.Clear();
+        PolygonGhostGeometry = null;
+        IsPolygonSnapped = false;
     }
 
     /// <summary>
@@ -264,6 +312,16 @@ public partial class BoardEditorViewModel : ViewModelBase
 
     /// <summary>Command to paint a hex.</summary>
     public ICommand PaintHexCommand { get; }
+    public ICommand ClearHighlightsCommand { get; }
+    public ICommand ResetViewCommand { get; }
+    public ICommand HandleLosToolClickCommand { get; }
+    public ICommand PenRectClickCommand { get; }
+    public ICommand PenRectHoverCommand { get; }
+    public ICommand PenPolygonClickCommand { get; }
+    public ICommand PenPolygonHoverCommand { get; }
+    public ICommand SelectDrawingCommand { get; }
+    public ICommand DeleteSelectedDrawingCommand { get; }
+    public ICommand ClosePolygonCommand { get; }
 
     /// <summary>Command to terminate the current road stringing.</summary>
     public ICommand EndRoadCommand { get; }
@@ -311,9 +369,23 @@ public partial class BoardEditorViewModel : ViewModelBase
         ResetZoomCommand = new RelayCommand(_ => ZoomLevel = 1.0);
         EndRoadCommand = new RelayCommand(_ => EndRoad());
         
+        // Pen Tool Commands
+        PenRectClickCommand = new RelayCommand<System.Windows.Point>(HandlePenRectClick);
+        PenRectHoverCommand = new RelayCommand<System.Windows.Point>(HandlePenRectHover);
+        PenPolygonClickCommand = new RelayCommand<System.Windows.Point>(HandlePolygonClick);
+        PenPolygonHoverCommand = new RelayCommand<System.Windows.Point>(HandlePolygonHover);
+        SelectDrawingCommand = new RelayCommand<TerrainDrawingViewModel>(OnSelectDrawing);
+        DeleteSelectedDrawingCommand = new RelayCommand(_ => OnDeleteSelectedDrawing());
+        ClosePolygonCommand = new RelayCommand(_ => ClosePolygon(), _ => _activePolygonPoints.Count >= 3);
+        HandleLosToolClickCommand = new RelayCommand<HexViewModel>(HandleLosToolClick);
+        
         UpdateLayout();
         RecalculateHexSize();
         GenerateHexGrid();
+        
+        // Load custom terrain drawings FIRST before the final visual refresh
+        _ = LoadLosData();
+        
         RefreshAllVisuals();
     }
 

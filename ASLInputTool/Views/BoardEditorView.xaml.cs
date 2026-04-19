@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using ASLInputTool.ViewModels;
 
 namespace ASLInputTool.Views
@@ -23,6 +24,7 @@ namespace ASLInputTool.Views
             InitializeComponent();
             LoadCursors();
             DataContextChanged += OnDataContextChanged;
+            PreviewMouseMove += OnBoardMouseMove;
         }
 
         private void LoadCursors()
@@ -93,11 +95,64 @@ namespace ASLInputTool.Views
         {
             if (ViewModel == null) return;
 
+            // Determine which coordinate space to use (Editor or LOS tab)
+            bool isLosTab = false;
+            bool hitContent = false;
+            DependencyObject? current = e.OriginalSource as DependencyObject;
+            while (current != null)
+            {
+                if (current == LosZoomContainer) { isLosTab = true; hitContent = true; break; }
+                if (current == ZoomContainer) { hitContent = true; break; }
+                current = VisualTreeHelper.GetParent(current);
+            }
+            
+            if (!hitContent) return;
+            UIElement container = isLosTab ? LosZoomContainer : ZoomContainer;
+            Point position = e.GetPosition(container);
+
             if (ViewModel.CurrentTool == ToolMode.ZoomIn || ViewModel.CurrentTool == ToolMode.ZoomOut)
             {
                 e.Handled = true;
                 double delta = ViewModel.CurrentTool == ToolMode.ZoomIn ? 0.2 : -0.2;
-                ApplyZoom(delta, e.GetPosition(ZoomContainer));
+                ApplyZoom(delta, position);
+            }
+            else if (ViewModel.CurrentTool == ToolMode.PenRect)
+            {
+                e.Handled = true;
+                ViewModel.PenRectClickCommand.Execute(position);
+            }
+            else if (ViewModel.CurrentTool == ToolMode.PenPolygon || ViewModel.CurrentTool == ToolMode.PenSubtract)
+            {
+                e.Handled = true;
+                ViewModel.PenPolygonClickCommand.Execute(position);
+            }
+        }
+
+        private void OnBoardMouseMove(object sender, MouseEventArgs e)
+        {
+            if (ViewModel == null) return;
+            if (ViewModel.CurrentTool == ToolMode.PenRect || ViewModel.CurrentTool == ToolMode.PenPolygon || ViewModel.CurrentTool == ToolMode.PenSubtract)
+            {
+                // Determine container
+                bool isLosTab = false;
+                DependencyObject? current = e.OriginalSource as DependencyObject;
+                while (current != null)
+                {
+                    if (current == LosZoomContainer) { isLosTab = true; break; }
+                    current = VisualTreeHelper.GetParent(current);
+                }
+                
+                UIElement container = isLosTab ? LosZoomContainer : ZoomContainer;
+                Point position = e.GetPosition(container);
+
+                if (ViewModel.CurrentTool == ToolMode.PenRect)
+                {
+                    ViewModel.PenRectHoverCommand.Execute(position);
+                }
+                else if (ViewModel.CurrentTool == ToolMode.PenPolygon || ViewModel.CurrentTool == ToolMode.PenSubtract)
+                {
+                    ViewModel.PenPolygonHoverCommand.Execute(position);
+                }
             }
         }
 

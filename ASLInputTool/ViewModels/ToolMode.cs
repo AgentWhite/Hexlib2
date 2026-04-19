@@ -16,5 +16,13 @@ public enum ToolMode
     /// <summary>Create a string of road/path hexsides.</summary>
     Road,
     /// <summary>Test Line of Sight between two coordinates.</summary>
-    LosTest
+    LosTest,
+    /// <summary>Draw rectangles with boolean unions.</summary>
+    PenRect,
+    /// <summary>Draw multi-point polygons with boolean unions.</summary>
+    PenPolygon,
+    /// <summary>Subtract from existing shapes using polygons.</summary>
+    PenSubtract,
+    /// <summary>Select and manage custom terrain drawings.</summary>
+    PenSelect
 }
