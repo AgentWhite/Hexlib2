@@ -4,10 +4,6 @@ using ASL.Models.Board;
 using ASL.Models.Scenarios;
 using ASL.Models.Modules;
 using ASL.Models.Equipment;
-using ASL.Models.Units;
-using ASL.Models.Scenarios;
-using ASL.Models.Modules;
-using ASL.Models.Board;
 using ASL.Models.Components;
 using ASL.Persistence;
 using HexLib.Persistence;
@@ -16,6 +12,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using System.Threading.Tasks;
 using ASLInputTool.Helpers;
 using ASLInputTool.Infrastructure;
 
@@ -28,7 +25,6 @@ namespace ASLInputTool.ViewModels;
 public class MainViewModel : ViewModelBase
 {
     private ViewModelBase? _currentView;
-    private readonly ASLSaveManager _saveManager;
     private readonly ViewModelLocator _locator;
 
     /// <summary>
@@ -46,110 +42,69 @@ public class MainViewModel : ViewModelBase
     public List<ViewModelBase> NavigationItems => _locator.GetAll().ToList();
 
     /// <summary>
-    /// Command to save the current project to a file.
-    /// </summary>
-    public RelayCommand SaveCommand { get; }
-
-    /// <summary>
-    /// Command to load a project from a file.
-    /// </summary>
-    public RelayCommand LoadCommand { get; }
-
-    /// <summary>
     /// Command to define the global boards folder.
     /// </summary>
     public RelayCommand DefineBoardsFolderCommand { get; }
     
     /// <summary>
+    /// Command to define the global modules folder.
+    /// </summary>
+    public RelayCommand DefineModulesFolderCommand { get; }
+
+    /// <summary>
+    /// Command to define the global scenarios folder.
+    /// </summary>
+    public RelayCommand DefineScenariosFolderCommand { get; }
+    
+    /// <summary>
     /// Initializes a new instance of the <see cref="MainViewModel"/> class.
-    /// Sets up the view locator and save manager, and selects the first view.
+    /// Sets up the view locator and selects the first view.
     /// </summary>
     public MainViewModel()
     {
         _locator = new ViewModelLocator();
-        _saveManager = new ASLSaveManager(new FileStorageAdapter(Path.GetTempPath()));
-
         CurrentView = NavigationItems.FirstOrDefault();
 
-        SaveCommand = new RelayCommand(_ => ExecuteSave());
-        LoadCommand = new RelayCommand(_ => ExecuteLoad());
         DefineBoardsFolderCommand = new RelayCommand(_ => ExecuteDefineBoardsFolder());
+        DefineModulesFolderCommand = new RelayCommand(_ => ExecuteDefineModulesFolder());
+        DefineScenariosFolderCommand = new RelayCommand(_ => ExecuteDefineScenariosFolder());
+
+        // Kick off initial scan and load
+        InitializeAsync();
     }
 
-    private void ExecuteSave()
+    private async void InitializeAsync()
     {
-        var saveDialog = new SaveFileDialog
+        try
         {
-            Filter = "ASL Project files (*.asl)|*.asl",
-            DefaultExt = "asl",
-            Title = "Save ASL Project"
-        };
+            // 1. Scan and Load Boards
+            var boards = await _locator.BoardRepository.ScanAndLoadAsync();
+            _locator.BoardRepository.Initialize(boards);
 
-        if (saveDialog.ShowDialog() == true)
-        {
-            try
+            // 2. Scan and Load Modules
+            var modules = await _locator.ModuleRepository.ScanAndLoadAsync();
+            _locator.ModuleRepository.Initialize(modules);
+
+            // 3. Scan and Load Scenarios
+            var scenarios = await _locator.ScenarioRepository.ScanAndLoadAsync();
+            _locator.ScenarioRepository.Initialize(scenarios);
+
+            // 4. Load Units for each Module
+            _locator.UnitRepository.Clear();
+            foreach (var module in modules)
             {
-                var sourceProject = new ASLProject
-                {
-                    Counters = _locator.UnitRepository.AllUnits.ToList(),
-                    Scenarios = _locator.ScenarioRepository.AllScenarios.ToList(),
-                    Modules = _locator.ModuleRepository.AllModules.ToList(),
-                    Boards = _locator.BoardRepository.AllBoards.ToList()
-                };
-
-                var projectToSave = _saveManager.PrepareProjectForSaving(sourceProject, saveDialog.FileName);
-
-                string json = _saveManager.SerializeProject(projectToSave);
-                File.WriteAllText(saveDialog.FileName, json);
+                await _locator.UnitRepository.LoadUnitsForModuleAsync(module.FullName);
             }
-            catch (Exception ex)
+
+            // 5. Trigger UI refreshes
+            foreach (var vm in _locator.GetAll().OfType<IInitializeableFromRepository>())
             {
-                System.Windows.MessageBox.Show($"Failed to save project: {ex.Message}", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
+                vm.InitializeFromRepository();
             }
         }
-    }
-
-    private void ExecuteLoad()
-    {
-        var openDialog = new OpenFileDialog
+        catch (Exception ex)
         {
-            Filter = "ASL Project files (*.asl)|*.asl",
-            DefaultExt = "asl",
-            Title = "Load ASL Project"
-        };
-
-        if (openDialog.ShowDialog() == true)
-        {
-            try
-            {
-                string json = File.ReadAllText(openDialog.FileName);
-                var project = _saveManager.DeserializeProject(json);
-
-                if (project != null)
-                {
-                    // Initialize repositories
-                    _locator.UnitRepository.Initialize(project.Counters);
-                    _locator.ScenarioRepository.Initialize(project.Scenarios);
-                    _locator.ModuleRepository.Initialize(project.Modules ?? new List<AslModule>());
-                    _locator.BoardRepository.Initialize(project.Boards ?? new List<AslBoard>());
-
-                    // Process data (fix image paths etc)
-                    _locator.UnitRepository.ProcessData(openDialog.FileName);
-                    _locator.ScenarioRepository.ProcessData(openDialog.FileName);
-                    _locator.ModuleRepository.ProcessData(openDialog.FileName);
-                    _locator.BoardRepository.ProcessData(openDialog.FileName);
-
-                    // Initialize child ViewModels from repositories
-                    foreach (var vm in _locator.GetAll().OfType<IInitializeableFromRepository>())
-                    {
-                        vm.InitializeFromRepository();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Windows.MessageBox.Show($"Failed to load project: {ex.Message}", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
-            }
+            System.Windows.MessageBox.Show($"Error during initialization: {ex.Message}", "Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
         }
     }
 
@@ -166,6 +121,44 @@ public class MainViewModel : ViewModelBase
             SettingsManager.Instance.Settings.BoardsFolder = openFolderDialog.FolderName;
             SettingsManager.Instance.Save();
             System.Windows.MessageBox.Show($"Boards folder set to: {openFolderDialog.FolderName}", "Success", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+        }
+    }
+
+    private void ExecuteDefineModulesFolder()
+    {
+        var openFolderDialog = new OpenFolderDialog
+        {
+            Title = "Define Modules Folder",
+            InitialDirectory = SettingsManager.Instance.Settings.ModulesFolder
+        };
+        
+        if (openFolderDialog.ShowDialog() == true)
+        {
+            SettingsManager.Instance.Settings.ModulesFolder = openFolderDialog.FolderName;
+            SettingsManager.Instance.Save();
+            System.Windows.MessageBox.Show($"Modules folder set to: {openFolderDialog.FolderName}", "Success", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+            
+            // Re-initialize to pick up modules from the new folder
+            InitializeAsync();
+        }
+    }
+
+    private void ExecuteDefineScenariosFolder()
+    {
+        var openFolderDialog = new OpenFolderDialog
+        {
+            Title = "Define Scenarios Folder",
+            InitialDirectory = SettingsManager.Instance.Settings.ScenariosFolder
+        };
+        
+        if (openFolderDialog.ShowDialog() == true)
+        {
+            SettingsManager.Instance.Settings.ScenariosFolder = openFolderDialog.FolderName;
+            SettingsManager.Instance.Save();
+            System.Windows.MessageBox.Show($"Scenarios folder set to: {openFolderDialog.FolderName}", "Success", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+            
+            // Re-initialize to pick up scenarios from the new folder
+            InitializeAsync();
         }
     }
 }

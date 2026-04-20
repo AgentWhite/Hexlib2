@@ -8,13 +8,9 @@ using ASL.Models.Equipment;
 using ASL.Infrastructure;
 using ASL.Services;
 using ASL.Models;
-using ASL.Models.Units;
-using ASL.Models.Board;
-using ASL.Models.Scenarios;
-using ASL.Models.Modules;
-using ASL.Models.Equipment;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace ASLInputTool.Infrastructure;
 
@@ -52,4 +48,19 @@ public interface IScenarioRepository
     /// Clears all scenarios from the project.
     /// </summary>
     void Clear();
+
+    /// <summary>
+    /// Saves a scenario to disk as a discrete file.
+    /// </summary>
+    Task SaveToDiskAsync(Scenario scenario, string? originalName = null);
+
+    /// <summary>
+    /// Scans the scenarios folder and loads all scenarios.
+    /// </summary>
+    Task<IEnumerable<Scenario>> ScanAndLoadAsync();
+
+    /// <summary>
+    /// Deletes a scenario file from disk.
+    /// </summary>
+    Task DeleteFromDiskAsync(Scenario scenario);
 }

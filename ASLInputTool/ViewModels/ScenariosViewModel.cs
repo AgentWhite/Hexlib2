@@ -9,14 +9,10 @@ using ASL.Models.Equipment;
 using ASL.Infrastructure;
 using ASL.Services;
 using ASL.Models;
-using ASL.Models.Units;
-using ASL.Models.Board;
-using ASL.Models.Scenarios;
-using ASL.Models.Modules;
-using ASL.Models.Equipment;
 using System.Linq;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using ASLInputTool.Infrastructure;
 
 namespace ASLInputTool.ViewModels;
@@ -153,6 +149,9 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>, IInitializeableFr
 
     private readonly IScenarioRepository _repository;
 
+    /// <inheritdoc />
+    protected override bool CanAdd => !string.IsNullOrWhiteSpace(SettingsManager.Instance.Settings.ScenariosFolder);
+
     /// <summary>
     /// Initializes the ViewModel's items from the central repository.
     /// </summary>
@@ -173,6 +172,12 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>, IInitializeableFr
         _repository = repository;
         DisplayName = "Scenarios";
         PickImageCommand = new RelayCommand(_ => ExecutePickImage());
+
+        SettingsManager.Instance.SettingsChanged += (s, e) =>
+        {
+            OnPropertyChanged(nameof(CanAdd));
+            AddCommand.RaiseCanExecuteChanged();
+        };
     }
 
     private void ValidateName()
@@ -329,7 +334,7 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>, IInitializeableFr
     }
 
     /// <inheritdoc />
-    protected override void OnSave(object? parameter)
+    protected override async void OnSave(object? parameter)
     {
         ValidateName();
         ValidateReference();
@@ -342,6 +347,7 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>, IInitializeableFr
             return;
         }
 
+        string? originalName = EditingItem?.Name;
         var scenario = new Scenario
         {
             Name = Name,
@@ -365,16 +371,24 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>, IInitializeableFr
                 int index = Items.IndexOf(wrapper);
                 if (index >= 0)
                 {
-                    OnItemRemoved(EditingItem);
                     Items[index] = new SelectableItem<Scenario>(scenario, NotifySelectionChanged);
-                    OnItemAdded(scenario);
                 }
             }
         }
         else
         {
             Items.Add(new SelectableItem<Scenario>(scenario, NotifySelectionChanged));
-            OnItemAdded(scenario);
+        }
+
+        try
+        {
+            await _repository.SaveToDiskAsync(scenario, originalName);
+            _repository.Initialize(Items.Select(i => i.Item).ToList());
+            ShowToast($"Scenario '{scenario.Name}' saved to disk.");
+        }
+        catch (Exception ex)
+        {
+            ShowToast("Error saving scenario: " + ex.Message);
         }
 
         IsAdding = false;
@@ -384,5 +398,9 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>, IInitializeableFr
     protected override void OnItemAdded(Scenario item) => _repository.Add(item);
 
     /// <inheritdoc />
-    protected override void OnItemRemoved(Scenario item) => _repository.Remove(item);
+    protected override async void OnItemRemoved(Scenario item)
+    {
+        _repository.Remove(item);
+        await _repository.DeleteFromDiskAsync(item);
+    }
 }

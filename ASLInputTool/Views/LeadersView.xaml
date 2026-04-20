@@ -43,6 +43,7 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTextColumn Header="Name" Binding="{Binding Item.Name}" Width="*" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Module" Binding="{Binding Item.Module}" Width="100" IsReadOnly="True" />
                     <DataGridTextColumn Header="Nationality" Binding="{Binding Item.Nationality}" Width="120" IsReadOnly="True" />
                     <DataGridTextColumn Header="Stats" Binding="{Binding Item, Converter={StaticResource CounterStats}}" Width="100" IsReadOnly="True" SortMemberPath="Item.Leadership.Leadership" />
                 </DataGrid.Columns>
@@ -67,6 +68,13 @@
                     <ComboBox Margin="0,0,0,10" Padding="5"
                               ItemsSource="{Binding Nationalities}"
                               SelectedItem="{Binding SelectedNationality}"/>
+
+                    <Label Content="Module" FontWeight="SemiBold"/>
+                    <ComboBox Margin="0,0,0,10" Padding="5" 
+                              ItemsSource="{Binding AvailableModules}" 
+                              SelectedValue="{Binding SelectedModule}" 
+                              SelectedValuePath="Module" 
+                              DisplayMemberPath="FullName" />
 
                     <Grid>
                         <Grid.ColumnDefinitions>

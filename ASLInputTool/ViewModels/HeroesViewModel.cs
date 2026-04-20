@@ -94,7 +94,7 @@ public class HeroesViewModel : UnitViewModelBase
     /// <summary>
     /// Initializes a new instance of the <see cref="HeroesViewModel"/> class.
     /// </summary>
-    public HeroesViewModel(IUnitRepository repository) : base(repository)
+    public HeroesViewModel(IUnitRepository repository, IModuleRepository moduleRepository) : base(repository, moduleRepository)
     {
         DisplayName = "Heroes";
     }
@@ -158,6 +158,7 @@ public class HeroesViewModel : UnitViewModelBase
         OnPropertyChanged(nameof(BrokenMorale));
         OnPropertyChanged(nameof(CanHaveBrokenMorale));
         SelectedNationality = Nationality.German;
+        SelectedModule = ASL.Models.Modules.Module.BeyondValor;
         ImagePathFront = null;
         ImagePathBack = null;
     }
@@ -178,6 +179,7 @@ public class HeroesViewModel : UnitViewModelBase
         OnPropertyChanged(nameof(BrokenMorale));
         OnPropertyChanged(nameof(CanHaveBrokenMorale));
         SelectedNationality = item.Nationality;
+        SelectedModule = item.Module;
         ImagePathFront = item.ImagePathFront;
         ImagePathBack = item.ImagePathBack;
     }
@@ -200,6 +202,7 @@ public class HeroesViewModel : UnitViewModelBase
         {
             Name = Name,
             Nationality = SelectedNationality,
+            Module = SelectedModule,
             UnitType = UnitType.SMC,
             ImagePathFront = ImagePathFront,
             ImagePathBack = ImagePathBack

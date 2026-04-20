@@ -27,10 +27,10 @@ public class ViewModelLocator
         _boardRepository = new BoardRepository();
 
         // Register default instances with injected dependencies
-        Register<LeadersViewModel>(new LeadersViewModel(_unitRepository));
-        Register<HeroesViewModel>(new HeroesViewModel(_unitRepository));
-        Register<SquadsViewModel>(new SquadsViewModel(_unitRepository));
-        Register<EquipmentViewModel>(new EquipmentViewModel(_unitRepository));
+        Register<LeadersViewModel>(new LeadersViewModel(_unitRepository, _moduleRepository));
+        Register<HeroesViewModel>(new HeroesViewModel(_unitRepository, _moduleRepository));
+        Register<SquadsViewModel>(new SquadsViewModel(_unitRepository, _moduleRepository));
+        Register<EquipmentViewModel>(new EquipmentViewModel(_unitRepository, _moduleRepository));
         Register<ScenariosViewModel>(new ScenariosViewModel(_scenarioRepository));
         Register<ModulesViewModel>(new ModulesViewModel(_moduleRepository));
         Register<BoardsViewModel>(new BoardsViewModel(_boardRepository));

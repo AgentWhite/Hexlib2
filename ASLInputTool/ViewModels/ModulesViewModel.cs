@@ -100,6 +100,7 @@ public class ModulesViewModel : CrudViewModelBase<AslModule>, IInitializeableFro
         PickBackImageCommand = new RelayCommand(_ => ExecutePickImage(false));
         
         Items.CollectionChanged += (s, e) => UpdateAvailableModuleTypes();
+        SettingsManager.Instance.SettingsChanged += (s, e) => { AddCommand.RaiseCanExecuteChanged(); OnPropertyChanged(nameof(CanAdd)); };
         UpdateAvailableModuleTypes();
     }
 
@@ -130,6 +131,9 @@ public class ModulesViewModel : CrudViewModelBase<AslModule>, IInitializeableFro
         // Force a UI refresh because clearing the collection broke the ComboBox binding
         OnPropertyChanged(nameof(ModuleType));
     }
+
+    /// <inheritdoc />
+    protected override bool CanAdd => !string.IsNullOrWhiteSpace(SettingsManager.Instance.Settings.ModulesFolder);
 
     /// <summary>
     /// Gets or sets a value indicating whether the "Add" form is currently visible.
@@ -188,7 +192,7 @@ public class ModulesViewModel : CrudViewModelBase<AslModule>, IInitializeableFro
     }
 
     /// <inheritdoc />
-    protected override void OnSave(object? parameter)
+    protected override async void OnSave(object? parameter)
     {
         ClearErrors();
         if (!ValidateAllProperties())
@@ -204,6 +208,7 @@ public class ModulesViewModel : CrudViewModelBase<AslModule>, IInitializeableFro
             return;
         }
 
+        string? originalName = EditingItem?.FullName;
         var module = new AslModule
         {
             FullName = FullName,
@@ -222,16 +227,24 @@ public class ModulesViewModel : CrudViewModelBase<AslModule>, IInitializeableFro
                 int index = Items.IndexOf(wrapper);
                 if (index >= 0)
                 {
-                    OnItemRemoved(EditingItem);
                     Items[index] = new SelectableItem<AslModule>(module, NotifySelectionChanged);
-                    OnItemAdded(module);
                 }
             }
         }
         else
         {
             Items.Add(new SelectableItem<AslModule>(module, NotifySelectionChanged));
-            OnItemAdded(module);
+        }
+
+        try
+        {
+            await _repository.SaveToDiskAsync(module, originalName);
+            _repository.Initialize(Items.Select(i => i.Item).ToList());
+            ShowToast($"Module '{module.FullName}' saved to disk.");
+        }
+        catch (Exception ex)
+        {
+            ShowToast("Error saving module: " + ex.Message);
         }
 
         IsAdding = false;

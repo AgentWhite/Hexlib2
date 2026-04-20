@@ -105,7 +105,7 @@ public abstract class SupportWeaponViewModelBase : UnitViewModelBase
     public System.Windows.Input.ICommand PickDismantledImageCommand { get; }
 
     /// <summary>Initializes a new instance of the <see cref="SupportWeaponViewModelBase"/> class.</summary>
-    protected SupportWeaponViewModelBase(IUnitRepository repository) : base(repository)
+    protected SupportWeaponViewModelBase(IUnitRepository repository, IModuleRepository moduleRepository) : base(repository, moduleRepository)
     {
         PickDismantledImageCommand = new RelayCommand(_ => ExecutePickImage(2));
     }

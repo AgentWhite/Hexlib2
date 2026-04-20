@@ -219,7 +219,7 @@ public class SquadsViewModel : UnitViewModelBase
     /// <summary>
     /// Initializes a new instance of the <see cref="SquadsViewModel"/> class.
     /// </summary>
-    public SquadsViewModel(IUnitRepository repository) : base(repository)
+    public SquadsViewModel(IUnitRepository repository, IModuleRepository moduleRepository) : base(repository, moduleRepository)
     {
         DisplayName = "Squads";
     }
@@ -300,6 +300,7 @@ public class SquadsViewModel : UnitViewModelBase
         OnPropertyChanged(nameof(BrokenMorale));
         OnPropertyChanged(nameof(BPV));
         SelectedNationality = Nationality.German;
+        SelectedModule = ASL.Models.Modules.Module.BeyondValor;
         SelectedScale = InfantryScale.Squad;
         SelectedClass = UnitClass.FirstLine;
         ImagePathFront = null;
@@ -329,6 +330,7 @@ public class SquadsViewModel : UnitViewModelBase
         OnPropertyChanged(nameof(BrokenMorale));
         OnPropertyChanged(nameof(BPV));
         SelectedNationality = item.Nationality;
+        SelectedModule = item.Module;
         SelectedClass = item.Infantry?.AslClass ?? UnitClass.SecondLine;
         ImagePathFront = item.ImagePathFront;
         ImagePathBack = item.ImagePathBack;
@@ -362,6 +364,7 @@ public class SquadsViewModel : UnitViewModelBase
         {
             Name = Name,
             Nationality = SelectedNationality,
+            Module = SelectedModule,
             UnitType = UnitType.MMC,
             ImagePathFront = ImagePathFront,
             ImagePathBack = ImagePathBack

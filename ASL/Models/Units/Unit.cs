@@ -44,6 +44,11 @@ public class Unit : ICounter
     /// Gets or sets the nationality of the unit.
     /// </summary>
     public Nationality Nationality { get; set; }  
+
+    /// <summary>
+    /// Gets or sets the module this unit belongs to.
+    /// </summary>
+    public ASL.Models.Modules.Module Module { get; set; } = ASL.Models.Modules.Module.BeyondValor;
     
     /// <summary>
     /// Gets or sets the parent unit (e.g., if this is a support weapon carried by a squad).

@@ -93,7 +93,7 @@ public class LeadersViewModel : UnitViewModelBase
     /// <summary>
     /// Initializes a new instance of the <see cref="LeadersViewModel"/> class.
     /// </summary>
-    public LeadersViewModel(IUnitRepository repository) : base(repository)
+    public LeadersViewModel(IUnitRepository repository, IModuleRepository moduleRepository) : base(repository, moduleRepository)
     {
         DisplayName = "Leaders";
     }
@@ -142,6 +142,7 @@ public class LeadersViewModel : UnitViewModelBase
         OnPropertyChanged(nameof(BPV));
         OnPropertyChanged(nameof(Leadership));
         SelectedNationality = Nationality.German;
+        SelectedModule = ASL.Models.Modules.Module.BeyondValor;
         ImagePathFront = null;
         ImagePathBack = null;
     }
@@ -161,6 +162,7 @@ public class LeadersViewModel : UnitViewModelBase
         OnPropertyChanged(nameof(BPV));
         OnPropertyChanged(nameof(Leadership));
         SelectedNationality = item.Nationality;
+        SelectedModule = item.Module;
         OnPropertyChanged(nameof(IsBrokenMoraleEnabled));
         ImagePathFront = item.ImagePathFront;
         ImagePathBack = item.ImagePathBack;
@@ -184,6 +186,7 @@ public class LeadersViewModel : UnitViewModelBase
         {
             Name = Name,
             Nationality = SelectedNationality,
+            Module = SelectedModule,
             UnitType = UnitType.SMC,
             ImagePathFront = ImagePathFront,
             ImagePathBack = ImagePathBack

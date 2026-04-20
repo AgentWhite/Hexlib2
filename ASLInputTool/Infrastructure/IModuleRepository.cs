@@ -9,6 +9,7 @@ using ASL.Infrastructure;
 using ASL.Services;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace ASLInputTool.Infrastructure;
 
@@ -28,7 +29,7 @@ public interface IModuleRepository
     void Initialize(IEnumerable<AslModule> modules);
 
     /// <summary>
-    /// Processes module data, e.g., fixing relative image paths for box art.
+    /// Performs any necessary cleanup or post-processing (e.g., fixing image paths).
     /// </summary>
     void ProcessData(string projectPath);
 
@@ -46,4 +47,14 @@ public interface IModuleRepository
     /// Clears all modules from the project.
     /// </summary>
     void Clear();
+
+    /// <summary>
+    /// Scans the project directory for modules and loads them.
+    /// </summary>
+    Task<IEnumerable<AslModule>> ScanAndLoadAsync();
+
+    /// <summary>
+    /// Saves a module to disk.
+    /// </summary>
+    Task SaveToDiskAsync(AslModule module, string? originalName = null);
 }

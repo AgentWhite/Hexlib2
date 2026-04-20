@@ -23,7 +23,9 @@ public abstract class UnitViewModelBase : CrudViewModelBase<Unit>, IInitializeab
 {
     /// <summary>The unit repository.</summary>
     protected readonly IUnitRepository Repository;
+    private readonly IModuleRepository _moduleRepository;
     private Nationality? _selectedNationalityFilter;
+    private ASL.Models.Modules.Module _selectedModule = ASL.Models.Modules.Module.BeyondValor;
     private string? _imagePathFront;
     private string? _imagePathBack;
 
@@ -58,6 +60,16 @@ public abstract class UnitViewModelBase : CrudViewModelBase<Unit>, IInitializeab
     public string? ImagePathBack { get => _imagePathBack; set => SetProperty(ref _imagePathBack, value); }
 
     /// <summary>
+    /// Gets or sets the currently selected module.
+    /// </summary>
+    public ASL.Models.Modules.Module SelectedModule { get => _selectedModule; set => SetProperty(ref _selectedModule, value); }
+
+    /// <summary>
+    /// Gets the list of available modules defined in the project.
+    /// </summary>
+    public IEnumerable<AslModule> AvailableModules => _moduleRepository.AllModules;
+
+    /// <summary>
     /// Gets the command to clear the nationality filter.
     /// </summary>
     public RelayCommand ClearFilterCommand { get; }
@@ -85,9 +97,10 @@ public abstract class UnitViewModelBase : CrudViewModelBase<Unit>, IInitializeab
     /// <summary>
     /// Initializes a new instance of the <see cref="UnitViewModelBase"/> class.
     /// </summary>
-    protected UnitViewModelBase(IUnitRepository repository)
+    protected UnitViewModelBase(IUnitRepository repository, IModuleRepository moduleRepository)
     {
         Repository = repository;
+        _moduleRepository = moduleRepository;
         FilteredItems = CollectionViewSource.GetDefaultView(Items);
         FilteredItems.Filter = FilterPredicate;
 
@@ -155,8 +168,28 @@ public abstract class UnitViewModelBase : CrudViewModelBase<Unit>, IInitializeab
     }
 
     /// <inheritdoc />
-    protected override void OnItemAdded(Unit item) => Repository.Add(item);
+    protected override void OnItemAdded(Unit item)
+    {
+        Repository.Add(item);
+        TriggerDiskSave(item.Module);
+    }
 
     /// <inheritdoc />
-    protected override void OnItemRemoved(Unit item) => Repository.Remove(item);
+    protected override void OnItemRemoved(Unit item)
+    {
+        Repository.Remove(item);
+        TriggerDiskSave(item.Module);
+    }
+
+    /// <summary>
+    /// Triggers a persist operation for all units belonging to the specified module.
+    /// </summary>
+    protected async void TriggerDiskSave(ASL.Models.Modules.Module moduleType)
+    {
+        var module = _moduleRepository.AllModules.FirstOrDefault(m => m.Module == moduleType);
+        if (module != null)
+        {
+            await Repository.SaveUnitsForModuleAsync(moduleType, module.FullName);
+        }
+    }
 }

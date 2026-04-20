@@ -43,6 +43,7 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTextColumn Header="Name" Binding="{Binding Item.Name}" Width="*" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Module" Binding="{Binding Item.Module}" Width="100" IsReadOnly="True" />
                     <DataGridTextColumn Header="Nationality" Binding="{Binding Item.Nationality}" Width="120" IsReadOnly="True" />
                     <DataGridTextColumn Header="Class" Binding="{Binding Item.Infantry.AslClass}" Width="100" IsReadOnly="True" />
                     <DataGridTextColumn Header="Squad Size" Binding="{Binding Item.Infantry.Scale}" Width="100" IsReadOnly="True" />
@@ -83,6 +84,13 @@
                             <ComboBox Padding="5" ItemsSource="{Binding UnitClasses}" SelectedItem="{Binding SelectedClass}" IsEnabled="{Binding IsClassSelectionEnabled}"/>
                         </StackPanel>
                     </Grid>
+
+                    <Label Content="Module" FontWeight="SemiBold" Margin="0,10,0,0"/>
+                    <ComboBox Margin="0,0,0,10" Padding="5" 
+                              ItemsSource="{Binding AvailableModules}" 
+                              SelectedValue="{Binding SelectedModule}" 
+                              SelectedValuePath="Module" 
+                              DisplayMemberPath="FullName" />
 
                     <Grid Margin="0,10">
                         <Grid.ColumnDefinitions>

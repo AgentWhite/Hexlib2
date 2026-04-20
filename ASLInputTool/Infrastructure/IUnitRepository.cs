@@ -51,5 +51,20 @@ namespace ASLInputTool.Infrastructure
         /// Performs any necessary cleanup or post-processing (e.g., fixing image paths).
         /// </summary>
         void ProcessData(string projectPath);
+
+        /// <summary>
+        /// Saves all units belonging to a specific module to disk.
+        /// </summary>
+        Task SaveUnitsForModuleAsync(Module moduleType, string moduleFolderName);
+
+        /// <summary>
+        /// Loads all units for a specific module from disk.
+        /// </summary>
+        Task LoadUnitsForModuleAsync(string moduleFolderName);
+
+        /// <summary>
+        /// Deletes all unit files for a specific module.
+        /// </summary>
+        Task DeleteUnitsForModuleAsync(string moduleFolderName);
     }
 }

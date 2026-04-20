@@ -202,7 +202,7 @@ public class EquipmentViewModel : SupportWeaponViewModelBase
     public bool HasSprayingFire { get => _hasSprayingFire; set => SetProperty(ref _hasSprayingFire, value); }
 
     /// <summary>Initializes a new instance of the <see cref="EquipmentViewModel"/> class.</summary>
-    public EquipmentViewModel(IUnitRepository repository) : base(repository)
+    public EquipmentViewModel(IUnitRepository repository, IModuleRepository moduleRepository) : base(repository, moduleRepository)
     {
         DisplayName = "Equipment";
     }
@@ -224,6 +224,7 @@ public class EquipmentViewModel : SupportWeaponViewModelBase
         HasSmokeExponent = false;
         SmokePlacementExponent = string.Empty;
         SelectedNationality = Nationality.German;
+        SelectedModule = ASL.Models.Modules.Module.BeyondValor;
         SelectedMachineGunType = MachineGunType.LMG;
         HasSprayingFire = false;
         
@@ -246,6 +247,7 @@ public class EquipmentViewModel : SupportWeaponViewModelBase
     {
         Name = item.Name;
         SelectedNationality = item.Nationality;
+        SelectedModule = item.Module;
         ImagePathFront = item.ImagePathFront ?? string.Empty;
         ImagePathBack = item.ImagePathBack ?? string.Empty;
 
@@ -332,6 +334,7 @@ public class EquipmentViewModel : SupportWeaponViewModelBase
         {
             Name = Name,
             Nationality = SelectedNationality,
+            Module = SelectedModule,
             UnitType = UnitType.Ordnance, // All equipment (MG, Radio, Phone) is Ordnance
             ImagePathFront = ImagePathFront,
             ImagePathBack = ImagePathBack

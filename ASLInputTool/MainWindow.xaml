@@ -29,9 +29,9 @@
 
         <Menu Grid.Row="0" Background="{StaticResource WindowBackgroundBrush}" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="0,0,0,1">
             <MenuItem Header="_File">
-                <MenuItem Header="_Load" Command="{Binding LoadCommand}"/>
-                <MenuItem Header="_Save" Command="{Binding SaveCommand}"/>
                 <MenuItem Header="Define Boards Folder..." Command="{Binding DefineBoardsFolderCommand}"/>
+                <MenuItem Header="Define Modules Folder..." Command="{Binding DefineModulesFolderCommand}"/>
+                <MenuItem Header="Define Scenarios Folder..." Command="{Binding DefineScenariosFolderCommand}"/>
                 <Separator/>
                 <MenuItem Header="_Exit" Click="MenuItem_Exit_Click"/>
             </MenuItem>

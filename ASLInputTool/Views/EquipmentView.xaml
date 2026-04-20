@@ -49,6 +49,7 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTextColumn Header="Name" Binding="{Binding Item.Name}" Width="*" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Module" Binding="{Binding Item.Module}" Width="100" IsReadOnly="True" />
                     <DataGridTextColumn Header="Nationality" Binding="{Binding Item.Nationality}" Width="120" IsReadOnly="True" />
                     <DataGridTextColumn Header="Type" Binding="{Binding Item, Converter={StaticResource EquipmentTypeConverter}}" Width="120" IsReadOnly="True" />
                 </DataGrid.Columns>
@@ -93,6 +94,13 @@
 
                     <Label Content="Nationality" FontWeight="SemiBold"/>
                     <ComboBox Margin="0,0,0,10" Padding="5" ItemsSource="{Binding Nationalities}" SelectedItem="{Binding SelectedNationality}"/>
+
+                    <Label Content="Module" FontWeight="SemiBold"/>
+                    <ComboBox Margin="0,0,0,10" Padding="5" 
+                              ItemsSource="{Binding AvailableModules}" 
+                              SelectedValue="{Binding SelectedModule}" 
+                              SelectedValuePath="Module" 
+                              DisplayMemberPath="FullName" />
 
                     <Label Content="Equipment Type" FontWeight="SemiBold"/>
                     <ComboBox Margin="0,0,0,10" Padding="5" ItemsSource="{Binding EquipmentTypes}" SelectedItem="{Binding SelectedEquipmentType}">
