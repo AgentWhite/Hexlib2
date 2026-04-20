@@ -23,11 +23,6 @@
         "$type": "Leadership",
         "ComponentName": "LeadershipComponent",
         "Leadership": -2
-      },
-      {
-        "$type": "BPV",
-        "ComponentName": "BPVComponent",
-        "BPV": 1
       }
     ]
   }

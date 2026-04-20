@@ -105,10 +105,6 @@
                                      IsEnabled="{Binding IsBrokenMoraleEnabled}"
                                      LostFocus="OnTextBoxLostFocus"/>
                         </StackPanel>
-                        <StackPanel Grid.Column="1">
-                            <Label Content="BPV" FontWeight="SemiBold"/>
-                            <TextBox Width="50" HorizontalAlignment="Left" Tag="20" Text="{Binding BPV, ValidatesOnNotifyDataErrors=True}" LostFocus="OnTextBoxLostFocus"/>
-                        </StackPanel>
                     </Grid>
 
                     <Button Content="Save Leader" Command="{Binding SaveCommand}" Margin="0,20,0,0" Padding="20,10" HorizontalAlignment="Right" Background="{StaticResource AccentBrush}" Foreground="White" FontWeight="Bold"/>

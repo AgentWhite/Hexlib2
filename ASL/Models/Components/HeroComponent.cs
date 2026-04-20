@@ -31,4 +31,9 @@ public class HeroComponent : IUnitComponent
     // public int FirepowerBonus { get; set; } = 1;
     // public int MoraleBonus { get; set; } = 1;
     // public bool CannotCower { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the range of the hero when wounded.
+    /// </summary>
+    public int WoundedRange { get; set; }
 }

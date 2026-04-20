@@ -53,6 +53,13 @@
                 </DataGrid.InputBindings>
                 <DataGrid.Columns>
                     <DataGridCheckBoxColumn Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" Width="30" IsReadOnly="False" CanUserSort="False" />
+                    <DataGridTemplateColumn Header="Image" Width="70" CanUserSort="False">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image Source="{Binding Item.ImagePath, Converter={StaticResource ImageSource}}" Height="54" Stretch="Uniform"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTextColumn Header="Name" Binding="{Binding Item.Name}" Width="*" IsReadOnly="True" />
                     <DataGridTextColumn Header="Reference" Binding="{Binding Item.Reference}" Width="150" IsReadOnly="True" />
                     <DataGridTextColumn Header="Attacker" Binding="{Binding Item.AttackerSide.Nationality}" Width="100" IsReadOnly="True" />

@@ -26,6 +26,7 @@ public class HeroesViewModel : UnitViewModelBase
     private string _range = string.Empty;
     private string _morale = string.Empty;
     private string _brokenMorale = string.Empty;
+    private string _woundedRange = string.Empty;
     private Nationality _selectedNationality = Nationality.German;
 
 
@@ -61,6 +62,13 @@ public class HeroesViewModel : UnitViewModelBase
     /// </summary>
     [Range(typeof(int), "1", "12", ErrorMessage = "Broken morale must be between 1 and 12.")]
     public string BrokenMorale { get => _brokenMorale; set => SetProperty(ref _brokenMorale, value); }
+
+    /// <summary>
+    /// Gets or sets the wounded range value as a string for UI binding.
+    /// </summary>
+    [Required(ErrorMessage = "Wounded range is required.")]
+    [Range(typeof(int), "0", "50", ErrorMessage = "Wounded range must be between 0 and 50.")]
+    public string WoundedRange { get => _woundedRange; set => SetProperty(ref _woundedRange, value); }
 
     /// <summary>
     /// Gets a value indicating whether this hero can have a broken morale value (false for Japanese).
@@ -151,11 +159,13 @@ public class HeroesViewModel : UnitViewModelBase
         _range = string.Empty;
         _morale = string.Empty;
         _brokenMorale = string.Empty;
+        _woundedRange = string.Empty;
         OnPropertyChanged(nameof(Name));
         OnPropertyChanged(nameof(Firepower));
         OnPropertyChanged(nameof(Range));
         OnPropertyChanged(nameof(Morale));
         OnPropertyChanged(nameof(BrokenMorale));
+        OnPropertyChanged(nameof(WoundedRange));
         OnPropertyChanged(nameof(CanHaveBrokenMorale));
         SelectedNationality = Nationality.German;
         SelectedModule = ASL.Models.Modules.Module.BeyondValor;
@@ -172,11 +182,13 @@ public class HeroesViewModel : UnitViewModelBase
         _range = (item.FirePower?.Range ?? 0).ToString();
         _morale = (item.Infantry?.Morale ?? 0).ToString();
         _brokenMorale = (item.Infantry?.BrokenMorale ?? 0).ToString();
+        _woundedRange = (item.Hero?.WoundedRange ?? 0).ToString();
         OnPropertyChanged(nameof(Name));
         OnPropertyChanged(nameof(Firepower));
         OnPropertyChanged(nameof(Range));
         OnPropertyChanged(nameof(Morale));
         OnPropertyChanged(nameof(BrokenMorale));
+        OnPropertyChanged(nameof(WoundedRange));
         OnPropertyChanged(nameof(CanHaveBrokenMorale));
         SelectedNationality = item.Nationality;
         SelectedModule = item.Module;
@@ -215,7 +227,7 @@ public class HeroesViewModel : UnitViewModelBase
             AslClass = UnitClass.Elite,
             Scale = InfantryScale.SMC
         });
-        unit.AddComponent(new HeroComponent());
+        unit.AddComponent(new HeroComponent { WoundedRange = int.Parse(WoundedRange) });
         unit.AddComponent(new FirePowerComponent { Firepower = fpValue, Range = rValue });
 
         if (EditingItem != null)

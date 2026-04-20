@@ -41,6 +41,13 @@
                 </DataGrid.InputBindings>
                 <DataGrid.Columns>
                     <DataGridCheckBoxColumn Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" Width="30" IsReadOnly="False" CanUserSort="False" />
+                    <DataGridTemplateColumn Header="Image" Width="70" CanUserSort="False">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image Source="{Binding Item.FrontImage, Converter={StaticResource ImageSource}}" Height="54" Stretch="Uniform"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTextColumn Header="Full Name" Binding="{Binding Item.FullName}" Width="*" IsReadOnly="True" />
                     <DataGridTextColumn Header="Type" Binding="{Binding Item.Module}" Width="150" IsReadOnly="True" />
                     <DataGridCheckBoxColumn Header="Finished" Binding="{Binding Item.IsFinished}" Width="80" IsReadOnly="True" />

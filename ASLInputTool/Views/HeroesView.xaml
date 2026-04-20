@@ -105,7 +105,11 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" Margin="0,0,20,0">
-                            <Label Content="Broken Morale" FontWeight="SemiBold"/>
+                            <Label Content="Wounded Range" FontWeight="SemiBold"/>
+                            <TextBox Width="50" HorizontalAlignment="Left" Tag="4" Text="{Binding WoundedRange, ValidatesOnNotifyDataErrors=True}" LostFocus="OnTextBoxLostFocus"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Margin="0,0,20,0">
+                            <Label Content="Wounded Morale" FontWeight="SemiBold"/>
                             <TextBox Width="50" HorizontalAlignment="Left" Tag="10" Text="{Binding BrokenMorale, ValidatesOnNotifyDataErrors=True}" LostFocus="OnTextBoxLostFocus" IsEnabled="{Binding CanHaveBrokenMorale}"/>
                         </StackPanel>
                     </Grid>

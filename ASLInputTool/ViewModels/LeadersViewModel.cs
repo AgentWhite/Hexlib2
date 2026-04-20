@@ -24,7 +24,6 @@ public class LeadersViewModel : UnitViewModelBase
     private string _name = string.Empty;
     private string _morale = string.Empty;
     private string _brokenMorale = string.Empty;
-    private string _bpv = string.Empty;
     private string _leadership = string.Empty;
     private Nationality _selectedNationality = Nationality.German;
 
@@ -48,12 +47,6 @@ public class LeadersViewModel : UnitViewModelBase
     [Range(typeof(int), "1", "12", ErrorMessage = "Broken morale must be between 1 and 12.")]
     public string BrokenMorale { get => _brokenMorale; set => SetProperty(ref _brokenMorale, value); }
 
-    /// <summary>
-    /// Gets or sets the BPV value as a string for UI binding.
-    /// </summary>
-    [Required(ErrorMessage = "BPV is required.")]
-    [Range(typeof(int), "1", "100", ErrorMessage = "BPV must be between 1 and 100.")]
-    public string BPV { get => _bpv; set => SetProperty(ref _bpv, value); }
 
     /// <summary>
     /// Gets or sets the leadership modifier as a string for UI binding.
@@ -134,12 +127,10 @@ public class LeadersViewModel : UnitViewModelBase
         _name = string.Empty;
         _morale = string.Empty;
         _brokenMorale = string.Empty;
-        _bpv = string.Empty;
         _leadership = string.Empty;
         OnPropertyChanged(nameof(Name));
         OnPropertyChanged(nameof(Morale));
         OnPropertyChanged(nameof(BrokenMorale));
-        OnPropertyChanged(nameof(BPV));
         OnPropertyChanged(nameof(Leadership));
         SelectedNationality = Nationality.German;
         SelectedModule = ASL.Models.Modules.Module.BeyondValor;
@@ -154,12 +145,10 @@ public class LeadersViewModel : UnitViewModelBase
         _name = item.Name;
         _morale = (item.Infantry?.Morale ?? 0).ToString();
         _brokenMorale = item.Infantry?.BrokenMorale?.ToString() ?? string.Empty;
-        _bpv = (item.Bpv?.BPV ?? 0).ToString();
         _leadership = (item.Leadership?.Leadership ?? 0).ToString();
         OnPropertyChanged(nameof(Name));
         OnPropertyChanged(nameof(Morale));
         OnPropertyChanged(nameof(BrokenMorale));
-        OnPropertyChanged(nameof(BPV));
         OnPropertyChanged(nameof(Leadership));
         SelectedNationality = item.Nationality;
         SelectedModule = item.Module;
@@ -179,7 +168,6 @@ public class LeadersViewModel : UnitViewModelBase
 
         int m = int.Parse(Morale);
         int? bm = SelectedNationality == Nationality.Japanese ? null : (int.TryParse(BrokenMorale, out int bmv) ? bmv : 0);
-        int bpvValue = int.Parse(BPV);
         int l = int.Parse(Leadership);
 
         var unit = new Unit
@@ -201,7 +189,6 @@ public class LeadersViewModel : UnitViewModelBase
             CanSelfRally = true
         });
         unit.AddComponent(new LeadershipComponent { Leadership = l });
-        unit.AddComponent(new BPVComponent { BPV = bpvValue });
 
         if (EditingItem != null)
         {

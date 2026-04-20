@@ -21,7 +21,8 @@
       },
       {
         "$type": "Hero",
-        "ComponentName": "HeroComponent"
+        "ComponentName": "HeroComponent",
+        "WoundedRange": 3
       },
       {
         "$type": "FirePower",
