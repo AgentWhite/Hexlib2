@@ -22,26 +22,29 @@ public class DiceRollResult
     public int ColoredDie { get; }
 
     /// <summary>
-    /// How many dice were rolled (1 or 2).
+    /// The sum of the dice rolled.
     /// </summary>
-    public int DiceCount { get; }
+    public int Sum => ColoredDie + WhiteDie;
+
+    /// <summary>
+    /// Do the die show equal number of dots. 
+    /// </summary>
+    public bool IsDouble => ColoredDie == WhiteDie;
+
+    /// <summary>
+    /// Convenience method to determine if snakeyes where rolled.
+    /// </summary>
+    public bool IsSnakeEyes => WhiteDie == 1 && ColoredDie == 1;
+
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DiceRollResult"/> class.
     /// </summary>
     /// <param name="white">The result of the white die.</param>
     /// <param name="colored">The result of the colored die (if 2d6).</param>
-    /// <param name="count">The number of dice rolled (1 or 2).</param>
-    public DiceRollResult(int white, int colored, int count)
+    public DiceRollResult(int white, int colored)
     {
         WhiteDie = white;
         ColoredDie = colored;
-        DiceCount = count;
     }
-
-    /// <summary>
-    /// Returns a string representation of the dice roll result.
-    /// </summary>
-    /// <returns>A string like "DR: 7 (3,4)" or "dr: 5".</returns>
-    public override string ToString() => DiceCount == 2 ? $"DR: {Total} ({WhiteDie},{ColoredDie})" : $"dr: {WhiteDie}";
 }
