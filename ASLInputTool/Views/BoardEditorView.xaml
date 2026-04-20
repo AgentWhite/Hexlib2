@@ -788,6 +788,9 @@
                                 <Path Data="M 19.4,4.3 C 18.7,3.6 17.5,3.6 16.8,4.3 L 11.5,9.6 C 11.2,9.9 10.8,10.1 10.4,10.1 L 7.4,10.1 C 6.5,10.1 5.7,9.3 5.7,8.4 C 5.7,7.5 6.5,6.7 7.4,6.7 C 8.3,6.7 9.1,7.5 9.1,8.4 L 10.4,8.4 C 10.4,6.8 9,5.4 7.4,5.4 C 5.8,5.4 4.4,6.8 4.4,8.4 C 4.4,10 5.8,11.4 7.4,11.4 L 10.4,11.4 L 14.8,15.8 C 14.3,16.5 13.1,16.5 12.4,15.8 L 4.6,8 L 3,9.6 L 10.8,17.4 C 12.1,18.7 14.3,18.7 15.6,17.4 L 19.4,13.6 C 20.1,12.9 20.1,11.7 19.4,11 L 19.4,4.3 Z" Fill="Black" Width="14" Height="14" Stretch="Uniform" />
                             </RadioButton>
 
+                            <RadioButton Content="🪄 Magic Pen" IsChecked="{Binding CurrentTool, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=PenMagnetic}" 
+                                         Style="{StaticResource {x:Type ToggleButton}}" Padding="10,5" Margin="0,0,10,0"/>
+
                             <Separator Margin="10,0"/>
 
                             <Button Content="Clear LOS" Command="{Binding ClearLosCommand}" Margin="0,0,10,0" Padding="10,5"/>
@@ -1089,13 +1092,13 @@
                             <TextBlock Text="The LOS tool tests if a direct line touches hexes." TextWrapping="Wrap" Margin="0,0,0,15" Foreground="Gray"/>
                             
                             <!-- Pen Tool Selection -->
-                            <GroupBox Header="Terrain Drawing" Margin="0,10,0,0" Visibility="{Binding CurrentTool, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter='PenRect | PenPolygon | PenSubtract'}">
+                            <GroupBox Header="Terrain Drawing" Margin="0,10,0,0" Visibility="{Binding CurrentTool, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter='PenRect | PenPolygon | PenSubtract | PenMagnetic'}">
                                 <StackPanel Margin="5">
                                     <TextBlock Text="Terrain Selection:" Margin="0,0,0,5" FontWeight="Bold"/>
                                     <ComboBox ItemsSource="{Binding AvailablePenTerrains}" SelectedItem="{Binding ActivePenTerrain}" VerticalAlignment="Center" />
                                     
                                     <Button Content="Close Shape" Command="{Binding ClosePolygonCommand}" Margin="0,10,0,0" Padding="5"
-                                            Visibility="{Binding CurrentTool, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter='PenPolygon | PenSubtract'}"/>
+                                            Visibility="{Binding CurrentTool, Converter={StaticResource EnumToVisibilityConverter}, ConverterParameter='PenPolygon | PenSubtract | PenMagnetic'}"/>
 
                                     <TextBlock Text="Draw using Rectangles or Polygons. Use Scissors to subtract. Overlapping areas merge automatically." 
                                                TextWrapping="Wrap" FontSize="11" Foreground="Gray" Margin="0,10,0,0"/>

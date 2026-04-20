@@ -24,5 +24,7 @@ public enum ToolMode
     /// <summary>Subtract from existing shapes using polygons.</summary>
     PenSubtract,
     /// <summary>Select and manage custom terrain drawings.</summary>
-    PenSelect
+    PenSelect,
+    /// <summary>Draw polygons that snap to background edges.</summary>
+    PenMagnetic
 }

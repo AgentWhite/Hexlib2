@@ -149,6 +149,26 @@ public partial class BoardEditorViewModel
         PolygonGhostGeometry = group;
     }
 
+    private void HandleMagneticPolygonClick(Point p)
+    {
+        // Adjust point to best edge before clicking
+        if (_grayscalePixels != null)
+        {
+            p = ASLInputTool.Services.EdgeDetectionService.FindBestEdgePoint(p, _grayscalePixels, _imagePixelWidth, _imagePixelHeight, ActualGridWidth, ActualGridHeight);
+        }
+        HandlePolygonClick(p);
+    }
+
+    private void HandleMagneticPolygonHover(Point p)
+    {
+        // Adjust point to best edge before hover
+        if (_grayscalePixels != null)
+        {
+            p = ASLInputTool.Services.EdgeDetectionService.FindBestEdgePoint(p, _grayscalePixels, _imagePixelWidth, _imagePixelHeight, ActualGridWidth, ActualGridHeight);
+        }
+        HandlePolygonHover(p);
+    }
+
     private void ClosePolygon()
     {
         if (_activePolygonPoints.Count < 3)

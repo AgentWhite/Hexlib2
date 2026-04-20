@@ -57,6 +57,8 @@ public partial class BoardEditorViewModel : ViewModelBase
     private Geometry _polygonGhostGeometry;
     private bool _isPolygonSnapped = false;
     private System.Windows.Point _polygonSnapPoint;
+    private byte[]? _grayscalePixels;
+    private int _imagePixelWidth, _imagePixelHeight;
 
     /// <summary>Gets the collection of water visuals (streams, gullies, canals).</summary>
     public ObservableCollection<RoadVisualViewModel> WaterVisuals => _waterVisuals;
@@ -322,6 +324,8 @@ public partial class BoardEditorViewModel : ViewModelBase
     public ICommand SelectDrawingCommand { get; }
     public ICommand DeleteSelectedDrawingCommand { get; }
     public ICommand ClosePolygonCommand { get; }
+    public ICommand PenMagneticPolygonClickCommand { get; }
+    public ICommand PenMagneticPolygonHoverCommand { get; }
 
     /// <summary>Command to terminate the current road stringing.</summary>
     public ICommand EndRoadCommand { get; }
@@ -355,6 +359,9 @@ public partial class BoardEditorViewModel : ViewModelBase
                 bitmap.EndInit();
                 bitmap.Freeze(); // Optimize for cross-thread access
                 BackgroundImage = bitmap;
+
+                // Cache pixels for Magnetic Pen
+                _grayscalePixels = ASLInputTool.Services.EdgeDetectionService.GetGrayscalePixels(bitmap, out _imagePixelWidth, out _imagePixelHeight);
             }
             catch { /* Fallback to no image if load fails */ }
         }
@@ -378,6 +385,8 @@ public partial class BoardEditorViewModel : ViewModelBase
         DeleteSelectedDrawingCommand = new RelayCommand(_ => OnDeleteSelectedDrawing());
         ClosePolygonCommand = new RelayCommand(_ => ClosePolygon(), _ => _activePolygonPoints.Count >= 3);
         HandleLosToolClickCommand = new RelayCommand<HexViewModel>(HandleLosToolClick);
+        PenMagneticPolygonClickCommand = new RelayCommand<System.Windows.Point>(HandleMagneticPolygonClick);
+        PenMagneticPolygonHoverCommand = new RelayCommand<System.Windows.Point>(HandleMagneticPolygonHover);
         
         UpdateLayout();
         RecalculateHexSize();

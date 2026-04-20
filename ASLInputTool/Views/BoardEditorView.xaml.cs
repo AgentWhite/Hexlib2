@@ -126,12 +126,17 @@ namespace ASLInputTool.Views
                 e.Handled = true;
                 ViewModel.PenPolygonClickCommand.Execute(position);
             }
+            else if (ViewModel.CurrentTool == ToolMode.PenMagnetic)
+            {
+                e.Handled = true;
+                ViewModel.PenMagneticPolygonClickCommand.Execute(position);
+            }
         }
 
         private void OnBoardMouseMove(object sender, MouseEventArgs e)
         {
             if (ViewModel == null) return;
-            if (ViewModel.CurrentTool == ToolMode.PenRect || ViewModel.CurrentTool == ToolMode.PenPolygon || ViewModel.CurrentTool == ToolMode.PenSubtract)
+            if (ViewModel.CurrentTool == ToolMode.PenRect || ViewModel.CurrentTool == ToolMode.PenPolygon || ViewModel.CurrentTool == ToolMode.PenSubtract || ViewModel.CurrentTool == ToolMode.PenMagnetic)
             {
                 // Determine container
                 bool isLosTab = false;
@@ -152,6 +157,10 @@ namespace ASLInputTool.Views
                 else if (ViewModel.CurrentTool == ToolMode.PenPolygon || ViewModel.CurrentTool == ToolMode.PenSubtract)
                 {
                     ViewModel.PenPolygonHoverCommand.Execute(position);
+                }
+                else if (ViewModel.CurrentTool == ToolMode.PenMagnetic)
+                {
+                    ViewModel.PenMagneticPolygonHoverCommand.Execute(position);
                 }
             }
         }
