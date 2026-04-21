@@ -37,11 +37,25 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>, IInitializeableFr
     private string _sideAName = string.Empty;
     private Side _sideASide = Side.Attacker;
     private Nationality _sideANationality = Nationality.German;
+    private Insignia? _sideAInsignia;
 
     // Scenario Side B
     private string _sideBName = string.Empty;
     private Side _sideBSide = Side.Defender;
     private Nationality _sideBNationality = Nationality.Russian;
+    private Insignia? _sideBInsignia;
+
+    // Scenario Formations
+    /// <summary> Gets the collection of formations for Side A. </summary>
+    public ObservableCollection<Formation> SideAFormations { get; } = new();
+    /// <summary> Gets the collection of formations for Side B. </summary>
+    public ObservableCollection<Formation> SideBFormations { get; } = new();
+
+    /// <summary>
+    /// Gets a value indicating whether both side names are defined.
+    /// Used to control visibility of advanced side settings.
+    /// </summary>
+    public bool AreSidesDefined => !string.IsNullOrWhiteSpace(SideAName) && !string.IsNullOrWhiteSpace(SideBName);
 
     /// <summary>
     /// Gets or sets the name of the scenario.
@@ -90,7 +104,12 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>, IInitializeableFr
     /// <summary>
     /// Gets or sets the name for Side A.
     /// </summary>
-    public string SideAName { get => _sideAName; set { SetProperty(ref _sideAName, value); ValidateSideAName(); } }
+    public string SideAName { get => _sideAName; set { SetProperty(ref _sideAName, value); ValidateSideAName(); OnPropertyChanged(nameof(AreSidesDefined)); } }
+    
+    /// <summary>
+    /// Gets or sets the insignia for Side A.
+    /// </summary>
+    public Insignia? SideAInsignia { get => _sideAInsignia; set => SetProperty(ref _sideAInsignia, value); }
     
     /// <summary>
     /// Gets or sets the tactical side for Side A.
@@ -115,7 +134,12 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>, IInitializeableFr
     /// <summary>
     /// Gets or sets the name for Side B.
     /// </summary>
-    public string SideBName { get => _sideBName; set { SetProperty(ref _sideBName, value); ValidateSideBName(); } }
+    public string SideBName { get => _sideBName; set { SetProperty(ref _sideBName, value); ValidateSideBName(); OnPropertyChanged(nameof(AreSidesDefined)); } }
+
+    /// <summary>
+    /// Gets or sets the insignia for Side B.
+    /// </summary>
+    public Insignia? SideBInsignia { get => _sideBInsignia; set => SetProperty(ref _sideBInsignia, value); }
 
     /// <summary>
     /// Gets or sets the tactical side for Side B.
@@ -147,6 +171,21 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>, IInitializeableFr
     /// </summary>
     public IEnumerable<Nationality> AvailableNationalities => Enum.GetValues<Nationality>();
 
+    /// <summary>
+    /// Command to select an insignia for a side.
+    /// </summary>
+    public RelayCommand SelectInsigniaCommand { get; }
+
+    /// <summary>
+    /// Command to add a new formation to a side.
+    /// </summary>
+    public RelayCommand AddFormationCommand { get; }
+
+    /// <summary>
+    /// Command to remove a formation from a side.
+    /// </summary>
+    public RelayCommand RemoveFormationCommand { get; }
+
     private readonly IScenarioRepository _repository;
 
     /// <inheritdoc />
@@ -157,6 +196,7 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>, IInitializeableFr
     /// </summary>
     public void InitializeFromRepository()
     {
+        _ = _repository.LoadInsigniasAsync();
         Items.Clear();
         foreach (var scenario in _repository.AllScenarios)
         {
@@ -172,6 +212,9 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>, IInitializeableFr
         _repository = repository;
         DisplayName = "Scenarios";
         PickImageCommand = new RelayCommand(_ => ExecutePickImage());
+        SelectInsigniaCommand = new RelayCommand(p => ExecuteSelectInsignia(p));
+        AddFormationCommand = new RelayCommand(p => ExecuteAddFormation(p));
+        RemoveFormationCommand = new RelayCommand(p => ExecuteRemoveFormation(p));
 
         SettingsManager.Instance.SettingsChanged += (s, e) =>
         {
@@ -252,6 +295,51 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>, IInitializeableFr
         }
     }
 
+    private void ExecuteSelectInsignia(object? parameter)
+    {
+        var side = parameter as string;
+        var vm = new InsigniaSelectionViewModel(_repository);
+        if (side == "SideA") vm.SelectedInsignia = SideAInsignia;
+        else if (side == "SideB") vm.SelectedInsignia = SideBInsignia;
+
+        var dialog = new ASLInputTool.Views.InsigniaSelectionDialog(vm)
+        {
+            Owner = System.Windows.Application.Current.MainWindow
+        };
+
+        if (dialog.ShowDialog() == true)
+        {
+            if (side == "SideA") SideAInsignia = vm.Result;
+            else if (side == "SideB") SideBInsignia = vm.Result;
+        }
+    }
+
+    private void ExecuteAddFormation(object? parameter)
+    {
+        var side = parameter as string;
+        var vm = new NameInputDialogViewModel { Prompt = "Enter Formation Name:" };
+        var dialog = new ASLInputTool.Views.NameInputDialog(vm)
+        {
+            Owner = System.Windows.Application.Current.MainWindow
+        };
+
+        if (dialog.ShowDialog() == true)
+        {
+            var formation = new Formation { Name = vm.Name };
+            if (side == "SideA") SideAFormations.Add(formation);
+            else if (side == "SideB") SideBFormations.Add(formation);
+        }
+    }
+
+    private void ExecuteRemoveFormation(object? parameter)
+    {
+        if (parameter is Formation formation)
+        {
+            if (SideAFormations.Contains(formation)) SideAFormations.Remove(formation);
+            else if (SideBFormations.Contains(formation)) SideBFormations.Remove(formation);
+        }
+    }
+
     /// <inheritdoc />
     protected override void ResetForm()
     {
@@ -263,12 +351,11 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>, IInitializeableFr
         _aftermath = string.Empty;
         _turns = 1;
         _hasHalfTurn = false;
-        _sideAName = string.Empty;
-        _sideBName = string.Empty;
-        _sideASide = Side.Attacker;
-        _sideBSide = Side.Defender;
-        _sideANationality = Nationality.German;
         _sideBNationality = Nationality.Russian;
+        _sideAInsignia = null;
+        _sideBInsignia = null;
+        SideAFormations.Clear();
+        SideBFormations.Clear();
 
         OnPropertyChanged(nameof(Name));
         OnPropertyChanged(nameof(Reference));
@@ -281,9 +368,12 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>, IInitializeableFr
         OnPropertyChanged(nameof(SideAName));
         OnPropertyChanged(nameof(SideASide));
         OnPropertyChanged(nameof(SideANationality));
+        OnPropertyChanged(nameof(SideAInsignia));
         OnPropertyChanged(nameof(SideBName));
         OnPropertyChanged(nameof(SideBSide));
         OnPropertyChanged(nameof(SideBNationality));
+        OnPropertyChanged(nameof(SideBInsignia));
+        OnPropertyChanged(nameof(AreSidesDefined));
 
         ImagePath = null;
         ClearErrors();
@@ -309,9 +399,16 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>, IInitializeableFr
             _sideAName = item.ScenarioSides[0].Name;
             _sideASide = item.ScenarioSides[0].Side;
             _sideANationality = item.ScenarioSides[0].Nationality;
+            _sideAInsignia = item.ScenarioSides[0].Insignia;
             _sideBName = item.ScenarioSides[1].Name;
             _sideBSide = item.ScenarioSides[1].Side;
             _sideBNationality = item.ScenarioSides[1].Nationality;
+            _sideBInsignia = item.ScenarioSides[1].Insignia;
+
+            SideAFormations.Clear();
+            foreach (var f in item.ScenarioSides[0].Formations) SideAFormations.Add(f);
+            SideBFormations.Clear();
+            foreach (var f in item.ScenarioSides[1].Formations) SideBFormations.Add(f);
         }
         else
         {
@@ -321,14 +418,21 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>, IInitializeableFr
             _sideBSide = Side.Defender;
             _sideANationality = Nationality.German;
             _sideBNationality = Nationality.Russian;
+            _sideAInsignia = null;
+            _sideBInsignia = null;
+            SideAFormations.Clear();
+            SideBFormations.Clear();
         }
 
         OnPropertyChanged(nameof(SideAName));
         OnPropertyChanged(nameof(SideASide));
         OnPropertyChanged(nameof(SideANationality));
+        OnPropertyChanged(nameof(SideAInsignia));
         OnPropertyChanged(nameof(SideBName));
         OnPropertyChanged(nameof(SideBSide));
         OnPropertyChanged(nameof(SideBNationality));
+        OnPropertyChanged(nameof(SideBInsignia));
+        OnPropertyChanged(nameof(AreSidesDefined));
 
         ClearErrors();
     }
@@ -358,8 +462,16 @@ public class ScenariosViewModel : CrudViewModelBase<Scenario>, IInitializeableFr
             Description = new ScenarioDescription(Place, Date, DescriptionText, Aftermath),
             ScenarioSides = new List<ScenarioSide>
             {
-                new ScenarioSide { Name = SideAName, Side = SideASide, Nationality = SideANationality },
-                new ScenarioSide { Name = SideBName, Side = SideBSide, Nationality = SideBNationality }
+                new ScenarioSide 
+                { 
+                    Name = SideAName, Side = SideASide, Nationality = SideANationality, 
+                    Insignia = SideAInsignia, Formations = SideAFormations.ToList() 
+                },
+                new ScenarioSide 
+                { 
+                    Name = SideBName, Side = SideBSide, Nationality = SideBNationality, 
+                    Insignia = SideBInsignia, Formations = SideBFormations.ToList() 
+                }
             }
         };
 

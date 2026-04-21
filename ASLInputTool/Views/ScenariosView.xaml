@@ -163,6 +163,133 @@
                 </GroupBox>
 
                 <Separator Margin="0,10"/>
+                
+                <!-- Advanced Side Configuration: Insignias -->
+                <StackPanel Visibility="{Binding AreSidesDefined, Converter={StaticResource BoolToVis}}">
+                    <GroupBox Header="{Binding SideAName}" Margin="0,0,0,15" Padding="10" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            
+                            <StackPanel Grid.Column="0" Margin="0,0,20,0">
+                                <Label Content="Side Insignia" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                <Button Command="{Binding SelectInsigniaCommand}" CommandParameter="SideA" Width="80" Height="200">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="2" Background="White">
+                                                <Grid>
+                                                    <Image Source="{Binding SideAInsignia.ImagePath, Converter={StaticResource ImageSource}}" Stretch="Uniform"/>
+                                                    <TextBlock Text="Set Insignia" Visibility="{Binding SideAInsignia, Converter={StaticResource NullToVis}}" 
+                                                               VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Gray" TextAlignment="Center"/>
+                                                </Grid>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1">
+                                <ItemsControl ItemsSource="{Binding SideAFormations}" Margin="0,0,0,10">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <GroupBox Header="{Binding Name}" Margin="0,0,0,5" Padding="10" 
+                                                      BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1">
+                                                <Grid>
+                                                    <TextBlock Text="Formation Details Placeholder" Foreground="Gray" FontStyle="Italic"/>
+                                                    <Button Command="{Binding DataContext.RemoveFormationCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
+                                                            CommandParameter="{Binding}"
+                                                            HorizontalAlignment="Right" VerticalAlignment="Top"
+                                                            Width="24" Height="24" Margin="0,-10,-10,0"
+                                                            Background="Transparent" BorderThickness="0"
+                                                            Cursor="Hand" ToolTip="Delete Formation">
+                                                        <TextBlock Text="×" Foreground="Red" FontSize="20" FontWeight="Bold" 
+                                                                   VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,-2,0,0"/>
+                                                    </Button>
+                                                </Grid>
+                                            </GroupBox>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <Button Command="{Binding AddFormationCommand}" CommandParameter="SideA" HorizontalAlignment="Stretch">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border BorderBrush="Red" BorderThickness="2" Height="30" Background="Transparent" CornerRadius="2">
+                                                <TextBlock Text="+" Foreground="Red" FontSize="20" FontWeight="Bold" 
+                                                           VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,-2,0,0"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </GroupBox>
+
+                    <GroupBox Header="{Binding SideBName}" Margin="0,0,0,10" Padding="10" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" Margin="0,0,20,0">
+                                <Label Content="Side Insignia" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                                <Button Command="{Binding SelectInsigniaCommand}" CommandParameter="SideB" Width="80" Height="200">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="2" Background="White">
+                                                <Grid>
+                                                    <Image Source="{Binding SideBInsignia.ImagePath, Converter={StaticResource ImageSource}}" Stretch="Uniform"/>
+                                                    <TextBlock Text="Set Insignia" Visibility="{Binding SideBInsignia, Converter={StaticResource NullToVis}}" 
+                                                               VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Gray" TextAlignment="Center"/>
+                                                </Grid>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1">
+                                <ItemsControl ItemsSource="{Binding SideBFormations}" Margin="0,0,0,10">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <GroupBox Header="{Binding Name}" Margin="0,0,0,5" Padding="10" 
+                                                      BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1">
+                                                <Grid>
+                                                    <TextBlock Text="Formation Details Placeholder" Foreground="Gray" FontStyle="Italic"/>
+                                                    <Button Command="{Binding DataContext.RemoveFormationCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" 
+                                                            CommandParameter="{Binding}"
+                                                            HorizontalAlignment="Right" VerticalAlignment="Top"
+                                                            Width="24" Height="24" Margin="0,-10,-10,0"
+                                                            Background="Transparent" BorderThickness="0"
+                                                            Cursor="Hand" ToolTip="Delete Formation">
+                                                        <TextBlock Text="×" Foreground="Red" FontSize="20" FontWeight="Bold" 
+                                                                   VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,-2,0,0"/>
+                                                    </Button>
+                                                </Grid>
+                                            </GroupBox>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <Button Command="{Binding AddFormationCommand}" CommandParameter="SideB" HorizontalAlignment="Stretch">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border BorderBrush="Red" BorderThickness="2" Height="30" Background="Transparent" CornerRadius="2">
+                                                <TextBlock Text="+" Foreground="Red" FontSize="20" FontWeight="Bold" 
+                                                           VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,-2,0,0"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </GroupBox>
+                </StackPanel>
+
+                <Separator Margin="0,10"/>
                 <TextBlock Text="Historical Context" FontSize="18" FontWeight="Bold" Margin="0,10"/>
 
                 <Label Content="Place" FontWeight="SemiBold"/>

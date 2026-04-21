@@ -63,4 +63,19 @@ public interface IScenarioRepository
     /// Deletes a scenario file from disk.
     /// </summary>
     Task DeleteFromDiskAsync(Scenario scenario);
+
+    /// <summary>
+    /// Gets all shared insignias in the project.
+    /// </summary>
+    ObservableCollection<Insignia> AllInsignias { get; }
+
+    /// <summary>
+    /// Loads the shared insignias from disk.
+    /// </summary>
+    Task LoadInsigniasAsync();
+
+    /// <summary>
+    /// Saves a new insignia or updates an existing one on disk.
+    /// </summary>
+    Task SaveInsigniaAsync(Insignia insignia);
 }

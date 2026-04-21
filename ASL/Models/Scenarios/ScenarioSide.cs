@@ -1,4 +1,5 @@
 using ASL.Models.Units;
+using System.Collections.Generic;
 
 namespace ASL.Models.Scenarios;
 
@@ -21,4 +22,14 @@ public class ScenarioSide
     /// Gets or sets the name or designation of the forces (e.g., "The 10th Guards").
     /// </summary>
     public string Name { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the insignia for this side.
+    /// </summary>
+    public Insignia? Insignia { get; set; }
+
+    /// <summary>
+    /// Gets or sets the list of formations for this side.
+    /// </summary>
+    public List<Formation> Formations { get; set; } = new();
 }
