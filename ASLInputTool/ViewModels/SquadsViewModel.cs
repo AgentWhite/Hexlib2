@@ -305,6 +305,8 @@ public class SquadsViewModel : UnitViewModelBase
         SelectedClass = UnitClass.FirstLine;
         ImagePathFront = null;
         ImagePathBack = null;
+        SvgFront = null;
+        SvgBack = null;
         HasAssaultFire = false;
         HasSprayingFire = false;
         CanSelfRally = false;
@@ -332,8 +334,10 @@ public class SquadsViewModel : UnitViewModelBase
         SelectedNationality = item.Nationality;
         SelectedModule = item.Module;
         SelectedClass = item.Infantry?.AslClass ?? UnitClass.SecondLine;
-        ImagePathFront = item.ImagePathFront;
-        ImagePathBack = item.ImagePathBack;
+        ImagePathFront = item.Visual?.ImagePathFront;
+        ImagePathBack = item.Visual?.ImagePathBack;
+        SvgFront = item.Visual?.SvgFront;
+        SvgBack = item.Visual?.SvgBack;
         var infantry = item.Infantry;
         SelectedScale = infantry?.Scale ?? InfantryScale.Squad;
         HasAssaultFire = infantry?.HasAssaultFire ?? false;
@@ -366,8 +370,13 @@ public class SquadsViewModel : UnitViewModelBase
             Nationality = SelectedNationality,
             Module = SelectedModule,
             UnitType = UnitType.MMC,
-            ImagePathFront = ImagePathFront,
-            ImagePathBack = ImagePathBack
+            Visual = new UnitVisual
+            {
+                ImagePathFront = ImagePathFront,
+                ImagePathBack = ImagePathBack,
+                SvgFront = SvgFront,
+                SvgBack = SvgBack
+            }
         };
 
         unit.AddComponent(new InfantryComponent

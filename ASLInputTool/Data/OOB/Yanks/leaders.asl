@@ -1,8 +1,10 @@
 [
   {
     "Name": "Cpt Truitt",
-    "ImagePathFront": "images\\5099d167-4dd3-4931-bb7a-b0ee0f150f6f.png",
-    "ImagePathBack": "images\\ccf98500-7d14-4d29-8310-334432189570.png",
+    "Visual": {
+      "ImagePathFront": "images\\ccdf507a-f5ba-4ca9-aca3-9a6aead55e05.png",
+      "ImagePathBack": "images\\559ea86f-94e4-49d8-829e-c83308bba6b4.png"
+    },
     "UnitType": "SMC",
     "Nationality": "American",
     "Module": "BeyondValor",

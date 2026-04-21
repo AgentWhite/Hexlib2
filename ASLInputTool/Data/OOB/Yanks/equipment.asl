@@ -1,8 +1,10 @@
 [
   {
     "Name": "A",
-    "ImagePathFront": "images\\c97bf9d8-37fb-4bc2-a7a9-eda80b69056e.png",
-    "ImagePathBack": "images\\f77c6dee-38eb-40bd-9d9d-ffb3a96a0a28.png",
+    "Visual": {
+      "ImagePathFront": "images\\5513d3d2-ed77-40e6-a95a-254b5978c6bd.png",
+      "ImagePathBack": "images\\cea5ecf9-5720-4bfa-b5d1-79a37ff1d5c4.png"
+    },
     "UnitType": "Ordnance",
     "Nationality": "American",
     "Module": "BeyondValor",

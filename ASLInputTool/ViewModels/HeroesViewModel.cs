@@ -171,6 +171,8 @@ public class HeroesViewModel : UnitViewModelBase
         SelectedModule = ASL.Models.Modules.Module.BeyondValor;
         ImagePathFront = null;
         ImagePathBack = null;
+        SvgFront = null;
+        SvgBack = null;
     }
 
     /// <inheritdoc />
@@ -192,8 +194,10 @@ public class HeroesViewModel : UnitViewModelBase
         OnPropertyChanged(nameof(CanHaveBrokenMorale));
         SelectedNationality = item.Nationality;
         SelectedModule = item.Module;
-        ImagePathFront = item.ImagePathFront;
-        ImagePathBack = item.ImagePathBack;
+        ImagePathFront = item.Visual?.ImagePathFront;
+        ImagePathBack = item.Visual?.ImagePathBack;
+        SvgFront = item.Visual?.SvgFront;
+        SvgBack = item.Visual?.SvgBack;
     }
 
     /// <inheritdoc />
@@ -216,8 +220,13 @@ public class HeroesViewModel : UnitViewModelBase
             Nationality = SelectedNationality,
             Module = SelectedModule,
             UnitType = UnitType.SMC,
-            ImagePathFront = ImagePathFront,
-            ImagePathBack = ImagePathBack
+            Visual = new UnitVisual
+            {
+                ImagePathFront = ImagePathFront,
+                ImagePathBack = ImagePathBack,
+                SvgFront = SvgFront,
+                SvgBack = SvgBack
+            }
         };
 
         unit.AddComponent(new InfantryComponent 

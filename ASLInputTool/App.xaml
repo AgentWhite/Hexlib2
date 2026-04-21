@@ -19,6 +19,7 @@
             <c:CounterStatsConverter x:Key="CounterStats" />
             <c:InverseBooleanConverter x:Key="InverseBool" />
             <c:ImageSourceConverter x:Key="ImageSource" />
+            <c:SvgToImageSourceConverter x:Key="SvgToImage" />
             
             <Style TargetType="DataGridCell">
                 <Setter Property="VerticalContentAlignment" Value="Center"/>

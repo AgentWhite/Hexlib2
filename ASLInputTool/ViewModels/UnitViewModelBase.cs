@@ -11,6 +11,9 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
 
+using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Media;
 using ASLInputTool.Infrastructure;
 
 namespace ASLInputTool.ViewModels;
@@ -28,6 +31,12 @@ public abstract class UnitViewModelBase : CrudViewModelBase<Unit>, IInitializeab
     private ASL.Models.Modules.Module _selectedModule = ASL.Models.Modules.Module.BeyondValor;
     private string? _imagePathFront;
     private string? _imagePathBack;
+    private string? _svgFront;
+    private string? _svgBack;
+    private bool _isCutterActive;
+    private Geometry? _cutterGhostGeometry;
+    private string? _activeCutterSide;
+    private readonly ObservableCollection<Point> _activePolygonPoints = new();
 
     /// <summary>
     /// Gets or sets the nationality used to filter the list.
@@ -60,6 +69,16 @@ public abstract class UnitViewModelBase : CrudViewModelBase<Unit>, IInitializeab
     public string? ImagePathBack { get => _imagePathBack; set => SetProperty(ref _imagePathBack, value); }
 
     /// <summary>
+    /// Gets or sets the SVG content for the front side.
+    /// </summary>
+    public string? SvgFront { get => _svgFront; set => SetProperty(ref _svgFront, value); }
+
+    /// <summary>
+    /// Gets or sets the SVG content for the back side.
+    /// </summary>
+    public string? SvgBack { get => _svgBack; set => SetProperty(ref _svgBack, value); }
+
+    /// <summary>
     /// Gets or sets the currently selected module.
     /// </summary>
     public ASL.Models.Modules.Module SelectedModule { get => _selectedModule; set => SetProperty(ref _selectedModule, value); }
@@ -85,6 +104,48 @@ public abstract class UnitViewModelBase : CrudViewModelBase<Unit>, IInitializeab
     public RelayCommand PickBackImageCommand { get; }
 
     /// <summary>
+    /// Gets the command to open the SVG editor.
+    /// </summary>
+    public RelayCommand OpenSvgEditorCommand { get; }
+
+    /// <summary>
+    /// Gets the command to activate the cutter tool.
+    /// </summary>
+    public RelayCommand ToggleCutterCommand { get; }
+
+    /// <summary>
+    /// Gets or sets the indicator of which side is currently being cut (Front/Back).
+    /// </summary>
+    public string? ActiveCutterSide { get => _activeCutterSide; set => SetProperty(ref _activeCutterSide, value); }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the polygon cutter tool is active.
+    /// </summary>
+    public bool IsCutterActive 
+    { 
+        get => _isCutterActive; 
+        set 
+        { 
+            if (SetProperty(ref _isCutterActive, value) && !value)
+            {
+                ActivePolygonPoints.Clear();
+                CutterGhostGeometry = null;
+                ActiveCutterSide = null;
+            }
+        } 
+    }
+
+    /// <summary>
+    /// Gets or sets the ghost geometry for the cutter tool.
+    /// </summary>
+    public Geometry? CutterGhostGeometry { get => _cutterGhostGeometry; set => SetProperty(ref _cutterGhostGeometry, value); }
+
+    /// <summary>
+    /// Gets the collection of points for the active cutting polygon.
+    /// </summary>
+    public ObservableCollection<Point> ActivePolygonPoints => _activePolygonPoints;
+
+    /// <summary>
     /// Gets the list of available nationalities.
     /// </summary>
     public IEnumerable<Nationality> Nationalities => Enum.GetValues(typeof(Nationality)).Cast<Nationality>();
@@ -107,6 +168,95 @@ public abstract class UnitViewModelBase : CrudViewModelBase<Unit>, IInitializeab
         ClearFilterCommand = new RelayCommand(_ => SelectedNationalityFilter = null);
         PickFrontImageCommand = new RelayCommand(_ => ExecutePickImage(0));
         PickBackImageCommand = new RelayCommand(_ => ExecutePickImage(1));
+        OpenSvgEditorCommand = new RelayCommand(p => ExecuteOpenSvgEditor(p));
+        ToggleCutterCommand = new RelayCommand(_ => IsCutterActive = !IsCutterActive);
+    }
+
+    private void ExecuteOpenSvgEditor(object? parameter)
+    {
+        if (GlobalEditorService.ActiveSvgEditorWindow != null)
+        {
+            GlobalEditorService.ActiveSvgEditorWindow.Activate();
+            return;
+        }
+
+        bool isFront = "Front".Equals(parameter as string);
+        var vm = new SvgEditorViewModel 
+        { 
+            Title = $"Edit SVG {(isFront ? "Front" : "Back")}",
+            SvgContent = isFront ? SvgFront : SvgBack,
+            ToggleCutterCommand = ToggleCutterCommand,
+            IsCutterActive = IsCutterActive
+        };
+
+        // Sync Infantry stats if this is a Squads screen
+        Action syncStats = () =>
+        {
+            if (this is SquadsViewModel squadVm)
+            {
+                vm.IsInfantry = true;
+                vm.StatClass = squadVm.SelectedClass switch
+                {
+                    UnitClass.Elite => "E",
+                    UnitClass.FirstLine => "1",
+                    UnitClass.SecondLine => "2",
+                    UnitClass.Conscript => "C",
+                    UnitClass.Green => "G",
+                    _ => ""
+                };
+                vm.StatFirepower = squadVm.Firepower;
+                vm.StatRange = squadVm.Range;
+                vm.StatMorale = squadVm.Morale;
+                vm.HasAssaultFire = squadVm.HasAssaultFire;
+                vm.HasSprayingFire = squadVm.HasSprayingFire;
+                vm.HasELR = squadVm.HasELR;
+                vm.StatSmoke = squadVm.HasSmokeExponent ? squadVm.SmokePlacementExponent : string.Empty;
+            }
+        };
+
+        syncStats();
+
+        var dialog = new ASLInputTool.Views.SvgEditorDialog { DataContext = vm, Owner = System.Windows.Application.Current.MainWindow };
+        
+        // Sync triggers from Unit -> Editor
+        PropertyChangedEventHandler unitPropertyHandler = (s, e) =>
+        {
+            if (e.PropertyName == nameof(IsCutterActive)) vm.IsCutterActive = IsCutterActive;
+            else syncStats(); // Catch-all for stat changes
+        };
+        this.PropertyChanged += unitPropertyHandler;
+
+        // Sync changes from Editor -> Unit
+        vm.PropertyChanged += (s, e) =>
+        {
+            if (e.PropertyName == nameof(SvgEditorViewModel.SvgContent))
+            {
+                if (isFront) SvgFront = vm.SvgContent;
+                else SvgBack = vm.SvgContent;
+            }
+            else if (e.PropertyName == nameof(SvgEditorViewModel.IsCutterActive))
+            {
+                IsCutterActive = vm.IsCutterActive;
+            }
+        };
+
+        // Handle unloading and closing
+        dialog.Closed += (s, e) => 
+        {
+            this.PropertyChanged -= unitPropertyHandler;
+            vm.Unload();
+        };
+        
+        vm.CloseAction = result => 
+        {
+            if (result == false)
+            {
+                // If cancelled, we might want to revert, but for block color it's fine
+            }
+            dialog.Close();
+        };
+
+        dialog.Show();
     }
 
     /// <summary>

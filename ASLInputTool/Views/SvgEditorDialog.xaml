@@ -1,0 +1,86 @@
+<Window x:Class="ASLInputTool.Views.SvgEditorDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:ASLInputTool.ViewModels"
+        mc:Ignorable="d"
+        Title="{Binding Title}" Height="500" Width="600"
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource WindowBackgroundBrush}">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Counter Design Editor" FontSize="18" FontWeight="Bold" Margin="0,0,0,20"/>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Tools Column -->
+            <StackPanel Grid.Column="0" Margin="0,0,20,0">
+                <Label Content="Drawing Tools" FontWeight="SemiBold"/>
+                <ToggleButton Content="Polygon Cutter" 
+                              IsChecked="{Binding IsCutterActive}" 
+                              Height="40" Padding="5" Margin="0,5,0,5"/>
+
+                <ToggleButton Content="Pipette" 
+                              IsChecked="{Binding IsPipetteActive}" 
+                              Height="40" Padding="5" Margin="0,5,0,5"/>
+                
+                <Border Height="40" BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="1">
+                    <Rectangle Fill="{Binding BackgroundColor}"/>
+                </Border>
+                <TextBlock Text="{Binding BackgroundColor}" HorizontalAlignment="Center" Margin="0,5,0,20" FontWeight="Bold"/>
+
+                <Label Content="Cut-out Clipboard" FontWeight="SemiBold"/>
+                <CheckBox Content="Enable Ghosting" IsChecked="{Binding IsGhostingActive}" Margin="0,5,0,0"/>
+                <Border Height="80" Margin="0,5,0,0" BorderBrush="LightGray" BorderThickness="1" Background="#F9F9F9">
+                    <Image Source="{Binding GhostImage}" Stretch="Uniform" Opacity="0.8"/>
+                </Border>
+                <TextBlock Text="Click preview to paste" FontSize="10" Foreground="Gray" HorizontalAlignment="Center" Margin="0,5,0,0"/>
+            </StackPanel>
+
+            <!-- Preview & Code Column -->
+            <StackPanel Grid.Column="1">
+                <Label Content="Live Preview (120x120)" FontWeight="SemiBold"/>
+                <Border BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="2" 
+                        Width="120" Height="120" HorizontalAlignment="Left" Background="White">
+                    <Grid x:Name="PreviewArea" Background="Transparent" ClipToBounds="True"
+                          MouseMove="PreviewArea_MouseMove"
+                          PreviewMouseLeftButtonDown="PreviewArea_MouseLeftButtonDown">
+                        
+                        <!-- The SVG Content -->
+                        <Image Source="{Binding SvgContent, Converter={StaticResource SvgToImage}}" Stretch="Uniform" />
+                        
+                        <!-- Ghosting Overlay -->
+                        <Canvas IsHitTestVisible="False" 
+                                Visibility="{Binding IsGhostingActive, Converter={StaticResource BoolToVis}}">
+                            <Image Source="{Binding GhostImage}" Opacity="0.6" x:Name="GhostPreviewImage">
+                                <Image.RenderTransform>
+                                    <TranslateTransform x:Name="GhostTransform" />
+                                </Image.RenderTransform>
+                            </Image>
+                        </Canvas>
+                    </Grid>
+                </Border>
+
+                <Label Content="SVG Source Markup" FontWeight="SemiBold" Margin="0,20,0,0"/>
+                <TextBox Text="{Binding SvgContent}" IsReadOnly="False" Height="150" 
+                         VerticalScrollBarVisibility="Auto" AcceptsReturn="True" 
+                         TextWrapping="Wrap" Background="#F0F0F0" FontFamily="Consolas"/>
+            </StackPanel>
+        </Grid>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+            <Button Content="Save to Unit" Command="{Binding OkCommand}" Width="120" Padding="10" Margin="0,0,10,0" IsDefault="True"/>
+            <Button Content="Discard" Command="{Binding CancelCommand}" Width="80" Padding="10" IsCancel="True"/>
+        </StackPanel>
+    </Grid>
+</Window>

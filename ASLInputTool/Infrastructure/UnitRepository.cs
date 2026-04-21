@@ -130,8 +130,8 @@ namespace ASLInputTool.Infrastructure
             // Actually, we modify them and then call FixUnitImagePaths in the parent caller.
             foreach (var unit in units)
             {
-                unit.ImagePathFront = ProcessImage(unit.ImagePathFront, imagesDir, usedImages);
-                unit.ImagePathBack = ProcessImage(unit.ImagePathBack, imagesDir, usedImages);
+                unit.Visual.ImagePathFront = ProcessImage(unit.Visual.ImagePathFront, imagesDir, usedImages);
+                unit.Visual.ImagePathBack = ProcessImage(unit.Visual.ImagePathBack, imagesDir, usedImages);
 
                 var portage = unit.GetComponent<PortageComponent>();
                 if (portage != null)
@@ -207,11 +207,13 @@ namespace ASLInputTool.Infrastructure
 
         private void FixUnitImagePaths(Unit c, string moduleFolder)
         {
-            if (!string.IsNullOrEmpty(c.ImagePathFront) && !Path.IsPathRooted(c.ImagePathFront))
-                c.ImagePathFront = Path.GetFullPath(Path.Combine(moduleFolder, c.ImagePathFront!));
+            if (c.Visual == null) c.Visual = new UnitVisual();
 
-            if (!string.IsNullOrEmpty(c.ImagePathBack) && !Path.IsPathRooted(c.ImagePathBack))
-                c.ImagePathBack = Path.GetFullPath(Path.Combine(moduleFolder, c.ImagePathBack!));
+            if (!string.IsNullOrEmpty(c.Visual.ImagePathFront) && !Path.IsPathRooted(c.Visual.ImagePathFront))
+                c.Visual.ImagePathFront = Path.GetFullPath(Path.Combine(moduleFolder, c.Visual.ImagePathFront!));
+
+            if (!string.IsNullOrEmpty(c.Visual.ImagePathBack) && !Path.IsPathRooted(c.Visual.ImagePathBack))
+                c.Visual.ImagePathBack = Path.GetFullPath(Path.Combine(moduleFolder, c.Visual.ImagePathBack!));
 
             var portage = c.GetComponent<PortageComponent>();
             if (portage != null && !string.IsNullOrEmpty(portage.DismantledImage) && !Path.IsPathRooted(portage.DismantledImage))

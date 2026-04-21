@@ -38,7 +38,7 @@
                     <DataGridTemplateColumn Header="Image" Width="70" CanUserSort="False">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Image Source="{Binding Item.ImagePathFront, Converter={StaticResource ImageSource}}" Height="54" Stretch="Uniform"/>
+                                <Image Source="{Binding Item.Visual.ImagePathFront, Converter={StaticResource ImageSource}}" Height="54" Stretch="Uniform"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -54,7 +54,7 @@
         <ScrollViewer Grid.Row="1" Padding="10" Visibility="{Binding IsAdding, Converter={StaticResource BoolToVis}}" Background="{StaticResource WindowBackgroundBrush}">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="270"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 

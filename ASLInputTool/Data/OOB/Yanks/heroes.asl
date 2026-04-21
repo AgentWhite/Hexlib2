@@ -1,8 +1,10 @@
 [
   {
     "Name": "Winslow",
-    "ImagePathFront": "images\\78bf00fb-bd26-43a3-966e-47d9675bafd3.png",
-    "ImagePathBack": "images\\fa813913-bedf-4df7-967b-81fa787e331e.png",
+    "Visual": {
+      "ImagePathFront": "images\\441f46d8-2fc6-43ce-8352-b17a8e1f2d23.png",
+      "ImagePathBack": "images\\b02f97e4-4ace-4a86-b4cd-1885772a9ba7.png"
+    },
     "UnitType": "SMC",
     "Nationality": "American",
     "Module": "BeyondValor",

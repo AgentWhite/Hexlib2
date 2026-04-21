@@ -136,6 +136,8 @@ public class LeadersViewModel : UnitViewModelBase
         SelectedModule = ASL.Models.Modules.Module.BeyondValor;
         ImagePathFront = null;
         ImagePathBack = null;
+        SvgFront = null;
+        SvgBack = null;
     }
 
     /// <inheritdoc />
@@ -153,8 +155,10 @@ public class LeadersViewModel : UnitViewModelBase
         SelectedNationality = item.Nationality;
         SelectedModule = item.Module;
         OnPropertyChanged(nameof(IsBrokenMoraleEnabled));
-        ImagePathFront = item.ImagePathFront;
-        ImagePathBack = item.ImagePathBack;
+        ImagePathFront = item.Visual?.ImagePathFront;
+        ImagePathBack = item.Visual?.ImagePathBack;
+        SvgFront = item.Visual?.SvgFront;
+        SvgBack = item.Visual?.SvgBack;
     }
 
     /// <inheritdoc />
@@ -176,8 +180,13 @@ public class LeadersViewModel : UnitViewModelBase
             Nationality = SelectedNationality,
             Module = SelectedModule,
             UnitType = UnitType.SMC,
-            ImagePathFront = ImagePathFront,
-            ImagePathBack = ImagePathBack
+            Visual = new UnitVisual
+            {
+                ImagePathFront = ImagePathFront,
+                ImagePathBack = ImagePathBack,
+                SvgFront = SvgFront,
+                SvgBack = SvgBack
+            }
         };
 
         unit.AddComponent(new InfantryComponent 

@@ -26,14 +26,9 @@ public class Unit : ICounter
     public string Name { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the file path to the front image of the unit's counter.
+    /// Gets or sets the visual assets for the unit.
     /// </summary>
-    public string? ImagePathFront { get; set; }
-
-    /// <summary>
-    /// Gets or sets the file path to the back image of the unit's counter.
-    /// </summary>
-    public string? ImagePathBack { get; set; }
+    public UnitVisual Visual { get; set; } = new();
     
     /// <summary>
     /// Gets or sets the general unit type (SMC, MMC, etc.).

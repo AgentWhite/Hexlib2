@@ -111,16 +111,18 @@ public class ASLSaveManager
 
         foreach (var counter in project.Counters)
         {
-            if (!string.IsNullOrEmpty(counter.ImagePathFront))
+            if (counter.Visual == null) counter.Visual = new UnitVisual();
+
+            if (!string.IsNullOrEmpty(counter.Visual.ImagePathFront))
             {
-                counter.ImagePathFront = ProcessImage(counter.ImagePathFront!, imagesDir);
-                usedImages.Add(Path.GetFileName(counter.ImagePathFront));
+                counter.Visual.ImagePathFront = ProcessImage(counter.Visual.ImagePathFront!, imagesDir);
+                usedImages.Add(Path.GetFileName(counter.Visual.ImagePathFront));
             }
             
-            if (!string.IsNullOrEmpty(counter.ImagePathBack))
+            if (!string.IsNullOrEmpty(counter.Visual.ImagePathBack))
             {
-                counter.ImagePathBack = ProcessImage(counter.ImagePathBack!, imagesDir);
-                usedImages.Add(Path.GetFileName(counter.ImagePathBack));
+                counter.Visual.ImagePathBack = ProcessImage(counter.Visual.ImagePathBack!, imagesDir);
+                usedImages.Add(Path.GetFileName(counter.Visual.ImagePathBack));
             }
 
             var portage = counter.GetComponent<PortageComponent>();

@@ -4,41 +4,138 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="150"
+             d:DesignHeight="400" d:DesignWidth="300"
              Margin="0,0,20,0">
-    <StackPanel>
-        <Label Content="Front" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-        <Button Command="{Binding PickFrontImageCommand}" 
-                Width="120" Height="120" Margin="0,0,0,20">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/> <!-- Side 1 Headers -->
+            <RowDefinition Height="Auto"/> <!-- Side 1 Controls -->
+            <RowDefinition Height="Auto"/> <!-- Side 2 Headers -->
+            <RowDefinition Height="Auto"/> <!-- Side 2 Controls -->
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="130"/> <!-- Bitmap Column -->
+            <ColumnDefinition Width="130"/> <!-- SVG Column -->
+        </Grid.ColumnDefinitions>
+
+        <!-- SIDE 1 (FRONT) HEADERS -->
+        <Label Grid.Row="0" Grid.Column="0" Content="Front" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+        <Label Grid.Row="0" Grid.Column="1" Content="SVG Front" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+
+        <!-- SIDE 1 (FRONT) CONTROLS -->
+        <Button Grid.Row="1" Grid.Column="0" Command="{Binding PickFrontImageCommand}" 
+                Width="120" Height="120" Margin="0,0,10,20">
             <Button.Template>
                 <ControlTemplate TargetType="Button">
                     <Border BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="2" Background="White">
-                        <Grid>
-                            <Image Source="{Binding ImagePathFront, Converter={StaticResource ImageSource}}" Stretch="UniformToFill"/>
+                        <Grid x:Name="ImageGrid">
+                            <Image Source="{Binding ImagePathFront, Converter={StaticResource ImageSource}}" Stretch="UniformToFill"
+                                   Tag="Front"
+                                   PreviewMouseLeftButtonDown="Image_MouseLeftButtonDown" 
+                                   PreviewMouseMove="Image_MouseMove" Cursor="Cross"/>
                             <TextBlock Text="Click for Front" Visibility="{Binding ImagePathFront, Converter={StaticResource NullToVis}}" 
                                        VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" 
                                        Foreground="Gray" TextWrapping="Wrap" Padding="10"/>
+
+                            <!-- Cutter Overlay (Front) -->
+                            <Canvas Tag="Front" IsHitTestVisible="False">
+                                <Canvas.Style>
+                                    <Style TargetType="Canvas">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding DataContext.IsCutterActive, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True" />
+                                                    <Condition Binding="{Binding DataContext.ActiveCutterSide, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="Front" />
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </MultiDataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Canvas.Style>
+                                <Path Data="{Binding DataContext.CutterGhostGeometry, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                      Stroke="Red" StrokeThickness="2" Fill="#40FF0000" />
+                            </Canvas>
                         </Grid>
                     </Border>
                 </ControlTemplate>
             </Button.Template>
         </Button>
 
-        <Label Content="Back" FontWeight="SemiBold" HorizontalAlignment="Center"/>
-        <Button Command="{Binding PickBackImageCommand}" 
-                Width="120" Height="120">
+        <Button Grid.Row="1" Grid.Column="1" Command="{Binding OpenSvgEditorCommand}" CommandParameter="Front" 
+                Width="120" Height="120" Margin="0,0,0,20">
             <Button.Template>
                 <ControlTemplate TargetType="Button">
                     <Border BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="2" Background="White">
                         <Grid>
-                            <Image Source="{Binding ImagePathBack, Converter={StaticResource ImageSource}}" Stretch="UniformToFill"/>
-                            <TextBlock Text="Click for Back" Visibility="{Binding ImagePathBack, Converter={StaticResource NullToVis}}" 
+                            <TextBlock Text="SVG Front Placeholder" Visibility="{Binding SvgFront, Converter={StaticResource NullToVis}}" 
                                        VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" 
                                        Foreground="Gray" TextWrapping="Wrap" Padding="10"/>
+                            <Image Source="{Binding SvgFront, Converter={StaticResource SvgToImage}}" Stretch="Uniform"/>
                         </Grid>
                     </Border>
                 </ControlTemplate>
             </Button.Template>
         </Button>
-    </StackPanel>
+
+        <!-- SIDE 2 (BACK) HEADERS -->
+        <Label Grid.Row="2" Grid.Column="0" Content="Back" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+        <Label Grid.Row="2" Grid.Column="1" Content="SVG Back" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+
+        <!-- SIDE 2 (BACK) CONTROLS -->
+        <Button Grid.Row="3" Grid.Column="0" Command="{Binding PickBackImageCommand}" 
+                Width="120" Height="120" Margin="0,0,10,20">
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Border BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="2" Background="White">
+                        <Grid>
+                            <Image Source="{Binding ImagePathBack, Converter={StaticResource ImageSource}}" Stretch="UniformToFill"
+                                   Tag="Back"
+                                   PreviewMouseLeftButtonDown="Image_MouseLeftButtonDown" 
+                                   PreviewMouseMove="Image_MouseMove" Cursor="Cross"/>
+                            <TextBlock Text="Click for Back" Visibility="{Binding ImagePathBack, Converter={StaticResource NullToVis}}" 
+                                       VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" 
+                                       Foreground="Gray" TextWrapping="Wrap" Padding="10"/>
+
+                            <!-- Cutter Overlay (Back) -->
+                            <Canvas Tag="Back" IsHitTestVisible="False">
+                                <Canvas.Style>
+                                    <Style TargetType="Canvas">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding DataContext.IsCutterActive, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True" />
+                                                    <Condition Binding="{Binding DataContext.ActiveCutterSide, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="Back" />
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </MultiDataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Canvas.Style>
+                                <Path Data="{Binding DataContext.CutterGhostGeometry, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                                      Stroke="Red" StrokeThickness="2" Fill="#40FF0000" />
+                            </Canvas>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+
+        <Button Grid.Row="3" Grid.Column="1" Command="{Binding OpenSvgEditorCommand}" CommandParameter="Back" 
+                Width="120" Height="120" Margin="0,0,0,20">
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Border BorderBrush="{StaticResource ControlBorderBrush}" BorderThickness="2" Background="White">
+                        <Grid>
+                            <TextBlock Text="SVG Back Placeholder" Visibility="{Binding SvgBack, Converter={StaticResource NullToVis}}" 
+                                       VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" 
+                                       Foreground="Gray" TextWrapping="Wrap" Padding="10"/>
+                            <Image Source="{Binding SvgBack, Converter={StaticResource SvgToImage}}" Stretch="Uniform"/>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+    </Grid>
 </UserControl>

@@ -237,6 +237,8 @@ public class EquipmentViewModel : SupportWeaponViewModelBase
 
         ImagePathFront = null;
         ImagePathBack = null;
+        SvgFront = null;
+        SvgBack = null;
         DismantledImage = string.Empty;
         ShowDismantledImage = false;
         ClearErrors();
@@ -248,8 +250,10 @@ public class EquipmentViewModel : SupportWeaponViewModelBase
         Name = item.Name;
         SelectedNationality = item.Nationality;
         SelectedModule = item.Module;
-        ImagePathFront = item.ImagePathFront ?? string.Empty;
-        ImagePathBack = item.ImagePathBack ?? string.Empty;
+        ImagePathFront = item.Visual?.ImagePathFront ?? string.Empty;
+        ImagePathBack = item.Visual?.ImagePathBack ?? string.Empty;
+        SvgFront = item.Visual?.SvgFront;
+        SvgBack = item.Visual?.SvgBack;
 
         var mg = item.GetComponent<MachineGunComponent>();
         var radio = item.GetComponent<RadioComponent>();
@@ -336,8 +340,13 @@ public class EquipmentViewModel : SupportWeaponViewModelBase
             Nationality = SelectedNationality,
             Module = SelectedModule,
             UnitType = UnitType.Ordnance, // All equipment (MG, Radio, Phone) is Ordnance
-            ImagePathFront = ImagePathFront,
-            ImagePathBack = ImagePathBack
+            Visual = new UnitVisual
+            {
+                ImagePathFront = ImagePathFront,
+                ImagePathBack = ImagePathBack,
+                SvgFront = SvgFront,
+                SvgBack = SvgBack
+            }
         };
 
         if (IsMachineGun)
