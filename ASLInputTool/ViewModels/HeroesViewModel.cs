@@ -1,67 +1,15 @@
-using ASL.Models;
-using ASL.Models.Units;
-using ASL.Models.Board;
-using ASL.Models.Scenarios;
-using ASL.Models.Modules;
-using ASL.Models.Equipment;
-using ASL.Models.Components;
-using System;
-using System.Linq;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Windows.Data;
-using ASLInputTool.Infrastructure;
 
 namespace ASLInputTool.ViewModels;
 
 /// <summary>
 /// ViewModel for managing Hero counters.
 /// </summary>
-public class HeroesViewModel : UnitViewModelBase
+public class HeroesViewModel : InfantryViewModelBase
 {
     /// <inheritdoc />
     protected override string UnitCategoryFilter => "Hero";
-    private string _name = string.Empty;
-    private string _firepower = string.Empty;
-    private string _range = string.Empty;
-    private string _morale = string.Empty;
-    private string _brokenMorale = string.Empty;
+    
     private string _woundedRange = string.Empty;
-    private Nationality _selectedNationality = Nationality.German;
-
-
-    /// <summary>
-    /// Gets or sets the name of the hero.
-    /// </summary>
-    [Required(ErrorMessage = "Hero name is required.")]
-    public string Name { get => _name; set => SetProperty(ref _name, value); }
-
-    /// <summary>
-    /// Gets or sets the firepower value as a string for UI binding.
-    /// </summary>
-    [Required(ErrorMessage = "Firepower is required.")]
-    [Range(typeof(int), "1", "30", ErrorMessage = "Firepower must be between 1 and 30.")]
-    public string Firepower { get => _firepower; set => SetProperty(ref _firepower, value); }
-
-    /// <summary>
-    /// Gets or sets the range value as a string for UI binding.
-    /// </summary>
-    [Required(ErrorMessage = "Range is required.")]
-    [Range(typeof(int), "0", "50", ErrorMessage = "Range must be between 0 and 50.")]
-    public string Range { get => _range; set => SetProperty(ref _range, value); }
-
-    /// <summary>
-    /// Gets or sets the morale value as a string for UI binding.
-    /// </summary>
-    [Required(ErrorMessage = "Morale is required.")]
-    [Range(typeof(int), "0", "10", ErrorMessage = "Morale must be between 0 and 10.")]
-    public string Morale { get => _morale; set => SetProperty(ref _morale, value); }
-
-    /// <summary>
-    /// Gets or sets the broken morale value as a string for UI binding.
-    /// </summary>
-    [Range(typeof(int), "1", "12", ErrorMessage = "Broken morale must be between 1 and 12.")]
-    public string BrokenMorale { get => _brokenMorale; set => SetProperty(ref _brokenMorale, value); }
 
     /// <summary>
     /// Gets or sets the wounded range value as a string for UI binding.
@@ -76,35 +24,25 @@ public class HeroesViewModel : UnitViewModelBase
     public bool CanHaveBrokenMorale => SelectedNationality != Nationality.Japanese;
 
     /// <summary>
-    /// Gets or sets the selected nationality for the hero.
-    /// </summary>
-    public Nationality SelectedNationality 
-    { 
-        get => _selectedNationality; 
-        set 
-        { 
-            if (SetProperty(ref _selectedNationality, value))
-            {
-                OnPropertyChanged(nameof(CanHaveBrokenMorale));
-                if (SelectedNationality == Nationality.Japanese)
-                {
-                    ClearErrors(nameof(BrokenMorale));
-                }
-                else
-                {
-                    ValidateProperty(BrokenMorale, nameof(BrokenMorale));
-                }
-            }
-        } 
-    }
-
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="HeroesViewModel"/> class.
     /// </summary>
     public HeroesViewModel(IUnitRepository repository, IModuleRepository moduleRepository) : base(repository, moduleRepository)
     {
         DisplayName = "Heroes";
+    }
+
+    /// <inheritdoc />
+    protected override void OnNationalityChanged(Nationality newNationality)
+    {
+        OnPropertyChanged(nameof(CanHaveBrokenMorale));
+        if (newNationality == Nationality.Japanese)
+        {
+            ClearErrors(nameof(BrokenMorale));
+        }
+        else
+        {
+            ValidateProperty(BrokenMorale, nameof(BrokenMorale));
+        }
     }
 
     /// <inheritdoc />
@@ -154,50 +92,39 @@ public class HeroesViewModel : UnitViewModelBase
     protected override void ResetForm()
     {
         ClearErrors();
-        _name = string.Empty;
-        _firepower = string.Empty;
-        _range = string.Empty;
-        _morale = string.Empty;
-        _brokenMorale = string.Empty;
-        _woundedRange = string.Empty;
-        OnPropertyChanged(nameof(Name));
-        OnPropertyChanged(nameof(Firepower));
-        OnPropertyChanged(nameof(Range));
-        OnPropertyChanged(nameof(Morale));
-        OnPropertyChanged(nameof(BrokenMorale));
-        OnPropertyChanged(nameof(WoundedRange));
-        OnPropertyChanged(nameof(CanHaveBrokenMorale));
+        Name = string.Empty;
+        Firepower = string.Empty;
+        Range = string.Empty;
+        Morale = string.Empty;
+        BrokenMorale = string.Empty;
+        WoundedRange = string.Empty;
         SelectedNationality = Nationality.German;
         SelectedModule = ASL.Models.Modules.Module.BeyondValor;
         ImagePathFront = null;
         ImagePathBack = null;
         SvgFront = null;
         SvgBack = null;
+        OnPropertyChanged(nameof(CanHaveBrokenMorale));
     }
 
     /// <inheritdoc />
     protected override void PopulateForm(Unit item)
     {
         ClearErrors();
-        _name = item.Name;
-        _firepower = (item.FirePower?.Firepower ?? 0).ToString();
-        _range = (item.FirePower?.Range ?? 0).ToString();
-        _morale = (item.Infantry?.Morale ?? 0).ToString();
-        _brokenMorale = (item.Infantry?.BrokenMorale ?? 0).ToString();
-        _woundedRange = (item.Hero?.WoundedRange ?? 0).ToString();
-        OnPropertyChanged(nameof(Name));
-        OnPropertyChanged(nameof(Firepower));
-        OnPropertyChanged(nameof(Range));
-        OnPropertyChanged(nameof(Morale));
-        OnPropertyChanged(nameof(BrokenMorale));
-        OnPropertyChanged(nameof(WoundedRange));
-        OnPropertyChanged(nameof(CanHaveBrokenMorale));
+        Name = item.Name;
+        Firepower = (item.FirePower?.Firepower ?? 0).ToString();
+        Range = (item.FirePower?.Range ?? 0).ToString();
+        Morale = (item.Infantry?.Morale ?? 0).ToString();
+        BrokenMorale = (item.Infantry?.BrokenMorale ?? 0).ToString();
+        WoundedRange = (item.Hero?.WoundedRange ?? 0).ToString();
+        
         SelectedNationality = item.Nationality;
         SelectedModule = item.Module;
         ImagePathFront = item.Visual?.ImagePathFront;
         ImagePathBack = item.Visual?.ImagePathBack;
         SvgFront = item.Visual?.SvgFront;
         SvgBack = item.Visual?.SvgBack;
+        OnPropertyChanged(nameof(CanHaveBrokenMorale));
     }
 
     /// <inheritdoc />

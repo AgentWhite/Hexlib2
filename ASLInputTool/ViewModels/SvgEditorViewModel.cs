@@ -1,5 +1,5 @@
-using System;
 using System.IO;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -65,7 +65,27 @@ public class SvgEditorViewModel : ViewModelBase
     public string? SvgContent 
     { 
         get => _svgContent; 
-        set => SetProperty(ref _svgContent, value);
+        set 
+        {
+            if (SetProperty(ref _svgContent, value))
+            {
+                // If SvgContent is set manually (e.g. from unit), we parse out the background color
+                if (!string.IsNullOrEmpty(value))
+                {
+                    // Regex to find the first <rect width="120" height="120" fill="..." />
+                    var match = System.Text.RegularExpressions.Regex.Match(value, @"<rect\s+width=""120""\s+height=""120""\s+fill=""([^""]+)""\s*/>");
+                    if (match.Success)
+                    {
+                        var color = match.Groups[1].Value;
+                        if (!string.IsNullOrEmpty(color))
+                        {
+                            _backgroundColor = color;
+                            OnPropertyChanged(nameof(BackgroundColor));
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -247,9 +267,10 @@ public class SvgEditorViewModel : ViewModelBase
         double x = GhostPosition.X - (GhostImage.Width / 2);
         double y = GhostPosition.Y - (GhostImage.Height / 2);
 
-        string imgTag = $"\n  <image x=\"{x:F1}\" y=\"{y:F1}\" " +
-                        $"width=\"{GhostImage.Width:F1}\" height=\"{GhostImage.Height:F1}\" " +
-                        $"href=\"data:image/png;base64,{base64}\"/>";
+        string imgTag = string.Format(CultureInfo.InvariantCulture, 
+                        "\n  <image x=\"{0:F1}\" y=\"{1:F1}\" width=\"{2:F1}\" height=\"{3:F1}\" " +
+                        "href=\"data:image/png;base64,{4}\"/>", 
+                        x, y, GhostImage.Width, GhostImage.Height, base64);
         
         int index = SvgContent.LastIndexOf("</svg>");
         if (index != -1)
@@ -279,12 +300,32 @@ public class SvgEditorViewModel : ViewModelBase
 
     private void RegenerateSvg()
     {
+        // 0. Preserve existing custom content (images)
+        string preservedContent = string.Empty;
+        if (!string.IsNullOrEmpty(SvgContent))
+        {
+            // Extract all <image ... /> or <image>...</image> tags
+            var imageMatches = System.Text.RegularExpressions.Regex.Matches(SvgContent, @"<image[^>]*/>|<image.*?</image>", System.Text.RegularExpressions.RegexOptions.Singleline);
+            var preservedSb = new System.Text.StringBuilder();
+            foreach (System.Text.RegularExpressions.Match match in imageMatches)
+            {
+                preservedSb.AppendLine("  " + match.Value);
+            }
+            preservedContent = preservedSb.ToString();
+        }
+
         // Dimensions matches the editor preview (120x120)
         var sb = new System.Text.StringBuilder();
         sb.AppendLine("<svg width=\"120\" height=\"120\" xmlns=\"http://www.w3.org/2000/svg\">");
         
         // 1. Background
         sb.AppendLine($"  <rect width=\"120\" height=\"120\" fill=\"{_backgroundColor}\" />");
+
+        // 2. Insert preserved content (images)
+        if (!string.IsNullOrEmpty(preservedContent))
+        {
+            sb.Append(preservedContent);
+        }
 
         // 2. Infanry Stats Overlay
         if (IsInfantry)
@@ -338,9 +379,9 @@ public class SvgEditorViewModel : ViewModelBase
 
                         if (HasSelfRally || CounterStyle == CounterStyle.VerticalCCW)
                         {
-                            sb.AppendLine($"  <rect x=\"{rectX}\" y=\"{rectY}\" width=\"34\" height=\"34\" fill=\"none\" stroke=\"black\" stroke-width=\"1.5\" />");
+                            sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "  <rect x=\"{0:F1}\" y=\"{1:F1}\" width=\"34\" height=\"34\" fill=\"none\" stroke=\"black\" stroke-width=\"1.5\" />", rectX, rectY));
                         }
-                        sb.AppendLine($"    <text x=\"{textX:F1}\" y=\"{textY:F1}\" text-anchor=\"middle\" font-size=\"24\" {font} fill=\"black\">{StatBrokenMorale}</text>");
+                        sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "    <text x=\"{0:F1}\" y=\"{1:F1}\" text-anchor=\"middle\" font-size=\"24\" {2} fill=\"black\">{3}</text>", textX, textY, font, StatBrokenMorale));
                     }
                 }
 
@@ -379,35 +420,35 @@ public class SvgEditorViewModel : ViewModelBase
 
                 // Firepower
                 double fpX = startX + (digitWidth / 2);
-                sb.AppendLine($"  <text x=\"{fpX:F1}\" y=\"{centerY:F1}\" text-anchor=\"middle\" font-size=\"24\" {font} fill=\"black\">{StatFirepower}</text>");
+                sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "  <text x=\"{0:F1}\" y=\"{1:F1}\" text-anchor=\"middle\" font-size=\"24\" {2} fill=\"black\">{3}</text>", fpX, centerY, font, StatFirepower));
                 if (HasAssaultFire) 
-                    sb.AppendLine($"  <line x1=\"{fpX - 8:F1}\" y1=\"{centerY + 4:F1}\" x2=\"{fpX + 8:F1}\" y2=\"{centerY + 4:F1}\" stroke=\"black\" stroke-width=\"2\" />");
+                    sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "  <line x1=\"{0:F1}\" y1=\"{1:F1}\" x2=\"{2:F1}\" y2=\"{3:F1}\" stroke=\"black\" stroke-width=\"2\" />", fpX - 8, centerY + 4, fpX + 8, centerY + 4));
 
                 // Smoke Exponent (Superscript next to Firepower)
                 if (!string.IsNullOrEmpty(StatSmoke))
                 {
-                    sb.AppendLine($"  <text x=\"{fpX + 9:F1}\" y=\"{centerY - 12:F1}\" text-anchor=\"start\" font-size=\"14\" {font} fill=\"black\">{StatSmoke}</text>");
+                    sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "  <text x=\"{0:F1}\" y=\"{1:F1}\" text-anchor=\"start\" font-size=\"14\" {2} fill=\"black\">{3}</text>", fpX + 9, centerY - 12, font, StatSmoke));
                 }
 
                 // Dash 1
                 double d1X = startX + digitWidth + (dashWidth / 2);
-                sb.AppendLine($"  <text x=\"{d1X:F1}\" y=\"{centerY:F1}\" text-anchor=\"middle\" font-size=\"24\" {font} fill=\"black\">-</text>");
+                sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "  <text x=\"{0:F1}\" y=\"{1:F1}\" text-anchor=\"middle\" font-size=\"24\" {2} fill=\"black\">-</text>", d1X, centerY, font));
 
                 // Range
                 double rX = startX + digitWidth + dashWidth + (digitWidth / 2);
-                sb.AppendLine($"  <text x=\"{rX:F1}\" y=\"{centerY:F1}\" text-anchor=\"middle\" font-size=\"24\" {font} fill=\"black\">{StatRange}</text>");
+                sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "  <text x=\"{0:F1}\" y=\"{1:F1}\" text-anchor=\"middle\" font-size=\"24\" {2} fill=\"black\">{3}</text>", rX, centerY, font, StatRange));
                 if (HasSprayingFire)
-                    sb.AppendLine($"  <line x1=\"{rX - 8:F1}\" y1=\"{centerY + 4:F1}\" x2=\"{rX + 8:F1}\" y2=\"{centerY + 4:F1}\" stroke=\"black\" stroke-width=\"2\" />");
+                    sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "  <line x1=\"{0:F1}\" y1=\"{1:F1}\" x2=\"{2:F1}\" y2=\"{3:F1}\" stroke=\"black\" stroke-width=\"2\" />", rX - 8, centerY + 4, rX + 8, centerY + 4));
 
                 // Dash 2
                 double d2X = startX + (digitWidth * 2) + dashWidth + (dashWidth / 2);
-                sb.AppendLine($"  <text x=\"{d2X:F1}\" y=\"{centerY:F1}\" text-anchor=\"middle\" font-size=\"24\" {font} fill=\"black\">-</text>");
+                sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "  <text x=\"{0:F1}\" y=\"{1:F1}\" text-anchor=\"middle\" font-size=\"24\" {2} fill=\"black\">-</text>", d2X, centerY, font));
 
                 // Morale
                 double mX = startX + (digitWidth * 2) + (dashWidth * 2) + (digitWidth / 2);
-                sb.AppendLine($"  <text x=\"{mX:F1}\" y=\"{centerY:F1}\" text-anchor=\"middle\" font-size=\"24\" {font} fill=\"black\">{StatMorale}</text>");
+                sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "  <text x=\"{0:F1}\" y=\"{1:F1}\" text-anchor=\"middle\" font-size=\"24\" {2} fill=\"black\">{3}</text>", mX, centerY, font, StatMorale));
                 if (HasELR)
-                    sb.AppendLine($"  <line x1=\"{mX - 8:F1}\" y1=\"{centerY + 4:F1}\" x2=\"{mX + 8:F1}\" y2=\"{centerY + 4:F1}\" stroke=\"black\" stroke-width=\"2\" />");
+                    sb.AppendLine(string.Format(CultureInfo.InvariantCulture, "  <line x1=\"{0:F1}\" y1=\"{1:F1}\" x2=\"{2:F1}\" y2=\"{3:F1}\" stroke=\"black\" stroke-width=\"2\" />", mX - 8, centerY + 4, mX + 8, centerY + 4));
 
                 // Unit Code
                 if (!string.IsNullOrEmpty(StatUnitCode))

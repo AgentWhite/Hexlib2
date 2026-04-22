@@ -16,6 +16,7 @@ using System.Windows;
 using System.Windows.Media;
 using ASLInputTool.Infrastructure;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace ASLInputTool.ViewModels;
 
@@ -142,6 +143,56 @@ public abstract class UnitViewModelBase : CrudViewModelBase<Unit>, IInitializeab
     /// </summary>
     public Geometry? CutterGhostGeometry { get => _cutterGhostGeometry; set => SetProperty(ref _cutterGhostGeometry, value); }
 
+    /// <inheritdoc/>
+    protected override void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        base.OnPropertyChanged(propertyName);
+        
+        // Background sync of SVG strings when stats change
+        if (IsStatProperty(propertyName))
+        {
+            RefreshSvgStrings();
+        }
+    }
+
+    private bool IsStatProperty(string? propertyName)
+    {
+        return propertyName == nameof(UnitCode) || 
+               propertyName == "Firepower" || 
+               propertyName == "Range" || 
+               propertyName == "Morale" || 
+               propertyName == "BrokenMorale" || 
+               propertyName == "Leadership" ||
+               propertyName == "SelectedScale" ||
+               propertyName == "SelectedClass" ||
+               propertyName == "HasAssaultFire" ||
+               propertyName == "HasSprayingFire" ||
+               propertyName == "HasELR" ||
+               propertyName == "HasSmokeExponent" ||
+               propertyName == "SmokePlacementExponent" ||
+               propertyName == "CanSelfRally" ||
+               propertyName == "WoundedRange";
+    }
+
+    private void RefreshSvgStrings()
+    {
+        // We use two dummy SvgEditorViewModels to perform the regeneration
+        // one for Front and one for Back.
+        if (!string.IsNullOrEmpty(SvgFront))
+        {
+            var frontVm = new SvgEditorViewModel { SvgContent = SvgFront, IsBackSide = false };
+            SyncPropertiesToEditor(frontVm, true);
+            SvgFront = frontVm.SvgContent;
+        }
+
+        if (!string.IsNullOrEmpty(SvgBack))
+        {
+            var backVm = new SvgEditorViewModel { SvgContent = SvgBack, IsBackSide = true };
+            SyncPropertiesToEditor(backVm, false);
+            SvgBack = backVm.SvgContent;
+        }
+    }
+
     /// <summary>
     /// Gets or sets a transient unit code (ID) primarily for visual testing.
     /// Updating this property immediately injects the code into the SVG counter.
@@ -149,20 +200,7 @@ public abstract class UnitViewModelBase : CrudViewModelBase<Unit>, IInitializeab
     public string? UnitCode 
     { 
         get => _unitCode; 
-        set 
-        { 
-            if (SetProperty(ref _unitCode, value))
-            {
-                // Real-time injection into the front SVG
-                if (!string.IsNullOrEmpty(SvgFront))
-                {
-                    // Create a temporary UnitVisual to perform the replacement logic
-                    var tempVisual = new UnitVisual { SvgFront = SvgFront };
-                    tempVisual.SetUnitCode(value ?? string.Empty);
-                    SvgFront = tempVisual.SvgFront;
-                }
-            }
-        } 
+        set => SetProperty(ref _unitCode, value);
     }
 
     /// <summary>
@@ -215,93 +253,7 @@ public abstract class UnitViewModelBase : CrudViewModelBase<Unit>, IInitializeab
             IsCutterActive = IsCutterActive
         };
 
-        // Sync Infantry stats and Layout style
-        Action syncStats = () =>
-        {
-            if (this is SquadsViewModel squadVm)
-            {
-                vm.IsInfantry = true;
-                if (isFront)
-                {
-                    vm.CounterStyle = CounterStyle.Horizontal;
-                    vm.IsCrew = squadVm.SelectedScale == InfantryScale.Crew;
-                    // No class letter for Crews
-                    vm.StatClass = squadVm.SelectedScale == InfantryScale.Crew ? string.Empty : squadVm.SelectedClass switch
-                    {
-                        UnitClass.Elite => "E",
-                        UnitClass.FirstLine => "1",
-                        UnitClass.SecondLine => "2",
-                        UnitClass.Conscript => "C",
-                        UnitClass.Green => "G",
-                        _ => ""
-                    };
-                    vm.StatFirepower = squadVm.Firepower;
-                    vm.StatRange = squadVm.Range;
-                    vm.StatMorale = squadVm.Morale;
-                    vm.HasAssaultFire = squadVm.HasAssaultFire;
-                    vm.HasSprayingFire = squadVm.HasSprayingFire;
-                    vm.HasELR = squadVm.HasELR;
-                    vm.StatSmoke = squadVm.HasSmokeExponent ? squadVm.SmokePlacementExponent : string.Empty;
-                    vm.StatUnitCode = UnitCode ?? string.Empty;
-                }
-                else
-                {
-                    vm.CounterStyle = CounterStyle.Horizontal;
-                    vm.StatBPV = squadVm.BPV;
-                    vm.StatBrokenMorale = squadVm.BrokenMorale;
-                    vm.StatUnitCode = UnitCode ?? string.Empty;
-                    vm.HasSelfRally = squadVm.CanSelfRally;
-                }
-            }
-            else if (this is LeadersViewModel leaderVm)
-            {
-                vm.IsInfantry = true;
-                if (isFront)
-                {
-                    vm.CounterStyle = CounterStyle.VerticalCCW;
-                    vm.StatClass = string.Empty;
-                    vm.StatMorale = leaderVm.Morale;
-                    vm.StatLeadership = leaderVm.Leadership;
-                    vm.StatUnitCode = UnitCode ?? string.Empty;
-                    vm.StatBrokenMorale = string.Empty;
-                }
-                else
-                {
-                    vm.StatBrokenMorale = leaderVm.BrokenMorale;
-                    vm.StatUnitCode = string.Empty;
-                    vm.StatMorale = string.Empty;
-                    vm.StatLeadership = string.Empty;
-                }
-            }
-            else if (this is HeroesViewModel heroVm)
-            {
-                vm.IsInfantry = true;
-                if (isFront)
-                {
-                    vm.CounterStyle = CounterStyle.VerticalCW;
-                    vm.StatClass = string.Empty;
-                    vm.StatFirepower = heroVm.Firepower;
-                    vm.StatRange = heroVm.Range;
-                    vm.StatMorale = heroVm.Morale;
-                    vm.StatUnitCode = UnitCode ?? string.Empty;
-                    vm.StatMovementFactor = string.Empty;
-                    vm.StatBrokenMorale = string.Empty;
-                }
-                else
-                {
-                    vm.CounterStyle = CounterStyle.VerticalCW;
-                    vm.StatClass = string.Empty;
-                    vm.StatFirepower = heroVm.Firepower;
-                    vm.StatRange = heroVm.WoundedRange;
-                    vm.StatMorale = heroVm.BrokenMorale;
-                    vm.StatUnitCode = UnitCode ?? string.Empty;
-                    vm.StatMovementFactor = "3 MF";
-                    vm.StatBrokenMorale = string.Empty; // Hero back uses 3-column layout, not boxed morale
-                }
-            }
-        };
-
-        syncStats();
+        SyncPropertiesToEditor(vm, isFront);
 
         var dialog = new ASLInputTool.Views.SvgEditorDialog { DataContext = vm, Owner = System.Windows.Application.Current.MainWindow };
         
@@ -309,7 +261,7 @@ public abstract class UnitViewModelBase : CrudViewModelBase<Unit>, IInitializeab
         PropertyChangedEventHandler unitPropertyHandler = (s, e) =>
         {
             if (e.PropertyName == nameof(IsCutterActive)) vm.IsCutterActive = IsCutterActive;
-            else syncStats(); // Catch-all for stat changes
+            else if (IsStatProperty(e.PropertyName)) SyncPropertiesToEditor(vm, isFront);
         };
         this.PropertyChanged += unitPropertyHandler;
 
@@ -416,6 +368,95 @@ public abstract class UnitViewModelBase : CrudViewModelBase<Unit>, IInitializeab
     {
         Repository.Remove(item);
         TriggerDiskSave(item.Module);
+    }
+
+    /// <summary>
+    /// Synchronizes internal stat properties to an SvgEditorViewModel.
+    /// </summary>
+    private void SyncPropertiesToEditor(SvgEditorViewModel vm, bool isFront)
+    {
+        if (this is SquadsViewModel squadVm)
+        {
+            vm.IsInfantry = true;
+            if (isFront)
+            {
+                vm.CounterStyle = CounterStyle.Horizontal;
+                vm.IsCrew = squadVm.SelectedScale == InfantryScale.Crew;
+                vm.StatClass = squadVm.SelectedScale == InfantryScale.Crew ? string.Empty : squadVm.SelectedClass switch
+                {
+                    UnitClass.Elite => "E",
+                    UnitClass.FirstLine => "1",
+                    UnitClass.SecondLine => "2",
+                    UnitClass.Conscript => "C",
+                    UnitClass.Green => "G",
+                    _ => ""
+                };
+                vm.StatFirepower = squadVm.Firepower;
+                vm.StatRange = squadVm.Range;
+                vm.StatMorale = squadVm.Morale;
+                vm.HasAssaultFire = squadVm.HasAssaultFire;
+                vm.HasSprayingFire = squadVm.HasSprayingFire;
+                vm.HasELR = squadVm.HasELR;
+                vm.StatSmoke = squadVm.HasSmokeExponent ? squadVm.SmokePlacementExponent : string.Empty;
+                vm.StatUnitCode = UnitCode ?? string.Empty;
+            }
+            else
+            {
+                vm.CounterStyle = CounterStyle.Horizontal;
+                vm.StatBPV = squadVm.BPV;
+                vm.StatBrokenMorale = squadVm.BrokenMorale;
+                vm.StatUnitCode = UnitCode ?? string.Empty;
+                vm.HasSelfRally = squadVm.CanSelfRally;
+            }
+        }
+        else if (this is LeadersViewModel leaderVm)
+        {
+            vm.IsInfantry = true;
+            if (isFront)
+            {
+                vm.CounterStyle = CounterStyle.VerticalCCW;
+                vm.StatClass = string.Empty;
+                vm.StatMorale = leaderVm.Morale;
+                vm.StatLeadership = leaderVm.Leadership;
+                vm.StatUnitCode = UnitCode ?? string.Empty;
+                vm.StatBrokenMorale = string.Empty;
+            }
+            else
+            {
+                vm.CounterStyle = CounterStyle.VerticalCCW;
+                vm.StatBrokenMorale = leaderVm.BrokenMorale;
+                vm.StatUnitCode = string.Empty;
+                vm.StatMorale = string.Empty;
+                vm.StatLeadership = string.Empty;
+                vm.HasSelfRally = true;
+            }
+        }
+        else if (this is HeroesViewModel heroVm)
+        {
+            vm.IsInfantry = true;
+            if (isFront)
+            {
+                vm.CounterStyle = CounterStyle.VerticalCW;
+                vm.StatClass = string.Empty;
+                vm.StatFirepower = heroVm.Firepower;
+                vm.StatRange = heroVm.Range;
+                vm.StatMorale = heroVm.Morale;
+                vm.StatUnitCode = UnitCode ?? string.Empty;
+                vm.StatMovementFactor = string.Empty;
+                vm.StatBrokenMorale = string.Empty;
+            }
+            else
+            {
+                vm.CounterStyle = CounterStyle.VerticalCW;
+                vm.StatClass = string.Empty;
+                vm.StatFirepower = heroVm.Firepower;
+                vm.StatRange = heroVm.WoundedRange;
+                vm.StatMorale = heroVm.BrokenMorale;
+                vm.StatUnitCode = UnitCode ?? string.Empty;
+                vm.StatMovementFactor = "3 MF";
+                vm.StatBrokenMorale = string.Empty;
+            }
+        }
     }
 
     /// <summary>

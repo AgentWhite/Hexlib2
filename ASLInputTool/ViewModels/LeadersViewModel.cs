@@ -1,52 +1,15 @@
-using ASL.Models;
-using ASL.Models.Units;
-using ASL.Models.Board;
-using ASL.Models.Scenarios;
-using ASL.Models.Modules;
-using ASL.Models.Equipment;
-using ASL.Models.Components;
-using System;
-using System.Linq;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Windows.Data;
-using ASLInputTool.Infrastructure;
 
 namespace ASLInputTool.ViewModels;
 
 /// <summary>
 /// ViewModel for managing Leader counters.
 /// </summary>
-public class LeadersViewModel : UnitViewModelBase
+public class LeadersViewModel : InfantryViewModelBase
 {
     /// <inheritdoc />
     protected override string UnitCategoryFilter => "Leader";
-    private string _name = string.Empty;
-    private string _morale = string.Empty;
-    private string _brokenMorale = string.Empty;
+    
     private string _leadership = string.Empty;
-    private Nationality _selectedNationality = Nationality.German;
-
-
-    /// <summary>
-    /// Gets or sets the name of the leader.
-    /// </summary>
-    [Required(ErrorMessage = "Leader name is required.")]
-    public string Name { get => _name; set => SetProperty(ref _name, value); }
-
-    /// <summary>
-    /// Gets or sets the morale value as a string for UI binding.
-    /// </summary>
-    [Required(ErrorMessage = "Morale is required.")]
-    [Range(typeof(int), "1", "15", ErrorMessage = "Morale must be between 1 and 15.")]
-    public string Morale { get => _morale; set => SetProperty(ref _morale, value); }
-
-    /// <summary>
-    /// Gets or sets the broken morale value as a string for UI binding.
-    /// </summary>
-    [Range(typeof(int), "1", "12", ErrorMessage = "Broken morale must be between 1 and 12.")]
-    public string BrokenMorale { get => _brokenMorale; set => SetProperty(ref _brokenMorale, value); }
-
 
     /// <summary>
     /// Gets or sets the leadership modifier as a string for UI binding.
@@ -61,34 +24,25 @@ public class LeadersViewModel : UnitViewModelBase
     public bool IsBrokenMoraleEnabled => SelectedNationality != Nationality.Japanese;
 
     /// <summary>
-    /// Gets or sets the selected nationality for the leader.
-    /// </summary>
-    public Nationality SelectedNationality 
-    { 
-        get => _selectedNationality; 
-        set 
-        { 
-            if (SetProperty(ref _selectedNationality, value))
-            {
-                OnPropertyChanged(nameof(IsBrokenMoraleEnabled));
-                if (SelectedNationality == Nationality.Japanese)
-                {
-                    ClearErrors(nameof(BrokenMorale));
-                }
-                else
-                {
-                    ValidateProperty(BrokenMorale, nameof(BrokenMorale));
-                }
-            }
-        } 
-    }
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="LeadersViewModel"/> class.
     /// </summary>
     public LeadersViewModel(IUnitRepository repository, IModuleRepository moduleRepository) : base(repository, moduleRepository)
     {
         DisplayName = "Leaders";
+    }
+
+    /// <inheritdoc />
+    protected override void OnNationalityChanged(Nationality newNationality)
+    {
+        OnPropertyChanged(nameof(IsBrokenMoraleEnabled));
+        if (newNationality == Nationality.Japanese)
+        {
+            ClearErrors(nameof(BrokenMorale));
+        }
+        else
+        {
+            ValidateProperty(BrokenMorale, nameof(BrokenMorale));
+        }
     }
 
     /// <inheritdoc />
@@ -124,41 +78,39 @@ public class LeadersViewModel : UnitViewModelBase
     protected override void ResetForm()
     {
         ClearErrors();
-        _name = string.Empty;
-        _morale = string.Empty;
-        _brokenMorale = string.Empty;
-        _leadership = string.Empty;
-        OnPropertyChanged(nameof(Name));
-        OnPropertyChanged(nameof(Morale));
-        OnPropertyChanged(nameof(BrokenMorale));
-        OnPropertyChanged(nameof(Leadership));
+        Name = string.Empty;
+        Morale = string.Empty;
+        BrokenMorale = string.Empty;
+        Leadership = string.Empty;
         SelectedNationality = Nationality.German;
         SelectedModule = ASL.Models.Modules.Module.BeyondValor;
         ImagePathFront = null;
         ImagePathBack = null;
         SvgFront = null;
         SvgBack = null;
+        Firepower = "0"; // Leaders have no inherent FP
+        Range = "0";     // Leaders have no inherent Range
+        OnPropertyChanged(nameof(IsBrokenMoraleEnabled));
     }
 
     /// <inheritdoc />
     protected override void PopulateForm(Unit item)
     {
         ClearErrors();
-        _name = item.Name;
-        _morale = (item.Infantry?.Morale ?? 0).ToString();
-        _brokenMorale = item.Infantry?.BrokenMorale?.ToString() ?? string.Empty;
-        _leadership = (item.Leadership?.Leadership ?? 0).ToString();
-        OnPropertyChanged(nameof(Name));
-        OnPropertyChanged(nameof(Morale));
-        OnPropertyChanged(nameof(BrokenMorale));
-        OnPropertyChanged(nameof(Leadership));
+        Name = item.Name;
+        Morale = (item.Infantry?.Morale ?? 0).ToString();
+        BrokenMorale = item.Infantry?.BrokenMorale?.ToString() ?? string.Empty;
+        Leadership = (item.Leadership?.Leadership ?? 0).ToString();
+        
         SelectedNationality = item.Nationality;
         SelectedModule = item.Module;
-        OnPropertyChanged(nameof(IsBrokenMoraleEnabled));
         ImagePathFront = item.Visual?.ImagePathFront;
         ImagePathBack = item.Visual?.ImagePathBack;
         SvgFront = item.Visual?.SvgFront;
         SvgBack = item.Visual?.SvgBack;
+        Firepower = "0";
+        Range = "0";
+        OnPropertyChanged(nameof(IsBrokenMoraleEnabled));
     }
 
     /// <inheritdoc />

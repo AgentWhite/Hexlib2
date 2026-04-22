@@ -1,34 +1,15 @@
-using ASL.Models;
-using ASL.Models.Units;
-using ASL.Models.Board;
-using ASL.Models.Scenarios;
-using ASL.Models.Modules;
-using ASL.Models.Equipment;
-using ASL.Models.Components;
-using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Windows.Data;
-using ASLInputTool.Infrastructure;
 
 namespace ASLInputTool.ViewModels;
 
 /// <summary>
 /// ViewModel for managing Squad and Half-Squad MMC counters.
 /// </summary>
-public class SquadsViewModel : UnitViewModelBase
+public class SquadsViewModel : InfantryViewModelBase
 {
     /// <inheritdoc />
     protected override string UnitCategoryFilter => "Infantry";
-    private string _name = string.Empty;
-    private string _firepower = string.Empty;
-    private string _range = string.Empty;
-    private string _morale = string.Empty;
-    private string _brokenMorale = string.Empty;
+    
     private string _bpv = string.Empty;
-    private Nationality _selectedNationality = Nationality.German;
     private UnitClass _selectedClass = UnitClass.FirstLine;
     private InfantryScale _selectedScale = InfantryScale.Squad;
     private bool _hasAssaultFire;
@@ -38,41 +19,6 @@ public class SquadsViewModel : UnitViewModelBase
     private bool _hasSmokeExponent;
     private string _smokePlacementExponent = string.Empty;
 
-
-    /// <summary>
-    /// Gets or sets the name/identity of the squad.
-    /// </summary>
-    [Required(ErrorMessage = "Unit identity is required.")]
-    public string Name { get => _name; set => SetProperty(ref _name, value); }
-
-    /// <summary>
-    /// Gets or sets the firepower value as a string for UI binding.
-    /// </summary>
-    [Required(ErrorMessage = "Firepower is required.")]
-    [Range(typeof(int), "1", "30", ErrorMessage = "Firepower must be between 1 and 30.")]
-    public string Firepower { get => _firepower; set => SetProperty(ref _firepower, value); }
-
-    /// <summary>
-    /// Gets or sets the range value as a string for UI binding.
-    /// </summary>
-    [Required(ErrorMessage = "Range is required.")]
-    [Range(typeof(int), "0", "50", ErrorMessage = "Range must be between 0 and 50.")]
-    public string Range { get => _range; set => SetProperty(ref _range, value); }
-
-    /// <summary>
-    /// Gets or sets the morale value as a string for UI binding.
-    /// </summary>
-    [Required(ErrorMessage = "Morale is required.")]
-    [Range(typeof(int), "0", "10", ErrorMessage = "Morale must be between 0 and 10.")]
-    public string Morale { get => _morale; set => SetProperty(ref _morale, value); }
-
-    /// <summary>
-    /// Gets or sets the broken morale value as a string for UI binding.
-    /// </summary>
-    [Required(ErrorMessage = "Broken morale is required.")]
-    [Range(typeof(int), "1", "12", ErrorMessage = "Broken morale must be between 1 and 12.")]
-    public string BrokenMorale { get => _brokenMorale; set => SetProperty(ref _brokenMorale, value); }
-
     /// <summary>
     /// Gets or sets the BPV value as a string for UI binding.
     /// </summary>
@@ -81,19 +27,9 @@ public class SquadsViewModel : UnitViewModelBase
     public string BPV { get => _bpv; set => SetProperty(ref _bpv, value); }
 
     /// <summary>
-    /// Gets or sets the selected nationality for the squad.
-    /// </summary>
-    public Nationality SelectedNationality 
-    { 
-        get => _selectedNationality; 
-        set => SetProperty(ref _selectedNationality, value);
-    }
-
-    /// <summary>
     /// Gets or sets the selected unit class (Elite, 1st Line, etc.).
     /// </summary>
     public UnitClass SelectedClass { get => _selectedClass; set => SetProperty(ref _selectedClass, value); }
-
 
     /// <summary>
     /// Gets or sets the scale of the infantry unit.
@@ -256,11 +192,11 @@ public class SquadsViewModel : UnitViewModelBase
             int.TryParse(Morale, out int m))
         {
             if (Items.Any(i => i.Item != EditingItem && 
-                              i.Item.Name.Equals(Name, StringComparison.OrdinalIgnoreCase) && 
-                              i.Item.Nationality == SelectedNationality &&
-                              (i.Item.FirePower?.Firepower ?? 0) == fp &&
-                              (i.Item.FirePower?.Range ?? 0) == r &&
-                              (i.Item.Infantry?.Morale ?? 0) == m))
+                               i.Item.Name.Equals(Name, StringComparison.OrdinalIgnoreCase) && 
+                               i.Item.Nationality == SelectedNationality &&
+                               (i.Item.FirePower?.Firepower ?? 0) == fp &&
+                               (i.Item.FirePower?.Range ?? 0) == r &&
+                               (i.Item.Infantry?.Morale ?? 0) == m))
             {
                 AddError(nameof(Name), "An identical unit already exists for this nationality.");
                 isValid = false;
@@ -287,18 +223,12 @@ public class SquadsViewModel : UnitViewModelBase
     protected override void ResetForm()
     {
         ClearErrors();
-        _name = string.Empty;
-        _firepower = string.Empty;
-        _range = string.Empty;
-        _morale = string.Empty;
-        _brokenMorale = string.Empty;
-        _bpv = string.Empty;
-        OnPropertyChanged(nameof(Name));
-        OnPropertyChanged(nameof(Firepower));
-        OnPropertyChanged(nameof(Range));
-        OnPropertyChanged(nameof(Morale));
-        OnPropertyChanged(nameof(BrokenMorale));
-        OnPropertyChanged(nameof(BPV));
+        Name = string.Empty;
+        Firepower = string.Empty;
+        Range = string.Empty;
+        Morale = string.Empty;
+        BrokenMorale = string.Empty;
+        BPV = string.Empty;
         SelectedNationality = Nationality.German;
         SelectedModule = ASL.Models.Modules.Module.BeyondValor;
         SelectedScale = InfantryScale.Squad;
@@ -319,18 +249,13 @@ public class SquadsViewModel : UnitViewModelBase
     protected override void PopulateForm(Unit item)
     {
         ClearErrors();
-        _name = item.Name;
-        _firepower = (item.FirePower?.Firepower ?? 0).ToString();
-        _range = (item.FirePower?.Range ?? 0).ToString();
-        _morale = (item.Infantry?.Morale ?? 0).ToString();
-        _brokenMorale = (item.Infantry?.BrokenMorale ?? 0).ToString();
-        _bpv = (item.Bpv?.BPV ?? 0).ToString();
-        OnPropertyChanged(nameof(Name));
-        OnPropertyChanged(nameof(Firepower));
-        OnPropertyChanged(nameof(Range));
-        OnPropertyChanged(nameof(Morale));
-        OnPropertyChanged(nameof(BrokenMorale));
-        OnPropertyChanged(nameof(BPV));
+        Name = item.Name;
+        Firepower = (item.FirePower?.Firepower ?? 0).ToString();
+        Range = (item.FirePower?.Range ?? 0).ToString();
+        Morale = (item.Infantry?.Morale ?? 0).ToString();
+        BrokenMorale = (item.Infantry?.BrokenMorale ?? 0).ToString();
+        BPV = (item.Bpv?.BPV ?? 0).ToString();
+        
         SelectedNationality = item.Nationality;
         SelectedModule = item.Module;
         SelectedClass = item.Infantry?.AslClass ?? UnitClass.SecondLine;
