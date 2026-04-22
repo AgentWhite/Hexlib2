@@ -55,6 +55,16 @@
                     <Grid x:Name="PreviewArea" Background="Transparent" ClipToBounds="True"
                           MouseMove="PreviewArea_MouseMove"
                           PreviewMouseLeftButtonDown="PreviewArea_MouseLeftButtonDown">
+                        <Grid.Style>
+                            <Style TargetType="Grid">
+                                <Setter Property="Cursor" Value="Arrow"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsPipetteActive}" Value="True">
+                                        <Setter Property="Cursor" Value="Cross"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Style>
                         
                         <!-- The SVG Content -->
                         <Image Source="{Binding SvgContent, Converter={StaticResource SvgToImage}}" Stretch="Uniform" />

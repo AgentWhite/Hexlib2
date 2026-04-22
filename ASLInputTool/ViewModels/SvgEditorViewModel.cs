@@ -83,6 +83,27 @@ public class SvgEditorViewModel : ViewModelBase
                             OnPropertyChanged(nameof(BackgroundColor));
                         }
                     }
+
+                    // Task 5: Load PNG from SVG into clipboard if one exists
+                    var imgMatch = System.Text.RegularExpressions.Regex.Match(value, @"<image[^>]*href=""data:image/png;base64,([^""]+)""[^>]*/>");
+                    if (imgMatch.Success)
+                    {
+                        try
+                        {
+                            byte[] data = Convert.FromBase64String(imgMatch.Groups[1].Value);
+                            using (var ms = new MemoryStream(data))
+                            {
+                                var bitmap = new BitmapImage();
+                                bitmap.BeginInit();
+                                bitmap.StreamSource = ms;
+                                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                                bitmap.EndInit();
+                                if (bitmap.CanFreeze) bitmap.Freeze();
+                                GlobalEditorService.ClipBoardImage = bitmap;
+                            }
+                        }
+                        catch { /* Fail gracefully if image data is corrupt */ }
+                    }
                 }
             }
         }
@@ -96,11 +117,15 @@ public class SvgEditorViewModel : ViewModelBase
         get => _isPipetteActive; 
         set 
         { 
+            // Task 1: Clicking an active tool should not deactivate it
+            if (_isPipetteActive && !value) return; 
+
             if (SetProperty(ref _isPipetteActive, value))
             {
                 if (value) 
                 {
-                    IsCutterActive = false;
+                    _isCutterActive = false; // Bypass setter to avoid return logic
+                    OnPropertyChanged(nameof(IsCutterActive));
                     GlobalEditorService.ActiveSvgEditor = this;
                 }
                 else if (GlobalEditorService.ActiveSvgEditor == this) 
@@ -149,9 +174,16 @@ public class SvgEditorViewModel : ViewModelBase
         get => _isCutterActive; 
         set 
         { 
-            if (SetProperty(ref _isCutterActive, value) && value)
+            // Task 1: Clicking an active tool should not deactivate it
+            if (_isCutterActive && !value) return;
+
+            if (SetProperty(ref _isCutterActive, value))
             {
-                IsPipetteActive = false;
+                if (value)
+                {
+                    _isPipetteActive = false; // Bypass setter
+                    OnPropertyChanged(nameof(IsPipetteActive));
+                }
             }
         } 
     }
@@ -229,6 +261,7 @@ public class SvgEditorViewModel : ViewModelBase
 
         // Default initialization
         UpdateSvgFromColor();
+        IsPipetteActive = true; // Task 3: Pipette as default tool
 
         GlobalEditorService.ActiveSvgEditor = this;
         GlobalEditorService.ClipBoardImageChanged += OnClipBoardImageChanged;
@@ -272,10 +305,14 @@ public class SvgEditorViewModel : ViewModelBase
                         "href=\"data:image/png;base64,{4}\"/>", 
                         x, y, GhostImage.Width, GhostImage.Height, base64);
         
-        int index = SvgContent.LastIndexOf("</svg>");
+        // Task 6: Replace existing image if one exists
+        string content = SvgContent;
+        content = System.Text.RegularExpressions.Regex.Replace(content, @"<image[^>]*/>|<image.*?</image>", "", System.Text.RegularExpressions.RegexOptions.Singleline);
+
+        int index = content.LastIndexOf("</svg>");
         if (index != -1)
         {
-            SvgContent = SvgContent.Insert(index, imgTag);
+            SvgContent = content.Insert(index, imgTag);
         }
     }
 
@@ -477,8 +514,10 @@ public class SvgEditorViewModel : ViewModelBase
                 sb.AppendLine($"    <text x=\"60\" y=\"105\" text-anchor=\"middle\" font-size=\"32\" {font} fill=\"black\">{numbers}</text>");
                 if (!string.IsNullOrEmpty(StatUnitCode))
                 {
-                    // Unit code placed to the left of the numbers
-                    sb.AppendLine($"    <text id=\"unit-code-overlay\" x=\"60\" y=\"70\" text-anchor=\"middle\" font-size=\"14\" {font} fill=\"black\">{StatUnitCode}</text>");
+                    // Unit code placed to the left of the numbers - Task 1: Bolder/larger (16)
+                    // Task 2: Shifted right closer to numbers (60 -> 75)
+                    // Note: This is inside rotate(-90, 60, 60), so higher x is 'up' and higher y is 'right'.
+                    sb.AppendLine($"    <text id=\"unit-code-overlay\" x=\"60\" y=\"75\" text-anchor=\"middle\" font-size=\"16\" {font} fill=\"black\">{StatUnitCode}</text>");
                 }
                 sb.AppendLine("  </g>");
             }
@@ -495,6 +534,11 @@ public class SvgEditorViewModel : ViewModelBase
     /// </summary>
     public void Unload()
     {
+        _isPipetteActive = false; // Directly set backing fields to avoid return logic
+        _isCutterActive = false;
+        OnPropertyChanged(nameof(IsPipetteActive));
+        OnPropertyChanged(nameof(IsCutterActive));
+
         GlobalEditorService.ClipBoardImageChanged -= OnClipBoardImageChanged;
         if (GlobalEditorService.ActiveSvgEditor == this)
         {

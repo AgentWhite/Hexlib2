@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:infra="clr-namespace:ASLInputTool.Infrastructure"
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="300"
              Margin="0,0,20,0">
@@ -32,7 +33,21 @@
                             <Image Source="{Binding ImagePathFront, Converter={StaticResource ImageSource}}" Stretch="UniformToFill"
                                    Tag="Front"
                                    PreviewMouseLeftButtonDown="Image_MouseLeftButtonDown" 
-                                   PreviewMouseMove="Image_MouseMove" Cursor="Cross"/>
+                                   PreviewMouseMove="Image_MouseMove">
+                                <Image.Style>
+                                    <Style TargetType="Image">
+                                        <Setter Property="Cursor" Value="Arrow"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsCutterActive}" Value="True">
+                                                <Setter Property="Cursor" Value="Cross"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Source={x:Static infra:GlobalEditorService.ActiveSvgEditor}, Path=IsPipetteActive}" Value="True">
+                                                <Setter Property="Cursor" Value="Cross"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
                             <TextBlock Text="Click for Front" Visibility="{Binding ImagePathFront, Converter={StaticResource NullToVis}}" 
                                        VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" 
                                        Foreground="Gray" TextWrapping="Wrap" Padding="10"/>
@@ -92,7 +107,21 @@
                             <Image Source="{Binding ImagePathBack, Converter={StaticResource ImageSource}}" Stretch="UniformToFill"
                                    Tag="Back"
                                    PreviewMouseLeftButtonDown="Image_MouseLeftButtonDown" 
-                                   PreviewMouseMove="Image_MouseMove" Cursor="Cross"/>
+                                   PreviewMouseMove="Image_MouseMove">
+                                <Image.Style>
+                                    <Style TargetType="Image">
+                                        <Setter Property="Cursor" Value="Arrow"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsCutterActive}" Value="True">
+                                                <Setter Property="Cursor" Value="Cross"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Source={x:Static infra:GlobalEditorService.ActiveSvgEditor}, Path=IsPipetteActive}" Value="True">
+                                                <Setter Property="Cursor" Value="Cross"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
                             <TextBlock Text="Click for Back" Visibility="{Binding ImagePathBack, Converter={StaticResource NullToVis}}" 
                                        VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" 
                                        Foreground="Gray" TextWrapping="Wrap" Padding="10"/>

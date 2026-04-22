@@ -23,6 +23,7 @@ public partial class SvgEditorDialog : Window
     /// <inheritdoc/>
     protected override void OnClosed(EventArgs e)
     {
+        (DataContext as SvgEditorViewModel)?.Unload();
         base.OnClosed(e);
         GlobalEditorService.ActiveSvgEditorWindow = null;
     }
