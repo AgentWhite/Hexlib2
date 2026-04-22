@@ -280,10 +280,19 @@ public abstract class UnitViewModelBase : CrudViewModelBase<Unit>, IInitializeab
                     vm.StatRange = heroVm.Range;
                     vm.StatMorale = heroVm.Morale;
                     vm.StatUnitCode = UnitCode ?? string.Empty;
+                    vm.StatMovementFactor = string.Empty;
+                    vm.StatBrokenMorale = string.Empty;
                 }
                 else
                 {
-                    vm.StatBrokenMorale = string.Empty;
+                    vm.CounterStyle = CounterStyle.VerticalCW;
+                    vm.StatClass = string.Empty;
+                    vm.StatFirepower = heroVm.Firepower;
+                    vm.StatRange = heroVm.WoundedRange;
+                    vm.StatMorale = heroVm.BrokenMorale;
+                    vm.StatUnitCode = UnitCode ?? string.Empty;
+                    vm.StatMovementFactor = "3 MF";
+                    vm.StatBrokenMorale = string.Empty; // Hero back uses 3-column layout, not boxed morale
                 }
             }
         };

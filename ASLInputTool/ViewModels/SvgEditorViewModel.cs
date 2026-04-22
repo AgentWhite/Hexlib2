@@ -49,6 +49,7 @@ public class SvgEditorViewModel : ViewModelBase
     private string _statLeadership = string.Empty;
     private bool _isBackSide;
     private string _statBrokenMorale = string.Empty;
+    private string _statMovementFactor = string.Empty;
 
     /// <summary>
     /// Gets or sets the title of the editor.
@@ -160,6 +161,8 @@ public class SvgEditorViewModel : ViewModelBase
     public bool IsBackSide { get => _isBackSide; set { if (SetProperty(ref _isBackSide, value)) RegenerateSvg(); } }
     /// <summary>Gets or sets the broken morale value for the back side.</summary>
     public string StatBrokenMorale { get => _statBrokenMorale; set { if (SetProperty(ref _statBrokenMorale, value)) RegenerateSvg(); } }
+    /// <summary>Gets or sets the movement factor for informational display.</summary>
+    public string StatMovementFactor { get => _statMovementFactor; set { if (SetProperty(ref _statMovementFactor, value)) RegenerateSvg(); } }
 
     /// <summary>
     /// Gets or sets the command to toggle the cutter tool on the unit images.
@@ -281,11 +284,46 @@ public class SvgEditorViewModel : ViewModelBase
             
             if (IsBackSide)
             {
-                // Boxed Morale in lower right (strictly for leaders currently)
-                if (!string.IsNullOrEmpty(StatBrokenMorale))
+                if (CounterStyle == CounterStyle.VerticalCW || CounterStyle == CounterStyle.VerticalCCW)
                 {
-                    sb.AppendLine($"  <rect x=\"72\" y=\"65\" width=\"34\" height=\"34\" fill=\"none\" stroke=\"black\" stroke-width=\"1.5\" />");
-                    sb.AppendLine($"  <text x=\"89\" y=\"91\" text-anchor=\"middle\" font-size=\"24\" {font} fill=\"black\">{StatBrokenMorale}</text>");
+                    // Hero/Leader back side: Rotated -90 (CCW) around center (60, 60)
+                    sb.AppendLine($"  <g transform=\"rotate(-90, 60, 60)\">");
+                    
+                    if (CounterStyle == CounterStyle.VerticalCW)
+                    {
+                        // Hero back side stats: Firepower-Range-Morale shifted down and right
+                        string heroNumbers = $"{StatFirepower}-{StatRange}-{StatMorale}";
+                        sb.AppendLine($"    <text x=\"42\" y=\"110\" text-anchor=\"middle\" font-size=\"28\" {font} fill=\"black\">{heroNumbers}</text>");
+                        
+                        // Unit Code - shifted right to be closer to numbers
+                        if (!string.IsNullOrEmpty(StatUnitCode))
+                        {
+                            sb.AppendLine($"    <text id=\"unit-code-overlay\" x=\"42\" y=\"82\" text-anchor=\"middle\" font-size=\"16\" {font} fill=\"black\">{StatUnitCode}</text>");
+                        }
+                    }
+                    else
+                    {
+                        // Potential future Leader back side vertical? 
+                    }
+                    
+                    sb.AppendLine("  </g>");
+
+                    // Static "3MF" - Horizontal, Top-Right corner area
+                    if (CounterStyle == CounterStyle.VerticalCW && !string.IsNullOrEmpty(StatMovementFactor))
+                    {
+                        // Repositioned informational text (lowered slightly closer to the stats)
+                        sb.AppendLine($"  <text x=\"115\" y=\"38\" text-anchor=\"end\" font-size=\"20\" {font} fill=\"black\">3MF</text>");
+                    }
+                }
+                
+                // Boxed Morale (Leaders) - Horizontal in bottom right
+                if (!IsInfantry || CounterStyle == CounterStyle.Horizontal || (CounterStyle == CounterStyle.VerticalCCW && !string.IsNullOrEmpty(StatBrokenMorale)))
+                {
+                    if (!string.IsNullOrEmpty(StatBrokenMorale))
+                    {
+                        sb.AppendLine($"  <rect x=\"72\" y=\"65\" width=\"34\" height=\"34\" fill=\"none\" stroke=\"black\" stroke-width=\"1.5\" />");
+                        sb.AppendLine($"  <text x=\"89\" y=\"91\" text-anchor=\"middle\" font-size=\"24\" {font} fill=\"black\">{StatBrokenMorale}</text>");
+                    }
                 }
             }
             else if (CounterStyle == CounterStyle.Horizontal)
@@ -344,13 +382,14 @@ public class SvgEditorViewModel : ViewModelBase
                     ? $"{StatMorale}{(int.TryParse(StatLeadership, out int l) ? (l > 0 ? "+" : "-") + Math.Abs(l) : StatLeadership)}"
                     : $"{StatFirepower}-{StatRange}-{StatMorale}";
 
-                // Positioned on the right side, rotated -90 (CCW)
-                sb.AppendLine($"  <g transform=\"rotate(-90, 105, 60)\">");
-                sb.AppendLine($"    <text x=\"105\" y=\"60\" text-anchor=\"middle\" font-size=\"32\" {font} fill=\"black\">{numbers}</text>");
+                // Positioned on the right side, rotated -90 (CCW) around center (60, 60)
+                // Front side is centered vertically (height-wise) and placed on the right edge
+                sb.AppendLine($"  <g transform=\"rotate(-90, 60, 60)\">");
+                sb.AppendLine($"    <text x=\"60\" y=\"105\" text-anchor=\"middle\" font-size=\"32\" {font} fill=\"black\">{numbers}</text>");
                 if (!string.IsNullOrEmpty(StatUnitCode))
                 {
-                    // Unit code placed to the left (above when horizontal) of the numbers
-                    sb.AppendLine($"    <text id=\"unit-code-overlay\" x=\"105\" y=\"30\" text-anchor=\"middle\" font-size=\"14\" {font} fill=\"black\">{StatUnitCode}</text>");
+                    // Unit code placed to the left of the numbers
+                    sb.AppendLine($"    <text id=\"unit-code-overlay\" x=\"60\" y=\"70\" text-anchor=\"middle\" font-size=\"14\" {font} fill=\"black\">{StatUnitCode}</text>");
                 }
                 sb.AppendLine("  </g>");
             }
