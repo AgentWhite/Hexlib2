@@ -1,24 +1,37 @@
-using ASL;
-using ASL.Core;
-using ASL.Models.Units;
-using ASL.Models.Board;
-using ASL.Models.Scenarios;
-using ASL.Models.Modules;
-using ASL.Models.Equipment;
 using ASL.Infrastructure;
-using ASL.Services;
 using ASL.Models;
-using ASL.Models.Units;
 using ASL.Models.Board;
-using ASL.Models.Scenarios;
-using ASL.Models.Modules;
-using ASL.Models.Equipment;
 using ASL.Models.Components;
+using ASL.Models.Equipment;
+using ASL.Models.Modules;
+using ASL.Models.Scenarios;
+using ASL.Models.Units;
+using ASL.Services;
 using ASLInputTool.ViewModels;
 using Xunit;
 using System.Linq;
 
 namespace ASLInputTool.Tests;
+using ASLInputTool.Infrastructure;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+
+public class MockScenarioRepository : IScenarioRepository
+{
+    public ObservableCollection<Scenario> AllScenarios { get; } = new();
+    public ObservableCollection<Insignia> AllInsignias { get; } = new();
+    public void Initialize(IEnumerable<Scenario> scenarios) { }
+    public void ProcessData(string path) { }
+    public void Add(Scenario s) => AllScenarios.Add(s);
+    public void Remove(Scenario s) => AllScenarios.Remove(s);
+    public void Clear() => AllScenarios.Clear();
+    public Task SaveToDiskAsync(Scenario s, string? n) => Task.CompletedTask;
+    public Task<IEnumerable<Scenario>> ScanAndLoadAsync() => Task.FromResult<IEnumerable<Scenario>>(AllScenarios);
+    public Task DeleteFromDiskAsync(Scenario s) => Task.CompletedTask;
+    public Task LoadInsigniasAsync() => Task.CompletedTask;
+    public Task SaveInsigniaAsync(Insignia i) => Task.CompletedTask;
+}
 
 public class ViewModelTests
 {
@@ -35,7 +48,8 @@ public class ViewModelTests
     public void LeadersViewModel_InitialState_IsCorrect()
     {
         var repository = new ASLInputTool.Infrastructure.UnitRepository();
-        var vm = new LeadersViewModel(repository);
+        var moduleRepo = new ASLInputTool.Infrastructure.ModuleRepository();
+        var vm = new LeadersViewModel(repository, moduleRepo);
         Assert.Equal("Leaders", vm.DisplayName);
         Assert.False(vm.IsAdding);
         Assert.Empty(vm.Items);
@@ -45,7 +59,8 @@ public class ViewModelTests
     public void LeadersViewModel_AddAndCancelCommands_ToggleIsAdding()
     {
         var repository = new ASLInputTool.Infrastructure.UnitRepository();
-        var vm = new LeadersViewModel(repository);
+        var moduleRepo = new ASLInputTool.Infrastructure.ModuleRepository();
+        var vm = new LeadersViewModel(repository, moduleRepo);
         
         vm.AddCommand.Execute(null);
         Assert.True(vm.IsAdding);
@@ -58,12 +73,12 @@ public class ViewModelTests
     public void LeadersViewModel_Save_AddsToCollectionAndResetsView()
     {
         var repository = new ASLInputTool.Infrastructure.UnitRepository();
-        var vm = new LeadersViewModel(repository);
+        var moduleRepo = new ASLInputTool.Infrastructure.ModuleRepository();
+        var vm = new LeadersViewModel(repository, moduleRepo);
         vm.IsAdding = true;
         vm.Name = "Test Leader";
         vm.Morale = "9";
         vm.BrokenMorale = "10";
-        vm.BPV = "20";
         vm.Leadership = "-1";
 
         vm.SaveCommand.Execute(null);
@@ -80,7 +95,8 @@ public class ViewModelTests
     public void SquadsViewModel_Save_AddsToCollection()
     {
         var repository = new ASLInputTool.Infrastructure.UnitRepository();
-        var vm = new SquadsViewModel(repository);
+        var moduleRepo = new ASLInputTool.Infrastructure.ModuleRepository();
+        var vm = new SquadsViewModel(repository, moduleRepo);
         vm.Name = "Test Squad";
         vm.Firepower = "4";
         vm.Range = "6";
@@ -100,12 +116,14 @@ public class ViewModelTests
     public void HeroesViewModel_Save_AddsToCollection()
     {
         var repository = new ASLInputTool.Infrastructure.UnitRepository();
-        var vm = new HeroesViewModel(repository);
+        var moduleRepo = new ASLInputTool.Infrastructure.ModuleRepository();
+        var vm = new HeroesViewModel(repository, moduleRepo);
         vm.Name = "Test Hero";
         vm.Firepower = "1";
         vm.Range = "4";
         vm.Morale = "9";
         vm.BrokenMorale = "10";
+        vm.WoundedRange = "4";
         vm.SelectedNationality = Nationality.German;
 
         vm.SaveCommand.Execute(null);
@@ -120,11 +138,13 @@ public class ViewModelTests
     public void HeroesViewModel_JapaneseHero_BrokenMoraleIsZero()
     {
         var repository = new ASLInputTool.Infrastructure.UnitRepository();
-        var vm = new HeroesViewModel(repository);
+        var moduleRepo = new ASLInputTool.Infrastructure.ModuleRepository();
+        var vm = new HeroesViewModel(repository, moduleRepo);
         vm.Name = "Japanese Hero";
         vm.Firepower = "1";
         vm.Range = "4";
         vm.Morale = "10";
+        vm.WoundedRange = "4";
         vm.SelectedNationality = Nationality.Japanese;
 
         vm.SaveCommand.Execute(null);
@@ -137,7 +157,7 @@ public class ViewModelTests
     [Fact]
     public void ScenariosViewModel_SaveScenario_AddsToCollectionAndResetsView()
     {
-        var repository = new ASLInputTool.Infrastructure.ScenarioRepository();
+        var repository = new MockScenarioRepository();
         var vm = new ScenariosViewModel(repository);
         vm.IsAdding = true;
         vm.Name = "Test Scenario";
@@ -162,7 +182,8 @@ public class ViewModelTests
     public void ViewModelBase_OnPropertyChanged_IsRaised()
     {
         var repository = new ASLInputTool.Infrastructure.UnitRepository();
-        var vm = new LeadersViewModel(repository);
+        var moduleRepo = new ASLInputTool.Infrastructure.ModuleRepository();
+        var vm = new LeadersViewModel(repository, moduleRepo);
         string? changedPropertyName = null;
         vm.PropertyChanged += (s, e) => changedPropertyName = e.PropertyName;
 
