@@ -42,6 +42,13 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="SVG" Width="70" CanUserSort="False">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image Source="{Binding Item.Visual.SvgFront, Converter={StaticResource SvgToImage}}" Height="54" Stretch="Uniform"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTextColumn Header="Name" Binding="{Binding Item.Name}" Width="*" IsReadOnly="True" />
                     <DataGridTextColumn Header="Module" Binding="{Binding Item.Module}" Width="100" IsReadOnly="True" />
                     <DataGridTextColumn Header="Nationality" Binding="{Binding Item.Nationality}" Width="120" IsReadOnly="True" />
