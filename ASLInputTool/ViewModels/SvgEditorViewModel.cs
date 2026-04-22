@@ -47,6 +47,8 @@ public class SvgEditorViewModel : ViewModelBase
     private string _statUnitCode = string.Empty;
     private CounterStyle _counterStyle = CounterStyle.Horizontal;
     private string _statLeadership = string.Empty;
+    private bool _isBackSide;
+    private string _statBrokenMorale = string.Empty;
 
     /// <summary>
     /// Gets or sets the title of the editor.
@@ -154,6 +156,10 @@ public class SvgEditorViewModel : ViewModelBase
     public CounterStyle CounterStyle { get => _counterStyle; set { if (SetProperty(ref _counterStyle, value)) RegenerateSvg(); } }
     /// <summary>Gets or sets the leadership modifier (for Leaders).</summary>
     public string StatLeadership { get => _statLeadership; set { if (SetProperty(ref _statLeadership, value)) RegenerateSvg(); } }
+    /// <summary>Gets or sets a value indicating whether we are editing the back side.</summary>
+    public bool IsBackSide { get => _isBackSide; set { if (SetProperty(ref _isBackSide, value)) RegenerateSvg(); } }
+    /// <summary>Gets or sets the broken morale value for the back side.</summary>
+    public string StatBrokenMorale { get => _statBrokenMorale; set { if (SetProperty(ref _statBrokenMorale, value)) RegenerateSvg(); } }
 
     /// <summary>
     /// Gets or sets the command to toggle the cutter tool on the unit images.
@@ -273,7 +279,16 @@ public class SvgEditorViewModel : ViewModelBase
         {
             const string font = "font-family=\"Arial, sans-serif\" font-weight=\"bold\"";
             
-            if (CounterStyle == CounterStyle.Horizontal)
+            if (IsBackSide)
+            {
+                // Boxed Morale in lower right (strictly for leaders currently)
+                if (!string.IsNullOrEmpty(StatBrokenMorale))
+                {
+                    sb.AppendLine($"  <rect x=\"72\" y=\"65\" width=\"34\" height=\"34\" fill=\"none\" stroke=\"black\" stroke-width=\"1.5\" />");
+                    sb.AppendLine($"  <text x=\"89\" y=\"91\" text-anchor=\"middle\" font-size=\"24\" {font} fill=\"black\">{StatBrokenMorale}</text>");
+                }
+            }
+            else if (CounterStyle == CounterStyle.Horizontal)
             {
                 // Class (Top Right)
                 if (!string.IsNullOrEmpty(StatClass))

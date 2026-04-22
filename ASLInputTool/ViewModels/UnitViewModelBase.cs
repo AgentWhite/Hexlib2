@@ -210,6 +210,7 @@ public abstract class UnitViewModelBase : CrudViewModelBase<Unit>, IInitializeab
         { 
             Title = $"Edit SVG {(isFront ? "Front" : "Back")}",
             SvgContent = isFront ? SvgFront : SvgBack,
+            IsBackSide = !isFront,
             ToggleCutterCommand = ToggleCutterCommand,
             IsCutterActive = IsCutterActive
         };
@@ -220,44 +221,70 @@ public abstract class UnitViewModelBase : CrudViewModelBase<Unit>, IInitializeab
             if (this is SquadsViewModel squadVm)
             {
                 vm.IsInfantry = true;
-                vm.CounterStyle = CounterStyle.Horizontal;
-                // No class letter for Crews
-                vm.StatClass = squadVm.SelectedScale == InfantryScale.Crew ? string.Empty : squadVm.SelectedClass switch
+                if (isFront)
                 {
-                    UnitClass.Elite => "E",
-                    UnitClass.FirstLine => "1",
-                    UnitClass.SecondLine => "2",
-                    UnitClass.Conscript => "C",
-                    UnitClass.Green => "G",
-                    _ => ""
-                };
-                vm.StatFirepower = squadVm.Firepower;
-                vm.StatRange = squadVm.Range;
-                vm.StatMorale = squadVm.Morale;
-                vm.HasAssaultFire = squadVm.HasAssaultFire;
-                vm.HasSprayingFire = squadVm.HasSprayingFire;
-                vm.HasELR = squadVm.HasELR;
-                vm.StatSmoke = squadVm.HasSmokeExponent ? squadVm.SmokePlacementExponent : string.Empty;
-                vm.StatUnitCode = UnitCode ?? string.Empty;
+                    vm.CounterStyle = CounterStyle.Horizontal;
+                    // No class letter for Crews
+                    vm.StatClass = squadVm.SelectedScale == InfantryScale.Crew ? string.Empty : squadVm.SelectedClass switch
+                    {
+                        UnitClass.Elite => "E",
+                        UnitClass.FirstLine => "1",
+                        UnitClass.SecondLine => "2",
+                        UnitClass.Conscript => "C",
+                        UnitClass.Green => "G",
+                        _ => ""
+                    };
+                    vm.StatFirepower = squadVm.Firepower;
+                    vm.StatRange = squadVm.Range;
+                    vm.StatMorale = squadVm.Morale;
+                    vm.HasAssaultFire = squadVm.HasAssaultFire;
+                    vm.HasSprayingFire = squadVm.HasSprayingFire;
+                    vm.HasELR = squadVm.HasELR;
+                    vm.StatSmoke = squadVm.HasSmokeExponent ? squadVm.SmokePlacementExponent : string.Empty;
+                    vm.StatUnitCode = UnitCode ?? string.Empty;
+                }
+                else
+                {
+                    // Squads can also have broken morale on back side in future
+                    vm.StatBrokenMorale = string.Empty; 
+                }
             }
             else if (this is LeadersViewModel leaderVm)
             {
                 vm.IsInfantry = true;
-                vm.CounterStyle = CounterStyle.VerticalCCW;
-                vm.StatClass = string.Empty;
-                vm.StatMorale = leaderVm.Morale;
-                vm.StatLeadership = leaderVm.Leadership;
-                vm.StatUnitCode = UnitCode ?? string.Empty;
+                if (isFront)
+                {
+                    vm.CounterStyle = CounterStyle.VerticalCCW;
+                    vm.StatClass = string.Empty;
+                    vm.StatMorale = leaderVm.Morale;
+                    vm.StatLeadership = leaderVm.Leadership;
+                    vm.StatUnitCode = UnitCode ?? string.Empty;
+                    vm.StatBrokenMorale = string.Empty;
+                }
+                else
+                {
+                    vm.StatBrokenMorale = leaderVm.BrokenMorale;
+                    vm.StatUnitCode = string.Empty;
+                    vm.StatMorale = string.Empty;
+                    vm.StatLeadership = string.Empty;
+                }
             }
             else if (this is HeroesViewModel heroVm)
             {
                 vm.IsInfantry = true;
-                vm.CounterStyle = CounterStyle.VerticalCW;
-                vm.StatClass = string.Empty;
-                vm.StatFirepower = heroVm.Firepower;
-                vm.StatRange = heroVm.Range;
-                vm.StatMorale = heroVm.Morale;
-                vm.StatUnitCode = UnitCode ?? string.Empty;
+                if (isFront)
+                {
+                    vm.CounterStyle = CounterStyle.VerticalCW;
+                    vm.StatClass = string.Empty;
+                    vm.StatFirepower = heroVm.Firepower;
+                    vm.StatRange = heroVm.Range;
+                    vm.StatMorale = heroVm.Morale;
+                    vm.StatUnitCode = UnitCode ?? string.Empty;
+                }
+                else
+                {
+                    vm.StatBrokenMorale = string.Empty;
+                }
             }
         };
 
