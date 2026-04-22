@@ -224,6 +224,7 @@ public abstract class UnitViewModelBase : CrudViewModelBase<Unit>, IInitializeab
                 if (isFront)
                 {
                     vm.CounterStyle = CounterStyle.Horizontal;
+                    vm.IsCrew = squadVm.SelectedScale == InfantryScale.Crew;
                     // No class letter for Crews
                     vm.StatClass = squadVm.SelectedScale == InfantryScale.Crew ? string.Empty : squadVm.SelectedClass switch
                     {
@@ -245,8 +246,11 @@ public abstract class UnitViewModelBase : CrudViewModelBase<Unit>, IInitializeab
                 }
                 else
                 {
-                    // Squads can also have broken morale on back side in future
-                    vm.StatBrokenMorale = string.Empty; 
+                    vm.CounterStyle = CounterStyle.Horizontal;
+                    vm.StatBPV = squadVm.BPV;
+                    vm.StatBrokenMorale = squadVm.BrokenMorale;
+                    vm.StatUnitCode = UnitCode ?? string.Empty;
+                    vm.HasSelfRally = squadVm.CanSelfRally;
                 }
             }
             else if (this is LeadersViewModel leaderVm)

@@ -44,12 +44,15 @@ public class SvgEditorViewModel : ViewModelBase
     private bool _hasELR;
     private string _statSmoke = string.Empty;
     private bool _isInfantry;
+    private bool _isCrew;
     private string _statUnitCode = string.Empty;
     private CounterStyle _counterStyle = CounterStyle.Horizontal;
     private string _statLeadership = string.Empty;
     private bool _isBackSide;
     private string _statBrokenMorale = string.Empty;
     private string _statMovementFactor = string.Empty;
+    private string _statBPV = string.Empty;
+    private bool _hasSelfRally;
 
     /// <summary>
     /// Gets or sets the title of the editor.
@@ -151,6 +154,8 @@ public class SvgEditorViewModel : ViewModelBase
     public string StatSmoke { get => _statSmoke; set { if (SetProperty(ref _statSmoke, value)) RegenerateSvg(); } }
     /// <summary>Gets or sets whether to render infantry overlays.</summary>
     public bool IsInfantry { get => _isInfantry; set { if (SetProperty(ref _isInfantry, value)) RegenerateSvg(); } }
+    /// <summary>Gets or sets whether this unit is a crew (affects layout).</summary>
+    public bool IsCrew { get => _isCrew; set { if (SetProperty(ref _isCrew, value)) RegenerateSvg(); } }
     /// <summary>Gets or sets the unit code (ID) letter in the bottom right.</summary>
     public string StatUnitCode { get => _statUnitCode; set { if (SetProperty(ref _statUnitCode, value)) RegenerateSvg(); } }
     /// <summary>Gets or sets the layout style for the counter.</summary>
@@ -163,6 +168,10 @@ public class SvgEditorViewModel : ViewModelBase
     public string StatBrokenMorale { get => _statBrokenMorale; set { if (SetProperty(ref _statBrokenMorale, value)) RegenerateSvg(); } }
     /// <summary>Gets or sets the movement factor for informational display.</summary>
     public string StatMovementFactor { get => _statMovementFactor; set { if (SetProperty(ref _statMovementFactor, value)) RegenerateSvg(); } }
+    /// <summary>Gets or sets the BPV value for the back side.</summary>
+    public string StatBPV { get => _statBPV; set { if (SetProperty(ref _statBPV, value)) RegenerateSvg(); } }
+    /// <summary>Gets or sets a value indicating whether the unit has Self Rally (boxed morale).</summary>
+    public bool HasSelfRally { get => _hasSelfRally; set { if (SetProperty(ref _hasSelfRally, value)) RegenerateSvg(); } }
 
     /// <summary>
     /// Gets or sets the command to toggle the cutter tool on the unit images.
@@ -316,13 +325,40 @@ public class SvgEditorViewModel : ViewModelBase
                     }
                 }
                 
-                // Boxed Morale (Leaders) - Horizontal in bottom right
-                if (!IsInfantry || CounterStyle == CounterStyle.Horizontal || (CounterStyle == CounterStyle.VerticalCCW && !string.IsNullOrEmpty(StatBrokenMorale)))
+                // Boxed Morale (Leaders or Squads with Self Rally)
+                if (HasSelfRally || !IsInfantry || CounterStyle == CounterStyle.Horizontal || (CounterStyle == CounterStyle.VerticalCCW && !string.IsNullOrEmpty(StatBrokenMorale)))
                 {
                     if (!string.IsNullOrEmpty(StatBrokenMorale))
                     {
-                        sb.AppendLine($"  <rect x=\"72\" y=\"65\" width=\"34\" height=\"34\" fill=\"none\" stroke=\"black\" stroke-width=\"1.5\" />");
-                        sb.AppendLine($"  <text x=\"89\" y=\"91\" text-anchor=\"middle\" font-size=\"24\" {font} fill=\"black\">{StatBrokenMorale}</text>");
+                        // Alignment for Leaders (VerticalCCW) or Squads (Horizontal)
+                        double rectX = CounterStyle == CounterStyle.Horizontal ? 77 : 72;
+                        double rectY = CounterStyle == CounterStyle.Horizontal ? 77 : 65;
+                        double textX = rectX + 17;
+                        double textY = rectY + 26;
+
+                        if (HasSelfRally || CounterStyle == CounterStyle.VerticalCCW)
+                        {
+                            sb.AppendLine($"  <rect x=\"{rectX}\" y=\"{rectY}\" width=\"34\" height=\"34\" fill=\"none\" stroke=\"black\" stroke-width=\"1.5\" />");
+                        }
+                        sb.AppendLine($"    <text x=\"{textX:F1}\" y=\"{textY:F1}\" text-anchor=\"middle\" font-size=\"24\" {font} fill=\"black\">{StatBrokenMorale}</text>");
+                    }
+                }
+
+                // Additional Horizontal MMC back-side stats: BPV and Unit Code
+                if (CounterStyle == CounterStyle.Horizontal)
+                {
+                    if (!string.IsNullOrEmpty(StatBPV))
+                    {
+                        // BPV in top-left
+                        sb.AppendLine($"    <text x=\"15\" y=\"22\" text-anchor=\"middle\" font-size=\"18\" {font} fill=\"black\">{StatBPV}</text>");
+                    }
+
+                    if (!string.IsNullOrEmpty(StatUnitCode))
+                    {
+                        // Unit Code above broken morale
+                        double codeX = 77 + 17;
+                        double codeY = HasSelfRally || !string.IsNullOrEmpty(StatBrokenMorale) ? 68 : 100;
+                        sb.AppendLine($"    <text x=\"{codeX}\" y=\"{codeY}\" text-anchor=\"middle\" font-size=\"16\" {font} fill=\"black\">{StatUnitCode}</text>");
                     }
                 }
             }
@@ -373,8 +409,20 @@ public class SvgEditorViewModel : ViewModelBase
                 if (HasELR)
                     sb.AppendLine($"  <line x1=\"{mX - 8:F1}\" y1=\"{centerY + 4:F1}\" x2=\"{mX + 8:F1}\" y2=\"{centerY + 4:F1}\" stroke=\"black\" stroke-width=\"2\" />");
 
-                // Unit Code (Bottom Right)
-                sb.AppendLine($"  <text id=\"unit-code-overlay\" x=\"114\" y=\"105\" text-anchor=\"end\" font-size=\"16\" {font} fill=\"black\">{StatUnitCode}</text>");
+                // Unit Code
+                if (!string.IsNullOrEmpty(StatUnitCode))
+                {
+                    if (IsCrew)
+                    {
+                        // Crew identity at top center
+                        sb.AppendLine($"  <text id=\"unit-code-overlay\" x=\"60\" y=\"25\" text-anchor=\"middle\" font-size=\"16\" {font} fill=\"black\">{StatUnitCode}</text>");
+                    }
+                    else
+                    {
+                        // Standard squad identity at bottom right
+                        sb.AppendLine($"  <text id=\"unit-code-overlay\" x=\"114\" y=\"105\" text-anchor=\"end\" font-size=\"16\" {font} fill=\"black\">{StatUnitCode}</text>");
+                    }
+                }
             }
             else if (CounterStyle == CounterStyle.VerticalCW || CounterStyle == CounterStyle.VerticalCCW)
             {

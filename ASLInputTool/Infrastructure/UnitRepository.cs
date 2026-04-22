@@ -108,7 +108,7 @@ namespace ASLInputTool.Infrastructure
                 // Group units by their conceptual classification for separate file saving
                 var leaders = moduleUnits.Where(u => u.IsLeader).ToList();
                 var heroes = moduleUnits.Where(u => u.IsHero).ToList();
-                var squads = moduleUnits.Where(u => u.IsSquad).ToList();
+                var squads = moduleUnits.Where(u => u.IsSquad || u.IsHalfSquad || u.IsCrew).ToList();
                 var equipment = moduleUnits.Where(u => u.IsSupportWeapon).ToList();
 
                 await SaveUnitCollectionAsync(leaders, Path.Combine(modulePath, "leaders.asl"), imagesDir, usedImages);
