@@ -24,7 +24,7 @@ public partial class BoardEditorViewModel : ViewModelBase
 {
     private readonly AslBoard _board;
     private readonly IBoardRepository? _repository;
-    private Layout _layout;
+    private Layout _layout = new Layout(Orientation.Pointy, new Point2D(40, 40), new Point2D(0, 0));
     private double _hexSize = 40.0;
     private HexViewModel? _selectedHex;
     private HexEdgeSelection? _selectedEdge;
@@ -50,11 +50,11 @@ public partial class BoardEditorViewModel : ViewModelBase
     private double _losLineX1, _losLineY1, _losLineX2, _losLineY2;
     private bool _isPenDrawing = false;
     private System.Windows.Point? _penStartPoint;
-    private Geometry _penGhostGeometry;
+    private Geometry? _penGhostGeometry;
     private TerrainType _activePenTerrain = TerrainType.Woods;
     private ObservableCollection<TerrainDrawingViewModel> _customTerrainDrawings = new();
     private ObservableCollection<System.Windows.Point> _activePolygonPoints = new();
-    private Geometry _polygonGhostGeometry;
+    private Geometry? _polygonGhostGeometry;
     private bool _isPolygonSnapped = false;
     private System.Windows.Point _polygonSnapPoint;
     private byte[]? _grayscalePixels;
@@ -99,7 +99,7 @@ public partial class BoardEditorViewModel : ViewModelBase
     public bool IsPenDrawing { get => _isPenDrawing; set => SetProperty(ref _isPenDrawing, value); }
 
     /// <summary>Gets or sets the ghost geometry for the pen tool preview.</summary>
-    public Geometry PenGhostGeometry { get => _penGhostGeometry; set => SetProperty(ref _penGhostGeometry, value); }
+    public Geometry? PenGhostGeometry { get => _penGhostGeometry; set => SetProperty(ref _penGhostGeometry, value); }
 
     /// <summary>Gets or sets the active terrain type for the pen tool.</summary>
     public TerrainType ActivePenTerrain { get => _activePenTerrain; set => SetProperty(ref _activePenTerrain, value); }
@@ -114,7 +114,7 @@ public partial class BoardEditorViewModel : ViewModelBase
     public ObservableCollection<System.Windows.Point> ActivePolygonPoints => _activePolygonPoints;
 
     /// <summary>Gets or sets the ghost geometry for the polygon tool preview.</summary>
-    public Geometry PolygonGhostGeometry { get => _polygonGhostGeometry; set => SetProperty(ref _polygonGhostGeometry, value); }
+    public Geometry? PolygonGhostGeometry { get => _polygonGhostGeometry; set => SetProperty(ref _polygonGhostGeometry, value); }
 
     /// <summary>Gets or sets a value indicating whether the polygon tool is currently snapped to the start point.</summary>
     public bool IsPolygonSnapped { get => _isPolygonSnapped; set => SetProperty(ref _isPolygonSnapped, value); }
@@ -392,6 +392,8 @@ public partial class BoardEditorViewModel : ViewModelBase
         SaveCommand = new RelayCommand(OnSave);
         ResetZoomCommand = new RelayCommand(_ => ZoomLevel = 1.0);
         EndRoadCommand = new RelayCommand(_ => EndRoad());
+        ClearHighlightsCommand = new RelayCommand(_ => ClearLos());
+        ResetViewCommand = new RelayCommand(_ => { /* Handled in view */ });
         
         // Pen Tool Commands
         PenRectClickCommand = new RelayCommand<System.Windows.Point>(HandlePenRectClick);

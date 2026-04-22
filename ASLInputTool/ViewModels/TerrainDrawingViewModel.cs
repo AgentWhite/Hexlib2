@@ -9,9 +9,9 @@ namespace ASLInputTool.ViewModels;
 public class TerrainDrawingViewModel : ViewModelBase
 {
     private TerrainType _terrainType;
-    private Geometry _geometry;
+    private Geometry _geometry = Geometry.Empty;
     private bool _isSelected;
-    private Brush _fill;
+    private Brush _fill = Brushes.Transparent;
 
     /// <summary>
     /// Gets or sets a value indicating whether this drawing is currently selected.

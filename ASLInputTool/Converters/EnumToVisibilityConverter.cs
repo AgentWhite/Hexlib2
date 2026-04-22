@@ -12,13 +12,13 @@ namespace ASLInputTool.Converters;
 public class EnumToVisibilityConverter : IValueConverter
 {
     /// <inheritdoc />
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
     {
         if (value == null || parameter == null)
             return Visibility.Collapsed;
 
-        string checkValue = value.ToString();
-        string targetValue = parameter.ToString();
+        string checkValue = value.ToString() ?? string.Empty;
+        string targetValue = parameter.ToString() ?? string.Empty;
 
         var targets = targetValue.Split('|');
         bool match = targets.Any(t => checkValue.Equals(t.Trim(), StringComparison.OrdinalIgnoreCase));

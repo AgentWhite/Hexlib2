@@ -209,9 +209,9 @@ public partial class BoardEditorViewModel
         IsPolygonSnapped = false;
     }
 
-    private void OnSelectDrawing(TerrainDrawingViewModel drawing)
+    private void OnSelectDrawing(TerrainDrawingViewModel? drawing)
     {
-        if (CurrentTool != ToolMode.PenSelect) return;
+        if (drawing == null || CurrentTool != ToolMode.PenSelect) return;
 
         bool wasSelected = drawing.IsSelected;
         
@@ -252,8 +252,9 @@ public partial class BoardEditorViewModel
         }
     }
 
-    private void HandleLosToolClick(HexViewModel hex)
+    private void HandleLosToolClick(HexViewModel? hex)
     {
+        if (hex == null) return;
         if (!_isLosPlacing)
         {
             // First click: Start placing
@@ -282,6 +283,7 @@ public partial class BoardEditorViewModel
         LosLineY2 = _losEndHex.CenterY;
 
         // Calculate traversed hexes
+        if (_losStartHex == null || _losEndHex == null) return;
         var path = HexMath.GetLine(_losStartHex.Location, _losEndHex.Location);
         
         // Highlight hexes
@@ -291,8 +293,9 @@ public partial class BoardEditorViewModel
         }
     }
 
-    private void OnHexHover(HexViewModel hex)
+    private void OnHexHover(HexViewModel? hex)
     {
+        if (hex == null) return;
         if (CurrentTool == ToolMode.LosTest && _isLosPlacing && _losStartHex != null)
         {
             // Update ghost line
