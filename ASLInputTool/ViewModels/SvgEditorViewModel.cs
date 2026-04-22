@@ -9,6 +9,19 @@ using ASLInputTool.Infrastructure;
 namespace ASLInputTool.ViewModels;
 
 /// <summary>
+/// Defines the layout style for the SVG counter overlay.
+/// </summary>
+public enum CounterStyle
+{
+    /// <summary>Standard horizontal layout (Squads).</summary>
+    Horizontal,
+    /// <summary>Vertical layout rotated -90 degrees (Leaders).</summary>
+    VerticalCCW,
+    /// <summary>Vertical layout rotated +90 degrees (Heroes).</summary>
+    VerticalCW
+}
+
+/// <summary>
 /// ViewModel for the SVG Editor Dialog.
 /// Provides real-time SVG generation, image pasting, and color sampling via pipette.
 /// </summary>
@@ -31,6 +44,9 @@ public class SvgEditorViewModel : ViewModelBase
     private bool _hasELR;
     private string _statSmoke = string.Empty;
     private bool _isInfantry;
+    private string _statUnitCode = string.Empty;
+    private CounterStyle _counterStyle = CounterStyle.Horizontal;
+    private string _statLeadership = string.Empty;
 
     /// <summary>
     /// Gets or sets the title of the editor.
@@ -132,6 +148,12 @@ public class SvgEditorViewModel : ViewModelBase
     public string StatSmoke { get => _statSmoke; set { if (SetProperty(ref _statSmoke, value)) RegenerateSvg(); } }
     /// <summary>Gets or sets whether to render infantry overlays.</summary>
     public bool IsInfantry { get => _isInfantry; set { if (SetProperty(ref _isInfantry, value)) RegenerateSvg(); } }
+    /// <summary>Gets or sets the unit code (ID) letter in the bottom right.</summary>
+    public string StatUnitCode { get => _statUnitCode; set { if (SetProperty(ref _statUnitCode, value)) RegenerateSvg(); } }
+    /// <summary>Gets or sets the layout style for the counter.</summary>
+    public CounterStyle CounterStyle { get => _counterStyle; set { if (SetProperty(ref _counterStyle, value)) RegenerateSvg(); } }
+    /// <summary>Gets or sets the leadership modifier (for Leaders).</summary>
+    public string StatLeadership { get => _statLeadership; set { if (SetProperty(ref _statLeadership, value)) RegenerateSvg(); } }
 
     /// <summary>
     /// Gets or sets the command to toggle the cutter tool on the unit images.
@@ -251,50 +273,72 @@ public class SvgEditorViewModel : ViewModelBase
         {
             const string font = "font-family=\"Arial, sans-serif\" font-weight=\"bold\"";
             
-            // Class (Top Right)
-            if (!string.IsNullOrEmpty(StatClass))
+            if (CounterStyle == CounterStyle.Horizontal)
             {
-                sb.AppendLine($"  <text x=\"110\" y=\"28\" text-anchor=\"end\" font-size=\"24\" {font} fill=\"black\">{StatClass}</text>");
+                // Class (Top Right)
+                if (!string.IsNullOrEmpty(StatClass))
+                {
+                    sb.AppendLine($"  <text x=\"110\" y=\"28\" text-anchor=\"end\" font-size=\"24\" {font} fill=\"black\">{StatClass}</text>");
+                }
+
+                // Stats row (Bottom Center: F-R-M)
+                double centerY = 105;
+                double dashWidth = 8;
+                double digitWidth = 18;
+                double totalWidth = (digitWidth * 3) + (dashWidth * 2);
+                double startX = (120 - totalWidth) / 2;
+
+                // Firepower
+                double fpX = startX + (digitWidth / 2);
+                sb.AppendLine($"  <text x=\"{fpX:F1}\" y=\"{centerY:F1}\" text-anchor=\"middle\" font-size=\"24\" {font} fill=\"black\">{StatFirepower}</text>");
+                if (HasAssaultFire) 
+                    sb.AppendLine($"  <line x1=\"{fpX - 8:F1}\" y1=\"{centerY + 4:F1}\" x2=\"{fpX + 8:F1}\" y2=\"{centerY + 4:F1}\" stroke=\"black\" stroke-width=\"2\" />");
+
+                // Smoke Exponent (Superscript next to Firepower)
+                if (!string.IsNullOrEmpty(StatSmoke))
+                {
+                    sb.AppendLine($"  <text x=\"{fpX + 9:F1}\" y=\"{centerY - 12:F1}\" text-anchor=\"start\" font-size=\"14\" {font} fill=\"black\">{StatSmoke}</text>");
+                }
+
+                // Dash 1
+                double d1X = startX + digitWidth + (dashWidth / 2);
+                sb.AppendLine($"  <text x=\"{d1X:F1}\" y=\"{centerY:F1}\" text-anchor=\"middle\" font-size=\"24\" {font} fill=\"black\">-</text>");
+
+                // Range
+                double rX = startX + digitWidth + dashWidth + (digitWidth / 2);
+                sb.AppendLine($"  <text x=\"{rX:F1}\" y=\"{centerY:F1}\" text-anchor=\"middle\" font-size=\"24\" {font} fill=\"black\">{StatRange}</text>");
+                if (HasSprayingFire)
+                    sb.AppendLine($"  <line x1=\"{rX - 8:F1}\" y1=\"{centerY + 4:F1}\" x2=\"{rX + 8:F1}\" y2=\"{centerY + 4:F1}\" stroke=\"black\" stroke-width=\"2\" />");
+
+                // Dash 2
+                double d2X = startX + (digitWidth * 2) + dashWidth + (dashWidth / 2);
+                sb.AppendLine($"  <text x=\"{d2X:F1}\" y=\"{centerY:F1}\" text-anchor=\"middle\" font-size=\"24\" {font} fill=\"black\">-</text>");
+
+                // Morale
+                double mX = startX + (digitWidth * 2) + (dashWidth * 2) + (digitWidth / 2);
+                sb.AppendLine($"  <text x=\"{mX:F1}\" y=\"{centerY:F1}\" text-anchor=\"middle\" font-size=\"24\" {font} fill=\"black\">{StatMorale}</text>");
+                if (HasELR)
+                    sb.AppendLine($"  <line x1=\"{mX - 8:F1}\" y1=\"{centerY + 4:F1}\" x2=\"{mX + 8:F1}\" y2=\"{centerY + 4:F1}\" stroke=\"black\" stroke-width=\"2\" />");
+
+                // Unit Code (Bottom Right)
+                sb.AppendLine($"  <text id=\"unit-code-overlay\" x=\"114\" y=\"105\" text-anchor=\"end\" font-size=\"16\" {font} fill=\"black\">{StatUnitCode}</text>");
             }
-
-            // Stats row (Bottom Center: F-R-M)
-            double centerY = 105;
-            double dashWidth = 8;
-            double digitWidth = 18;
-            double totalWidth = (digitWidth * 3) + (dashWidth * 2);
-            double startX = (120 - totalWidth) / 2;
-
-            // Firepower
-            double fpX = startX + (digitWidth / 2);
-            sb.AppendLine($"  <text x=\"{fpX:F1}\" y=\"{centerY:F1}\" text-anchor=\"middle\" font-size=\"24\" {font} fill=\"black\">{StatFirepower}</text>");
-            if (HasAssaultFire) 
-                sb.AppendLine($"  <line x1=\"{fpX - 8:F1}\" y1=\"{centerY + 4:F1}\" x2=\"{fpX + 8:F1}\" y2=\"{centerY + 4:F1}\" stroke=\"black\" stroke-width=\"2\" />");
-
-            // Smoke Exponent (Superscript next to Firepower)
-            if (!string.IsNullOrEmpty(StatSmoke))
+            else if (CounterStyle == CounterStyle.VerticalCW || CounterStyle == CounterStyle.VerticalCCW)
             {
-                sb.AppendLine($"  <text x=\"{fpX + 9:F1}\" y=\"{centerY - 12:F1}\" text-anchor=\"start\" font-size=\"14\" {font} fill=\"black\">{StatSmoke}</text>");
+                string numbers = CounterStyle == CounterStyle.VerticalCCW && !string.IsNullOrEmpty(StatLeadership)
+                    ? $"{StatMorale}{(int.TryParse(StatLeadership, out int l) ? (l > 0 ? "+" : "-") + Math.Abs(l) : StatLeadership)}"
+                    : $"{StatFirepower}-{StatRange}-{StatMorale}";
+
+                // Positioned on the right side, rotated -90 (CCW)
+                sb.AppendLine($"  <g transform=\"rotate(-90, 105, 60)\">");
+                sb.AppendLine($"    <text x=\"105\" y=\"60\" text-anchor=\"middle\" font-size=\"32\" {font} fill=\"black\">{numbers}</text>");
+                if (!string.IsNullOrEmpty(StatUnitCode))
+                {
+                    // Unit code placed to the left (above when horizontal) of the numbers
+                    sb.AppendLine($"    <text id=\"unit-code-overlay\" x=\"105\" y=\"30\" text-anchor=\"middle\" font-size=\"14\" {font} fill=\"black\">{StatUnitCode}</text>");
+                }
+                sb.AppendLine("  </g>");
             }
-
-            // Dash 1
-            double d1X = startX + digitWidth + (dashWidth / 2);
-            sb.AppendLine($"  <text x=\"{d1X:F1}\" y=\"{centerY:F1}\" text-anchor=\"middle\" font-size=\"24\" {font} fill=\"black\">-</text>");
-
-            // Range
-            double rX = startX + digitWidth + dashWidth + (digitWidth / 2);
-            sb.AppendLine($"  <text x=\"{rX:F1}\" y=\"{centerY:F1}\" text-anchor=\"middle\" font-size=\"24\" {font} fill=\"black\">{StatRange}</text>");
-            if (HasSprayingFire)
-                sb.AppendLine($"  <line x1=\"{rX - 8:F1}\" y1=\"{centerY + 4:F1}\" x2=\"{rX + 8:F1}\" y2=\"{centerY + 4:F1}\" stroke=\"black\" stroke-width=\"2\" />");
-
-            // Dash 2
-            double d2X = startX + (digitWidth * 2) + dashWidth + (dashWidth / 2);
-            sb.AppendLine($"  <text x=\"{d2X:F1}\" y=\"{centerY:F1}\" text-anchor=\"middle\" font-size=\"24\" {font} fill=\"black\">-</text>");
-
-            // Morale
-            double mX = startX + (digitWidth * 2) + (dashWidth * 2) + (digitWidth / 2);
-            sb.AppendLine($"  <text x=\"{mX:F1}\" y=\"{centerY:F1}\" text-anchor=\"middle\" font-size=\"24\" {font} fill=\"black\">{StatMorale}</text>");
-            if (HasELR)
-                sb.AppendLine($"  <line x1=\"{mX - 8:F1}\" y1=\"{centerY + 4:F1}\" x2=\"{mX + 8:F1}\" y2=\"{centerY + 4:F1}\" stroke=\"black\" stroke-width=\"2\" />");
         }
 
         sb.AppendLine("</svg>");

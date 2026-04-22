@@ -21,6 +21,13 @@ public class Unit : ICounter
     public string Id => Name;
 
     /// <summary>
+    /// Gets or sets a transient unit code used for counter identification (e.g., 'A', 'B').
+    /// This property is primarily for testing and is not persisted.
+    /// </summary>
+    [JsonIgnore]
+    public string? UnitCode { get; set; }
+
+    /// <summary>
     /// Gets or sets the name of the unit.
     /// </summary>
     public string Name { get; set; } = string.Empty;

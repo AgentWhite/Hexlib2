@@ -24,4 +24,33 @@ public class UnitVisual
     /// Gets or sets the SVG content or reference for the back of the unit's counter.
     /// </summary>
     public string? SvgBack { get; set; }
+
+    /// <summary>
+    /// Updates the Unit Code text element within the front SVG content.
+    /// Expects a text element with id="unit-code-overlay".
+    /// </summary>
+    /// <param name="code">The code to inject.</param>
+    public void SetUnitCode(string code)
+    {
+        if (string.IsNullOrEmpty(SvgFront)) return;
+
+        // Targeted replacement for the tagged unit code element
+        // Look for the id and the subsequent > closing the open tag
+        string targetId = "id=\"unit-code-overlay\"";
+        int idIndex = SvgFront.IndexOf(targetId);
+        if (idIndex == -1) return;
+
+        int closeTagIndex = SvgFront.IndexOf(">", idIndex);
+        if (closeTagIndex == -1) return;
+
+        int endTextIndex = SvgFront.IndexOf("</text>", closeTagIndex);
+        if (endTextIndex == -1) return;
+
+        // Replace the content between > and </text>
+        string newSvg = SvgFront.Substring(0, closeTagIndex + 1) + 
+                        code + 
+                        SvgFront.Substring(endTextIndex);
+        
+        SvgFront = newSvg;
+    }
 }

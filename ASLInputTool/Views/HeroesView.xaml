@@ -62,8 +62,11 @@
                 <controls:UnitImagePickerControl Grid.Column="0" />
 
                 <StackPanel Grid.Column="1">
-                    <Label Content="Hero Name" FontWeight="SemiBold"/>
+                    <Label Content="Unit Identity / Name" FontWeight="SemiBold"/>
                     <TextBox Margin="0,0,0,10" Tag="e.g., Sgt. Rock" Text="{Binding Name, ValidatesOnNotifyDataErrors=True}" LostFocus="OnTextBoxLostFocus"/>
+
+                    <Label Content="Unit Code (Testing Only)" FontWeight="SemiBold" Foreground="#CC0000"/>
+                    <TextBox Margin="0,0,0,10" Tag="e.g., A" Text="{Binding UnitCode}" LostFocus="OnTextBoxLostFocus" BorderBrush="#CC0000" Background="#FFF8F8"/>
 
                     <Label Content="Nationality" FontWeight="SemiBold"/>
                     <ComboBox Margin="0,0,0,10" Padding="5"

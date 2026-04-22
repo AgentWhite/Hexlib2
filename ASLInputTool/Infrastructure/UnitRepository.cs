@@ -13,6 +13,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Threading;
 using System;
 
 namespace ASLInputTool.Infrastructure
@@ -36,6 +37,8 @@ namespace ASLInputTool.Infrastructure
                 Converters = { new JsonStringEnumConverter() }
             };
         }
+
+        private readonly SemaphoreSlim _saveSemaphore = new(1, 1);
 
         /// <inheritdoc />
         public ObservableCollection<Unit> AllUnits { get; } = new();
@@ -95,24 +98,33 @@ namespace ASLInputTool.Infrastructure
             string imagesDir = Path.Combine(modulePath, "images");
             if (!Directory.Exists(imagesDir)) Directory.CreateDirectory(imagesDir);
 
-            var moduleUnits = AllUnits.Where(u => u.Module == moduleType).ToList();
-            HashSet<string> usedImages = new(StringComparer.OrdinalIgnoreCase);
-
-            // Group units by their conceptual classification for separate file saving
-            var leaders = moduleUnits.Where(u => u.IsLeader).ToList();
-            var heroes = moduleUnits.Where(u => u.IsHero).ToList();
-            var squads = moduleUnits.Where(u => u.IsSquad).ToList();
-            var equipment = moduleUnits.Where(u => u.IsSupportWeapon).ToList();
-
-            await SaveUnitCollectionAsync(leaders, Path.Combine(modulePath, "leaders.asl"), imagesDir, usedImages);
-            await SaveUnitCollectionAsync(heroes, Path.Combine(modulePath, "heroes.asl"), imagesDir, usedImages);
-            await SaveUnitCollectionAsync(squads, Path.Combine(modulePath, "squads.asl"), imagesDir, usedImages);
-            await SaveUnitCollectionAsync(equipment, Path.Combine(modulePath, "equipment.asl"), imagesDir, usedImages);
-
-            // Restore absolute paths in memory for all units in this module
-            foreach (var unit in moduleUnits)
+            // Synchronize save operations to prevent IOException (file in use)
+            await _saveSemaphore.WaitAsync();
+            try
             {
-                FixUnitImagePaths(unit, modulePath);
+                var moduleUnits = AllUnits.Where(u => u.Module == moduleType).ToList();
+                HashSet<string> usedImages = new(StringComparer.OrdinalIgnoreCase);
+
+                // Group units by their conceptual classification for separate file saving
+                var leaders = moduleUnits.Where(u => u.IsLeader).ToList();
+                var heroes = moduleUnits.Where(u => u.IsHero).ToList();
+                var squads = moduleUnits.Where(u => u.IsSquad).ToList();
+                var equipment = moduleUnits.Where(u => u.IsSupportWeapon).ToList();
+
+                await SaveUnitCollectionAsync(leaders, Path.Combine(modulePath, "leaders.asl"), imagesDir, usedImages);
+                await SaveUnitCollectionAsync(heroes, Path.Combine(modulePath, "heroes.asl"), imagesDir, usedImages);
+                await SaveUnitCollectionAsync(squads, Path.Combine(modulePath, "squads.asl"), imagesDir, usedImages);
+                await SaveUnitCollectionAsync(equipment, Path.Combine(modulePath, "equipment.asl"), imagesDir, usedImages);
+
+                // Restore absolute paths in memory for all units in this module
+                foreach (var unit in moduleUnits)
+                {
+                    FixUnitImagePaths(unit, modulePath);
+                }
+            }
+            finally
+            {
+                _saveSemaphore.Release();
             }
 
             // Images cleanup is handled by module saving or could be triggered here if safe.

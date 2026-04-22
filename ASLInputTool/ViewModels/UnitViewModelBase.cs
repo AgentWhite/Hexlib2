@@ -15,6 +15,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Media;
 using ASLInputTool.Infrastructure;
+using System.IO;
 
 namespace ASLInputTool.ViewModels;
 
@@ -36,6 +37,7 @@ public abstract class UnitViewModelBase : CrudViewModelBase<Unit>, IInitializeab
     private bool _isCutterActive;
     private Geometry? _cutterGhostGeometry;
     private string? _activeCutterSide;
+    private string? _unitCode;
     private readonly ObservableCollection<Point> _activePolygonPoints = new();
 
     /// <summary>
@@ -141,6 +143,29 @@ public abstract class UnitViewModelBase : CrudViewModelBase<Unit>, IInitializeab
     public Geometry? CutterGhostGeometry { get => _cutterGhostGeometry; set => SetProperty(ref _cutterGhostGeometry, value); }
 
     /// <summary>
+    /// Gets or sets a transient unit code (ID) primarily for visual testing.
+    /// Updating this property immediately injects the code into the SVG counter.
+    /// </summary>
+    public string? UnitCode 
+    { 
+        get => _unitCode; 
+        set 
+        { 
+            if (SetProperty(ref _unitCode, value))
+            {
+                // Real-time injection into the front SVG
+                if (!string.IsNullOrEmpty(SvgFront))
+                {
+                    // Create a temporary UnitVisual to perform the replacement logic
+                    var tempVisual = new UnitVisual { SvgFront = SvgFront };
+                    tempVisual.SetUnitCode(value ?? string.Empty);
+                    SvgFront = tempVisual.SvgFront;
+                }
+            }
+        } 
+    }
+
+    /// <summary>
     /// Gets the collection of points for the active cutting polygon.
     /// </summary>
     public ObservableCollection<Point> ActivePolygonPoints => _activePolygonPoints;
@@ -189,13 +214,15 @@ public abstract class UnitViewModelBase : CrudViewModelBase<Unit>, IInitializeab
             IsCutterActive = IsCutterActive
         };
 
-        // Sync Infantry stats if this is a Squads screen
+        // Sync Infantry stats and Layout style
         Action syncStats = () =>
         {
             if (this is SquadsViewModel squadVm)
             {
                 vm.IsInfantry = true;
-                vm.StatClass = squadVm.SelectedClass switch
+                vm.CounterStyle = CounterStyle.Horizontal;
+                // No class letter for Crews
+                vm.StatClass = squadVm.SelectedScale == InfantryScale.Crew ? string.Empty : squadVm.SelectedClass switch
                 {
                     UnitClass.Elite => "E",
                     UnitClass.FirstLine => "1",
@@ -211,6 +238,26 @@ public abstract class UnitViewModelBase : CrudViewModelBase<Unit>, IInitializeab
                 vm.HasSprayingFire = squadVm.HasSprayingFire;
                 vm.HasELR = squadVm.HasELR;
                 vm.StatSmoke = squadVm.HasSmokeExponent ? squadVm.SmokePlacementExponent : string.Empty;
+                vm.StatUnitCode = UnitCode ?? string.Empty;
+            }
+            else if (this is LeadersViewModel leaderVm)
+            {
+                vm.IsInfantry = true;
+                vm.CounterStyle = CounterStyle.VerticalCCW;
+                vm.StatClass = string.Empty;
+                vm.StatMorale = leaderVm.Morale;
+                vm.StatLeadership = leaderVm.Leadership;
+                vm.StatUnitCode = UnitCode ?? string.Empty;
+            }
+            else if (this is HeroesViewModel heroVm)
+            {
+                vm.IsInfantry = true;
+                vm.CounterStyle = CounterStyle.VerticalCW;
+                vm.StatClass = string.Empty;
+                vm.StatFirepower = heroVm.Firepower;
+                vm.StatRange = heroVm.Range;
+                vm.StatMorale = heroVm.Morale;
+                vm.StatUnitCode = UnitCode ?? string.Empty;
             }
         };
 
@@ -336,10 +383,23 @@ public abstract class UnitViewModelBase : CrudViewModelBase<Unit>, IInitializeab
     /// </summary>
     protected async void TriggerDiskSave(ASL.Models.Modules.Module moduleType)
     {
-        var module = _moduleRepository.AllModules.FirstOrDefault(m => m.Module == moduleType);
-        if (module != null)
+        try
         {
-            await Repository.SaveUnitsForModuleAsync(moduleType, module.FullName);
+            var module = _moduleRepository.AllModules.FirstOrDefault(m => m.Module == moduleType);
+            if (module != null)
+            {
+                await Repository.SaveUnitsForModuleAsync(moduleType, module.FullName);
+            }
+        }
+        catch (Exception ex)
+        {
+            // Fail gracefully to prevent UI thread crash
+            try
+            {
+                string logPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "crash_log.txt");
+                File.AppendAllText(logPath, $"\n--- Background Save Error {DateTime.Now} ---\n{ex.Message}\n{ex.StackTrace}\n");
+            }
+            catch { /* If even logging fails, we must stay silent to avoid crashing */ }
         }
     }
 }
