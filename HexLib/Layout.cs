@@ -7,10 +7,19 @@ namespace HexLib;
 /// </summary>
 public class Layout
 {
+    /// <summary>Gets the orientation of the hexes in the layout.</summary>
     public Orientation Orientation { get; }
+    /// <summary>Gets the size of the hexes (radius in X and Y).</summary>
     public Point2D Size { get; }
+    /// <summary>Gets the pixel origin of the (0,0) hex.</summary>
     public Point2D Origin { get; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Layout"/> class.
+    /// </summary>
+    /// <param name="orientation">The layout orientation.</param>
+    /// <param name="size">The hex size.</param>
+    /// <param name="origin">The pixel origin.</param>
     public Layout(Orientation orientation, Point2D size, Point2D origin)
     {
         Orientation = orientation;

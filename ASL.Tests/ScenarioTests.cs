@@ -8,11 +8,6 @@ using ASL.Models.Equipment;
 using ASL.Infrastructure;
 using ASL.Services;
 using ASL.Models;
-using ASL.Models.Units;
-using ASL.Models.Board;
-using ASL.Models.Scenarios;
-using ASL.Models.Modules;
-using ASL.Models.Equipment;
 using Xunit;
 
 using ASL.Factories.Infrastructure;

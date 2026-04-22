@@ -2,9 +2,6 @@ using ASL.Models.Equipment;
 using ASL.Core;
 using ASL.Models.Units;
 using System.Text.Json.Serialization;
-using ASL.Core;
-using ASL.Models.Units;
-using ASL.Models.Equipment;
 
 namespace ASL.Models.Components;
 

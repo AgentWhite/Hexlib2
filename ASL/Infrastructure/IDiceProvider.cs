@@ -22,6 +22,7 @@ public interface IDiceProvider
     /// Roll a number of dice, mostly used for random selection.
     /// </summary>
     /// <param name="count">The number of dice to be rolled.</param>
-    /// <returns></returns>
+    /// <param name="description">An optional message describing the purpose of the roll.</param>
+    /// <returns>A collection of individual dice results.</returns>
     IEnumerable<int> RollMultiple(int count, string? description = null);
 }

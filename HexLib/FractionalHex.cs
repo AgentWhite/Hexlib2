@@ -6,10 +6,19 @@ namespace HexLib;
 /// </summary>
 public struct FractionalHex
 {
+    /// <summary>Gets the Q (axial column) component.</summary>
     public double Q { get; }
+    /// <summary>Gets the R (axial row) component.</summary>
     public double R { get; }
+    /// <summary>Gets the S (derived third axial) component.</summary>
     public double S { get; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FractionalHex"/> struct.
+    /// </summary>
+    /// <param name="q">The Q coordinate.</param>
+    /// <param name="r">The R coordinate.</param>
+    /// <param name="s">The S coordinate.</param>
     public FractionalHex(double q, double r, double s)
     {
         Q = q;
