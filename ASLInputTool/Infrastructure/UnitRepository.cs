@@ -26,6 +26,9 @@ namespace ASLInputTool.Infrastructure
     {
         private readonly JsonSerializerOptions _jsonOptions;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UnitRepository"/> class.
+        /// </summary>
         public UnitRepository()
         {
             _jsonOptions = new JsonSerializerOptions

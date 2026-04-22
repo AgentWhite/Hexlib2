@@ -18,6 +18,9 @@ public class ModuleRepository : IModuleRepository
 {
     private readonly JsonSerializerOptions _jsonOptions;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ModuleRepository"/> class.
+    /// </summary>
     public ModuleRepository()
     {
         _jsonOptions = new JsonSerializerOptions

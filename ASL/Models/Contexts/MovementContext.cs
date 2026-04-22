@@ -3,10 +3,16 @@ using ASL.Models.Board;
 
 namespace ASL.Models.Contexts;
 
+/// <summary>
+/// Represents the context for a unit movement action.
+/// </summary>
 public class MovementContext
 {
+    /// <summary>Gets or sets the unit currently performing movement.</summary>
     public Unit MovingUnit { get; set; }
+    /// <summary>Gets or sets the starting location of the movement.</summary>
     public Location Origin { get; set; }
+    /// <summary>Gets or sets the target location of the movement.</summary>
     public Location Destination { get; set; }
     /// <summary>
     /// The hexside being passed if any. 

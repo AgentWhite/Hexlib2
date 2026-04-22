@@ -86,9 +86,13 @@ public partial class BoardEditorViewModel : ViewModelBase
 
     /// <summary>Gets a value indicating whether an LOS line is currently being tested.</summary>
     public bool IsLosLineVisible { get => _isLosLineVisible; set => SetProperty(ref _isLosLineVisible, value); }
+    /// <summary>Gets or sets the X1 coordinate of the LOS test line.</summary>
     public double LosLineX1 { get => _losLineX1; set => SetProperty(ref _losLineX1, value); }
+    /// <summary>Gets or sets the Y1 coordinate of the LOS test line.</summary>
     public double LosLineY1 { get => _losLineY1; set => SetProperty(ref _losLineY1, value); }
+    /// <summary>Gets or sets the X2 coordinate of the LOS test line.</summary>
     public double LosLineX2 { get => _losLineX2; set => SetProperty(ref _losLineX2, value); }
+    /// <summary>Gets or sets the Y2 coordinate of the LOS test line.</summary>
     public double LosLineY2 { get => _losLineY2; set => SetProperty(ref _losLineY2, value); }
 
     /// <summary>Gets a value indicating whether a pen drawing is in progress.</summary>
@@ -134,6 +138,7 @@ public partial class BoardEditorViewModel : ViewModelBase
     /// <summary>Gets the collection of hexes for rendering.</summary>
     public ObservableCollection<HexViewModel> Hexes => _hexes;
 
+    /// <summary>Gets or sets the display size (circumradius) of the hexes.</summary>
     public double HexSize
     {
         get => _hexSize;
@@ -314,17 +319,29 @@ public partial class BoardEditorViewModel : ViewModelBase
 
     /// <summary>Command to paint a hex.</summary>
     public ICommand PaintHexCommand { get; }
+    /// <summary>Command to clear all map highlights.</summary>
     public ICommand ClearHighlightsCommand { get; }
+    /// <summary>Command to reset the view transformation.</summary>
     public ICommand ResetViewCommand { get; }
+    /// <summary>Command called when the canvas is clicked with the LOS tool.</summary>
     public ICommand HandleLosToolClickCommand { get; }
+    /// <summary>Command called when the canvas is clicked with the Pen/Rectangle tool.</summary>
     public ICommand PenRectClickCommand { get; }
+    /// <summary>Command called when the mouse hovers over the canvas with the Pen/Rectangle tool.</summary>
     public ICommand PenRectHoverCommand { get; }
+    /// <summary>Command called when the canvas is clicked with the Polygon tool.</summary>
     public ICommand PenPolygonClickCommand { get; }
+    /// <summary>Command called when the mouse hovers over the canvas with the Polygon tool.</summary>
     public ICommand PenPolygonHoverCommand { get; }
+    /// <summary>Command to select a custom terrain drawing.</summary>
     public ICommand SelectDrawingCommand { get; }
+    /// <summary>Command to delete the currently selected custom terrain drawing.</summary>
     public ICommand DeleteSelectedDrawingCommand { get; }
+    /// <summary>Command to finalize (close) the current polygon drawing.</summary>
     public ICommand ClosePolygonCommand { get; }
+    /// <summary>Command called when the canvas is clicked with the Magnetic Pen tool.</summary>
     public ICommand PenMagneticPolygonClickCommand { get; }
+    /// <summary>Command called when the mouse hovers over the canvas with the Magnetic Pen tool.</summary>
     public ICommand PenMagneticPolygonHoverCommand { get; }
 
     /// <summary>Command to terminate the current road stringing.</summary>

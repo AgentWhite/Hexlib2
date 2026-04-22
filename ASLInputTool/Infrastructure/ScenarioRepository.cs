@@ -25,6 +25,9 @@ public class ScenarioRepository : IScenarioRepository
 {
     private readonly JsonSerializerOptions _jsonOptions;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ScenarioRepository"/> class.
+    /// </summary>
     public ScenarioRepository()
     {
         _jsonOptions = new JsonSerializerOptions

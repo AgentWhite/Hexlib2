@@ -61,6 +61,12 @@ public class TerrainDrawingViewModel : ViewModelBase
         };
     }
 
+    /// <summary>
+    /// Creates a ViewModel from a DTO.
+    /// </summary>
+    /// <param name="dto">The terrain drawing DTO.</param>
+    /// <param name="fill">The fill brush to apply.</param>
+    /// <returns>A new <see cref="TerrainDrawingViewModel"/> instance.</returns>
     public static TerrainDrawingViewModel FromDto(ASL.Persistence.TerrainDrawingDto dto, Brush fill)
     {
         // SVG path syntax expects ' ' or ',' as delimiters. 

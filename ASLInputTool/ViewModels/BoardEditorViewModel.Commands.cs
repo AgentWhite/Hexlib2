@@ -544,8 +544,10 @@ public partial class BoardEditorViewModel
     }
 
     private ICommand? _clearLosCommand;
+    /// <summary>Command to clear the LOS line and highlights.</summary>
     public ICommand ClearLosCommand => _clearLosCommand ??= new RelayCommand(_ => ClearLos());
 
     private ICommand? _hoverHexCommand;
+    /// <summary>Command called when the mouse hovers over a hex.</summary>
     public ICommand HoverHexCommand => _hoverHexCommand ??= new RelayCommand<HexViewModel>(OnHexHover);
 }

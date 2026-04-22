@@ -11,6 +11,7 @@ namespace ASLInputTool.Converters;
 /// </summary>
 public class EnumToVisibilityConverter : IValueConverter
 {
+    /// <inheritdoc />
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         if (value == null || parameter == null)
@@ -25,6 +26,7 @@ public class EnumToVisibilityConverter : IValueConverter
         return match ? Visibility.Visible : Visibility.Collapsed;
     }
 
+    /// <inheritdoc />
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
         throw new NotImplementedException();
