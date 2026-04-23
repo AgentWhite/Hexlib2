@@ -31,11 +31,9 @@ public class RelayCommand : ICommand
     }
 
     /// <inheritdoc />
-    /// <param name="parameter">Data used by the command. If the command does not require data to be passed, this object can be set to null.</param>
     public bool CanExecute(object? parameter) => _canExecute == null || _canExecute(parameter);
 
     /// <inheritdoc />
-    /// <param name="parameter">Data used by the command. If the command does not require data to be passed, this object can be set to null.</param>
     public void Execute(object? parameter) => _execute(parameter);
 
     /// <summary>
@@ -72,10 +70,8 @@ public class RelayCommand<T> : ICommand
     }
 
     /// <inheritdoc />
-    /// <param name="parameter">Data used by the command. If the command does not require data to be passed, this object can be set to null.</param>
     public bool CanExecute(object? parameter) => _canExecute == null || _canExecute((T?)parameter);
 
     /// <inheritdoc />
-    /// <param name="parameter">Data used by the command. If the command does not require data to be passed, this object can be set to null.</param>
     public void Execute(object? parameter) => _execute((T?)parameter);
 }

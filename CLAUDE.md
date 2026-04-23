@@ -2,6 +2,27 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Documentation
+
+```bash
+# One-time install
+dotnet tool install -g docfx
+
+# Regenerate API metadata (needed after adding/renaming public members)
+cd docs && docfx metadata
+
+# Build the static site
+cd docs && docfx build
+
+# Serve locally at http://localhost:8090
+cd docs && docfx serve _site --port 8090
+
+# Build + serve in one step
+cd docs && docfx --serve --port 8090
+```
+
+Generated output (`docs/_site/`, `docs/api/`, `docs/obj/`) is git-ignored. Only source files in `docs/` are committed.
+
 ## Build & Test Commands
 
 ```bash
