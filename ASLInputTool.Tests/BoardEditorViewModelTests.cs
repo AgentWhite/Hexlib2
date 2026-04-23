@@ -13,7 +13,9 @@ using Xunit;
 using System.Linq;
 
 namespace ASLInputTool.Tests;
+using ASLInputTool.Tests.Fixtures;
 
+[Collection("SettingsManager")]
 public class BoardEditorViewModelTests
 {
     [Fact]
@@ -124,13 +126,190 @@ public class BoardEditorViewModelTests
         board.AddHex(new Hex<ASLHexMetadata>(origin) { Metadata = new ASLHexMetadata() });
         var aslBoard = new AslBoard("Test") { Board = board };
         var vm = new BoardEditorViewModel(aslBoard);
-        
+
         var hexVm = vm.Hexes.First();
-        
+
         hexVm.Terrain = TerrainType.Pond;
         Assert.True(hexVm.IsPond);
-        
+
         hexVm.Terrain = TerrainType.Woods;
         Assert.False(hexVm.IsPond);
+    }
+
+    // ── Elevation ─────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void PaintHex_SetsElevation_UpdatesIsElevated()
+    {
+        var board = new Board<ASLHexMetadata, ASLEdgeData>(1, 1);
+        var origin = new CubeCoordinate(0, 0, 0);
+        board.AddHex(new Hex<ASLHexMetadata>(origin) { Metadata = new ASLHexMetadata() });
+        var aslBoard = new AslBoard("Test") { Board = board };
+        var vm = new BoardEditorViewModel(aslBoard);
+        var hexVm = vm.Hexes.First();
+
+        hexVm.Elevation = 2;
+
+        Assert.True(hexVm.IsElevated);
+        Assert.Equal(2, hexVm.Elevation);
+    }
+
+    [Fact]
+    public void Elevation_SetToZero_IsElevatedFalse()
+    {
+        var board = new Board<ASLHexMetadata, ASLEdgeData>(1, 1);
+        var origin = new CubeCoordinate(0, 0, 0);
+        board.AddHex(new Hex<ASLHexMetadata>(origin) { Metadata = new ASLHexMetadata() });
+        var aslBoard = new AslBoard("Test") { Board = board };
+        var vm = new BoardEditorViewModel(aslBoard);
+        var hexVm = vm.Hexes.First();
+
+        hexVm.Elevation = 3;
+        hexVm.Elevation = 0;
+
+        Assert.False(hexVm.IsElevated);
+    }
+
+    // ── Edge selection ────────────────────────────────────────────────────────
+
+    [Fact]
+    public void SelectMode_SelectEdge_SetsSelectedEdge()
+    {
+        var board = new Board<ASLHexMetadata, ASLEdgeData>(1, 1);
+        var origin = new CubeCoordinate(0, 0, 0);
+        board.AddHex(new Hex<ASLHexMetadata>(origin) { Metadata = new ASLHexMetadata() });
+        var aslBoard = new AslBoard("Test") { Board = board };
+        var vm = new BoardEditorViewModel(aslBoard);
+        var hexVm = vm.Hexes.First();
+
+        vm.CurrentTool = ToolMode.Select;
+        hexVm.SelectEdgeCommand.Execute("2");
+
+        Assert.NotNull(vm.SelectedEdge);
+        Assert.Equal(2, vm.SelectedEdge!.EdgeIndex);
+        Assert.Same(hexVm, vm.SelectedEdge.Hex);
+    }
+
+    [Fact]
+    public void SelectMode_SelectEdge_MarksEdgeVisualSelected()
+    {
+        var board = new Board<ASLHexMetadata, ASLEdgeData>(1, 1);
+        var origin = new CubeCoordinate(0, 0, 0);
+        board.AddHex(new Hex<ASLHexMetadata>(origin) { Metadata = new ASLHexMetadata() });
+        var aslBoard = new AslBoard("Test") { Board = board };
+        var vm = new BoardEditorViewModel(aslBoard);
+        var hexVm = vm.Hexes.First();
+
+        vm.CurrentTool = ToolMode.Select;
+        hexVm.SelectEdgeCommand.Execute("1");
+
+        Assert.True(hexVm.IsEdge1Selected);
+    }
+
+    // ── Road tool ─────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void RoadTool_FirstClick_SetsRoadStartHex()
+    {
+        var board = new Board<ASLHexMetadata, ASLEdgeData>(2, 2);
+        var origin = HexMath.OffsetToCube(0, 0);
+        board.AddHex(new Hex<ASLHexMetadata>(origin) { Metadata = new ASLHexMetadata() });
+        var aslBoard = new AslBoard("Test") { Board = board };
+        var vm = new BoardEditorViewModel(aslBoard);
+        var hexVm = vm.Hexes.First();
+
+        vm.CurrentTool = ToolMode.Road;
+        vm.SelectHexCommand.Execute(hexVm);
+
+        Assert.Same(hexVm, vm.RoadStartHex);
+    }
+
+    [Fact]
+    public void RoadTool_TwoAdjacentHexes_PavedRoad_SetsEdgeData()
+    {
+        // OffsetToCube(0,0) and OffsetToCube(1,0) are neighbors in flat-top layout
+        var board = new Board<ASLHexMetadata, ASLEdgeData>(2, 2, HexTopOrientation.FlatTopped);
+        var locA = HexMath.OffsetToCube(0, 0);
+        var locB = HexMath.OffsetToCube(1, 0);
+        board.AddHex(new Hex<ASLHexMetadata>(locA) { Metadata = new ASLHexMetadata() });
+        board.AddHex(new Hex<ASLHexMetadata>(locB) { Metadata = new ASLHexMetadata() });
+        var aslBoard = new AslBoard("Test") { Board = board };
+        var vm = new BoardEditorViewModel(aslBoard);
+
+        var hexA = vm.Hexes.First(h => h.Location.Equals(locA));
+        var hexB = vm.Hexes.First(h => h.Location.Equals(locB));
+
+        vm.CurrentTool = ToolMode.Road;
+        vm.ActiveRoadType = RoadToolType.Paved;
+        vm.SelectHexCommand.Execute(hexA);
+        vm.SelectHexCommand.Execute(hexB);
+
+        var edgeData = board.GetEdgeData(locA, locB);
+        Assert.NotNull(edgeData);
+        Assert.True(edgeData!.HasPavedRoad);
+    }
+
+    [Fact]
+    public void RoadTool_TwoAdjacentHexes_DirtRoad_SetsEdgeData()
+    {
+        var board = new Board<ASLHexMetadata, ASLEdgeData>(2, 2, HexTopOrientation.FlatTopped);
+        var locA = HexMath.OffsetToCube(0, 0);
+        var locB = HexMath.OffsetToCube(1, 0);
+        board.AddHex(new Hex<ASLHexMetadata>(locA) { Metadata = new ASLHexMetadata() });
+        board.AddHex(new Hex<ASLHexMetadata>(locB) { Metadata = new ASLHexMetadata() });
+        var aslBoard = new AslBoard("Test") { Board = board };
+        var vm = new BoardEditorViewModel(aslBoard);
+
+        var hexA = vm.Hexes.First(h => h.Location.Equals(locA));
+        var hexB = vm.Hexes.First(h => h.Location.Equals(locB));
+
+        vm.CurrentTool = ToolMode.Road;
+        vm.ActiveRoadType = RoadToolType.Dirt;
+        vm.SelectHexCommand.Execute(hexA);
+        vm.SelectHexCommand.Execute(hexB);
+
+        var edgeData = board.GetEdgeData(locA, locB);
+        Assert.NotNull(edgeData);
+        Assert.True(edgeData!.HasDirtRoad);
+    }
+
+    // ── LOS tool ──────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void LosTool_FirstClick_ShowsLosLine()
+    {
+        var board = new Board<ASLHexMetadata, ASLEdgeData>(1, 1);
+        var origin = new CubeCoordinate(0, 0, 0);
+        board.AddHex(new Hex<ASLHexMetadata>(origin) { Metadata = new ASLHexMetadata() });
+        var aslBoard = new AslBoard("Test") { Board = board };
+        var vm = new BoardEditorViewModel(aslBoard);
+        var hexVm = vm.Hexes.First();
+
+        vm.CurrentTool = ToolMode.LosTest;
+        vm.SelectHexCommand.Execute(hexVm);
+
+        Assert.True(vm.IsLosLineVisible);
+        Assert.True(hexVm.IsHighlightedForLos);
+    }
+
+    [Fact]
+    public void LosTool_TwoClicks_HighlightsPath()
+    {
+        var board = new Board<ASLHexMetadata, ASLEdgeData>(2, 2, HexTopOrientation.FlatTopped);
+        var locA = HexMath.OffsetToCube(0, 0);
+        var locB = HexMath.OffsetToCube(1, 0);
+        board.AddHex(new Hex<ASLHexMetadata>(locA) { Metadata = new ASLHexMetadata() });
+        board.AddHex(new Hex<ASLHexMetadata>(locB) { Metadata = new ASLHexMetadata() });
+        var aslBoard = new AslBoard("Test") { Board = board };
+        var vm = new BoardEditorViewModel(aslBoard);
+
+        var hexA = vm.Hexes.First(h => h.Location.Equals(locA));
+        var hexB = vm.Hexes.First(h => h.Location.Equals(locB));
+
+        vm.CurrentTool = ToolMode.LosTest;
+        vm.SelectHexCommand.Execute(hexA);
+        vm.SelectHexCommand.Execute(hexB);
+
+        Assert.True(hexA.IsHighlightedForLos || hexB.IsHighlightedForLos);
     }
 }
