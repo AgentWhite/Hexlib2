@@ -18,7 +18,7 @@ public class RulePipelineTests
         public string? Description => null;
         public RulePriority Priority { get; }
 
-        public RecordingRule(string id, RulePriority priority = RulePriority.Core)
+        public RecordingRule(string id, RulePriority priority = RulePriority.Baseline)
         {
             Id = id;
             Name = id;
@@ -137,10 +137,10 @@ public class RulePipelineTests
     public void Execute_CoreRulesRunBeforeSSR()
     {
         var pipeline = new RulePipeline<TestContext>();
-        pipeline.Register(new RecordingRule("ssr1", RulePriority.SSR));
-        pipeline.Register(new RecordingRule("core1", RulePriority.Core));
-        pipeline.Register(new RecordingRule("ssr2", RulePriority.SSR));
-        pipeline.Register(new RecordingRule("core2", RulePriority.Core));
+        pipeline.Register(new RecordingRule("ssr1", RulePriority.ScenarioSet));
+        pipeline.Register(new RecordingRule("core1", RulePriority.Baseline));
+        pipeline.Register(new RecordingRule("ssr2", RulePriority.ScenarioSet));
+        pipeline.Register(new RecordingRule("core2", RulePriority.Baseline));
         var ctx = new TestContext();
 
         pipeline.Execute(ctx);

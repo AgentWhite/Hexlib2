@@ -6,9 +6,18 @@ namespace ASL.Rules;
 /// </summary>
 public enum RulePriority
 {
-    /// <summary>Core rules that always apply.</summary>
-    Core = 0,
+    /// <summary>The "physics" of the game — foundational rules that always apply (e.g., A4.1, B13.1).</summary>
+    Baseline = 100,
 
-    /// <summary>Scenario Special Rules that override or extend Core.</summary>
-    SSR = 100
+    /// <summary>Optional core rules that may be in effect (Night, Weather, Slopes).</summary>
+    OptionalCore = 150,
+
+    /// <summary>Scenario Specific Rules from the scenario card.</summary>
+    ScenarioSet = 200,
+
+    /// <summary>Rules that modify the output of earlier rules (multipliers, add-ons).</summary>
+    Modifier = 300,
+
+    /// <summary>The final word — hard inhibitors or aborts that override everything else.</summary>
+    FinalOverride = 400
 }
