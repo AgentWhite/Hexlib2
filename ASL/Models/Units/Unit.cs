@@ -151,8 +151,7 @@ public class Unit : ICounter
     /// Gets a value indicating whether this unit represents a Support Weapon.
     /// </summary>
     [JsonIgnore]
-    // TODO: This logic is currently incorrect as other unit types may also have a BreakdownComponent.
-    public bool IsSupportWeapon => HasComponent<BreakdownComponent>();
+    public bool IsSupportWeapon => HasComponent<PortageComponent>() && !HasComponent<RadioComponent>();
     
     // Commonly used components for convenience
 

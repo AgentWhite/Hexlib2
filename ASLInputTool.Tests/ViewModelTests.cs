@@ -13,6 +13,7 @@ using System.Linq;
 
 namespace ASLInputTool.Tests;
 using ASLInputTool.Infrastructure;
+using ASLInputTool.Tests.Fixtures;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -33,6 +34,7 @@ public class MockScenarioRepository : IScenarioRepository
     public Task SaveInsigniaAsync(Insignia i) => Task.CompletedTask;
 }
 
+[Collection("SettingsManager")]
 public class ViewModelTests
 {
     [Fact]
@@ -77,6 +79,8 @@ public class ViewModelTests
         var vm = new LeadersViewModel(repository, moduleRepo);
         vm.IsAdding = true;
         vm.Name = "Test Leader";
+        vm.Firepower = "0";
+        vm.Range = "0";
         vm.Morale = "9";
         vm.BrokenMorale = "10";
         vm.Leadership = "-1";
