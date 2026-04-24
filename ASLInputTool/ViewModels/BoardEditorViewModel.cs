@@ -58,8 +58,7 @@ public partial class BoardEditorViewModel : ViewModelBase
     private bool _isPolygonSnapped = false;
     private System.Windows.Point _polygonSnapPoint;
     private ASLInputTool.Services.GradientMap? _gradientMap;
-    private System.Windows.Point _magneticSnapPoint;
-    private bool _isMagneticSnapping;
+
 
     /// <summary>Gets the collection of water visuals (streams, gullies, canals).</summary>
     public ObservableCollection<RoadVisualViewModel> WaterVisuals => _waterVisuals;
@@ -123,11 +122,7 @@ public partial class BoardEditorViewModel : ViewModelBase
     /// <summary>Gets or sets the point where the polygon tool is currently snapped.</summary>
     public System.Windows.Point PolygonSnapPoint { get => _polygonSnapPoint; set => SetProperty(ref _polygonSnapPoint, value); }
 
-    /// <summary>Gets or sets the predicted snap location for the magnetic pen (shown under the cursor).</summary>
-    public System.Windows.Point MagneticSnapPoint { get => _magneticSnapPoint; set => SetProperty(ref _magneticSnapPoint, value); }
 
-    /// <summary>Gets or sets a value indicating whether the magnetic pen is currently snapping to an edge.</summary>
-    public bool IsMagneticSnapping { get => _isMagneticSnapping; set => SetProperty(ref _isMagneticSnapping, value); }
 
     /// <summary>Gets the collection of road segments for rendering.</summary>
     public ObservableCollection<RoadVisualViewModel> RoadVisuals => _roadVisuals;
