@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git *)",
+      "Bash(xargs wc *)",
+      "Bash(dotnet build *)",
+      "Bash(dotnet test *)",
+      "Bash(docfx metadata *)",
+      "Bash(docfx build *)"
+    ]
+  }
+}

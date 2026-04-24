@@ -30,6 +30,10 @@ public class ViewModelLocator
         Register<LeadersViewModel>(new LeadersViewModel(_unitRepository, _moduleRepository));
         Register<HeroesViewModel>(new HeroesViewModel(_unitRepository, _moduleRepository));
         Register<SquadsViewModel>(new SquadsViewModel(_unitRepository, _moduleRepository));
+        Register<OrdnanceViewModel>(new OrdnanceViewModel());
+        Register<VehiclesViewModel>(new VehiclesViewModel());
+        Register<NationalCountersViewModel>(new NationalCountersViewModel());
+        Register<MiscCountersViewModel>(new MiscCountersViewModel());
         Register<EquipmentViewModel>(new EquipmentViewModel(_unitRepository, _moduleRepository));
         Register<ScenariosViewModel>(new ScenariosViewModel(_scenarioRepository));
         Register<ModulesViewModel>(new ModulesViewModel(_moduleRepository));
