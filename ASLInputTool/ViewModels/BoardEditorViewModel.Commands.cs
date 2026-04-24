@@ -151,22 +151,27 @@ public partial class BoardEditorViewModel
 
     private void HandleMagneticPolygonClick(Point p)
     {
-        // Adjust point to best edge before clicking
-        if (_grayscalePixels != null)
-        {
-            p = ASLInputTool.Services.EdgeDetectionService.FindBestEdgePoint(p, _grayscalePixels, _imagePixelWidth, _imagePixelHeight, ActualGridWidth, ActualGridHeight);
-        }
-        HandlePolygonClick(p);
+        Point snapped = SnapToEdge(p);
+        IsMagneticSnapping = false; // hide preview once an anchor is committed
+        HandlePolygonClick(snapped);
     }
 
     private void HandleMagneticPolygonHover(Point p)
     {
-        // Adjust point to best edge before hover
-        if (_grayscalePixels != null)
-        {
-            p = ASLInputTool.Services.EdgeDetectionService.FindBestEdgePoint(p, _grayscalePixels, _imagePixelWidth, _imagePixelHeight, ActualGridWidth, ActualGridHeight);
-        }
-        HandlePolygonHover(p);
+        Point snapped = SnapToEdge(p);
+        bool snappedDifferent = snapped != p;
+
+        MagneticSnapPoint = snapped;
+        IsMagneticSnapping = snappedDifferent;
+
+        HandlePolygonHover(snapped);
+    }
+
+    private Point SnapToEdge(Point p)
+    {
+        if (_gradientMap == null) return p;
+        return ASLInputTool.Services.EdgeDetectionService.FindBestEdgePoint(
+            p, _gradientMap, ActualGridWidth, ActualGridHeight, ZoomLevel);
     }
 
     private void ClosePolygon()

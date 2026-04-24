@@ -794,6 +794,8 @@
                             <Separator Margin="10,0"/>
 
                             <Button Content="Clear LOS" Command="{Binding ClearLosCommand}" Margin="0,0,10,0" Padding="10,5"/>
+                            <Separator Margin="10,0"/>
+                            <CheckBox Content="Dim Background" IsChecked="{Binding DimBackground}" VerticalAlignment="Center" Margin="0,0,10,0"/>
                             <CheckBox Content="Hide Decorations" IsChecked="{Binding HideDecorations}" VerticalAlignment="Center" Margin="0,0,10,0"/>
                         </StackPanel>
                     </Border>
@@ -1076,10 +1078,33 @@
                                     <Ellipse Width="10" Height="10" Fill="#440000FF" Stroke="Blue" StrokeThickness="1"
                                              Visibility="{Binding IsPolygonSnapped, Converter={StaticResource BooleanToVisibilityConverter}}">
                                         <Ellipse.RenderTransform>
-                                            <TranslateTransform X="{Binding PolygonSnapPoint.X, Converter={StaticResource CenterOffsetConverter}, ConverterParameter=-5}" 
+                                            <TranslateTransform X="{Binding PolygonSnapPoint.X, Converter={StaticResource CenterOffsetConverter}, ConverterParameter=-5}"
                                                                 Y="{Binding PolygonSnapPoint.Y, Converter={StaticResource CenterOffsetConverter}, ConverterParameter=-5}" />
                                         </Ellipse.RenderTransform>
                                     </Ellipse>
+                                    <!-- Magnetic snap target crosshair -->
+                                    <Path Stroke="Lime" StrokeThickness="1.5" IsHitTestVisible="False"
+                                          Visibility="{Binding IsMagneticSnapping, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <Path.Data>
+                                            <GeometryGroup>
+                                                <EllipseGeometry RadiusX="5" RadiusY="5">
+                                                    <EllipseGeometry.Transform>
+                                                        <TranslateTransform X="{Binding MagneticSnapPoint.X}" Y="{Binding MagneticSnapPoint.Y}" />
+                                                    </EllipseGeometry.Transform>
+                                                </EllipseGeometry>
+                                                <LineGeometry StartPoint="-8,0" EndPoint="8,0">
+                                                    <LineGeometry.Transform>
+                                                        <TranslateTransform X="{Binding MagneticSnapPoint.X}" Y="{Binding MagneticSnapPoint.Y}" />
+                                                    </LineGeometry.Transform>
+                                                </LineGeometry>
+                                                <LineGeometry StartPoint="0,-8" EndPoint="0,8">
+                                                    <LineGeometry.Transform>
+                                                        <TranslateTransform X="{Binding MagneticSnapPoint.X}" Y="{Binding MagneticSnapPoint.Y}" />
+                                                    </LineGeometry.Transform>
+                                                </LineGeometry>
+                                            </GeometryGroup>
+                                        </Path.Data>
+                                    </Path>
                                 </Canvas>
                             </Grid>
                         </Grid>
