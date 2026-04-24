@@ -152,18 +152,12 @@ public partial class BoardEditorViewModel
     private void HandleMagneticPolygonClick(Point p)
     {
         Point snapped = SnapToEdge(p);
-        IsMagneticSnapping = false; // hide preview once an anchor is committed
         HandlePolygonClick(snapped);
     }
 
     private void HandleMagneticPolygonHover(Point p)
     {
         Point snapped = SnapToEdge(p);
-        bool snappedDifferent = snapped != p;
-
-        MagneticSnapPoint = snapped;
-        IsMagneticSnapping = snappedDifferent;
-
         HandlePolygonHover(snapped);
     }
 

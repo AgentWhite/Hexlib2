@@ -801,7 +801,7 @@
                     </Border>
 
                     <!-- LOS Canvas -->
-                    <ScrollViewer Grid.Row="1" Grid.Column="0" Background="{StaticResource WindowBackgroundBrush}" 
+                    <ScrollViewer x:Name="LosScrollViewer" Grid.Row="1" Grid.Column="0" Background="{StaticResource WindowBackgroundBrush}" 
                                    HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
                                    PreviewMouseDown="OnBoardMouseDown">
                         <Grid x:Name="LosZoomContainer" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="50">
@@ -1082,29 +1082,7 @@
                                                                 Y="{Binding PolygonSnapPoint.Y, Converter={StaticResource CenterOffsetConverter}, ConverterParameter=-5}" />
                                         </Ellipse.RenderTransform>
                                     </Ellipse>
-                                    <!-- Magnetic snap target crosshair -->
-                                    <Path Stroke="Lime" StrokeThickness="1.5" IsHitTestVisible="False"
-                                          Visibility="{Binding IsMagneticSnapping, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                        <Path.Data>
-                                            <GeometryGroup>
-                                                <EllipseGeometry RadiusX="5" RadiusY="5">
-                                                    <EllipseGeometry.Transform>
-                                                        <TranslateTransform X="{Binding MagneticSnapPoint.X}" Y="{Binding MagneticSnapPoint.Y}" />
-                                                    </EllipseGeometry.Transform>
-                                                </EllipseGeometry>
-                                                <LineGeometry StartPoint="-8,0" EndPoint="8,0">
-                                                    <LineGeometry.Transform>
-                                                        <TranslateTransform X="{Binding MagneticSnapPoint.X}" Y="{Binding MagneticSnapPoint.Y}" />
-                                                    </LineGeometry.Transform>
-                                                </LineGeometry>
-                                                <LineGeometry StartPoint="0,-8" EndPoint="0,8">
-                                                    <LineGeometry.Transform>
-                                                        <TranslateTransform X="{Binding MagneticSnapPoint.X}" Y="{Binding MagneticSnapPoint.Y}" />
-                                                    </LineGeometry.Transform>
-                                                </LineGeometry>
-                                            </GeometryGroup>
-                                        </Path.Data>
-                                    </Path>
+
                                 </Canvas>
                             </Grid>
                         </Grid>

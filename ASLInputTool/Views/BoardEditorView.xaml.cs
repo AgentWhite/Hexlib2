@@ -72,9 +72,27 @@ namespace ASLInputTool.Views
                 newCursor = _zoomInCursor;
             else if (ViewModel.CurrentTool == ToolMode.ZoomOut && _zoomOutCursor != null)
                 newCursor = _zoomOutCursor;
+            else if (ViewModel.CurrentTool == ToolMode.PenMagnetic || 
+                     ViewModel.CurrentTool == ToolMode.PenPolygon || 
+                     ViewModel.CurrentTool == ToolMode.PenSubtract ||
+                     ViewModel.CurrentTool == ToolMode.PenRect)
+            {
+                newCursor = Cursors.Cross;
+            }
             
             // Apply to the entire ScrollViewer for consistent tool feel
-            BoardScrollViewer.Cursor = newCursor;
+            // We use ForceCursor to ensure child elements don't override the tool's cursor
+            if (BoardScrollViewer != null)
+            {
+                BoardScrollViewer.Cursor = newCursor;
+                BoardScrollViewer.ForceCursor = (newCursor != Cursors.Arrow);
+            }
+
+            if (LosScrollViewer != null)
+            {
+                LosScrollViewer.Cursor = newCursor;
+                LosScrollViewer.ForceCursor = (newCursor != Cursors.Arrow);
+            }
         }
 
         private BoardEditorViewModel? ViewModel => DataContext as BoardEditorViewModel;
