@@ -95,6 +95,18 @@
             <DataTemplate DataType="{x:Type vm:EquipmentViewModel}">
                 <v:EquipmentView />
             </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:OrdnanceViewModel}">
+                <TextBlock Text="Ordnance View Coming Soon" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="Gray"/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:VehiclesViewModel}">
+                <TextBlock Text="Vehicles View Coming Soon" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="Gray"/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:NationalCountersViewModel}">
+                <TextBlock Text="National Counters View Coming Soon" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="Gray"/>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:MiscCountersViewModel}">
+                <TextBlock Text="Misc Counters View Coming Soon" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" FontWeight="Bold" Foreground="Gray"/>
+            </DataTemplate>
             <DataTemplate DataType="{x:Type vm:ScenariosViewModel}">
                 <v:ScenariosView />
             </DataTemplate>
