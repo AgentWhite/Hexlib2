@@ -208,4 +208,40 @@ public class Unit : ICounter
     /// </summary>
     [JsonIgnore]
     public int? RateOfFire => FirePower?.RateOfFire;
+
+    /// <summary>
+    /// Gets the OrdnanceComponent of the unit, if present.
+    /// </summary>
+    [JsonIgnore]
+    public OrdnanceComponent? Ordnance => GetComponent<OrdnanceComponent>();
+
+    /// <summary>
+    /// Gets the GunToHitComponent of the unit, if present.
+    /// </summary>
+    [JsonIgnore]
+    public GunToHitComponent? GunToHit => GetComponent<GunToHitComponent>();
+
+    /// <summary>
+    /// Gets the ManhandlingComponent of the unit, if present.
+    /// </summary>
+    [JsonIgnore]
+    public ManhandlingComponent? Manhandling => GetComponent<ManhandlingComponent>();
+
+    /// <summary>
+    /// Gets the LimberedComponent of the unit, if present.
+    /// </summary>
+    [JsonIgnore]
+    public LimberedComponent? Limbered => GetComponent<LimberedComponent>();
+
+    /// <summary>
+    /// Gets the InherentFirepowerComponent of the unit, if present.
+    /// </summary>
+    [JsonIgnore]
+    public InherentFirepowerComponent? InherentFirepower => GetComponent<InherentFirepowerComponent>();
+
+    /// <summary>
+    /// Gets the AntiAircraftComponent of the unit, if present.
+    /// </summary>
+    [JsonIgnore]
+    public AntiAircraftComponent? AntiAircraft => GetComponent<AntiAircraftComponent>();
 }

@@ -19,6 +19,11 @@ namespace ASL.Core;
 [JsonDerivedType(typeof(RadioComponent), typeDiscriminator: "Radio")]
 [JsonDerivedType(typeof(OrdnanceComponent), typeDiscriminator: "Ordnance")]
 [JsonDerivedType(typeof(LightAntiTankWeaponComponent), typeDiscriminator: "LightAntiTankWeapon")]
+[JsonDerivedType(typeof(GunToHitComponent), typeDiscriminator: "GunToHit")]
+[JsonDerivedType(typeof(ManhandlingComponent), typeDiscriminator: "Manhandling")]
+[JsonDerivedType(typeof(LimberedComponent), typeDiscriminator: "Limbered")]
+[JsonDerivedType(typeof(InherentFirepowerComponent), typeDiscriminator: "InherentFirepower")]
+[JsonDerivedType(typeof(AntiAircraftComponent), typeDiscriminator: "AntiAircraft")]
 public interface IUnitComponent
 {
     /// <summary>

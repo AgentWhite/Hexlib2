@@ -30,9 +30,15 @@ public class OrdnanceComponent : IUnitComponent
     /// <summary>Gets or sets the targeting type (e.g., Infantry, Area).</summary>
     public TargettingType TargettingType { get; set; }
 
-    /// <summary>Gets or sets the minimum range of the weapon.</summary>
+    /// <summary>
+    /// Gets or sets the minimum range of the weapon.
+    /// Authoritative for ordnance-carrying units; any <see cref="FirePowerComponent.Range"/> is ignored when this component is present.
+    /// </summary>
     public int? MinRange { get; set; }
 
-    /// <summary>Gets or sets the maximum range of the weapon.</summary>
+    /// <summary>
+    /// Gets or sets the maximum range of the weapon.
+    /// Authoritative for ordnance-carrying units; any <see cref="FirePowerComponent.Range"/> is ignored when this component is present.
+    /// </summary>
     public int MaxRange { get; set; }
 }
